@@ -1,0 +1,81 @@
+\section{E/R-descriptions}
+
+\subsection{Requirements Descriptions}
+\reqm{REQ}
+{The \emph{controller} shall operate in one of four modes: \emph{off}, \emph{init}, \emph{normal} and \emph{fail}.\\}
+{See statechart in Fig.~\ref{fig:modes}.}
+\label{R1}
+\noindent \textbf{Rationale}: The Isolette should consist of separate states to indicate to the nurse whether it is safe or not for the child to be kept inside. States should exist to the nurse as messages, either of normal status or of an error. Errors such as failed sensors or display interfaces, or an invalid configuration of the \emph{desired temperature range} and \emph{alarm values} should be displayed to the nurse.
+
+\reqm{REQ}
+{In the \emph{normal} mode, the temperature controller shall maintain current temperature inside the Isolette within a set temperature range (the \emph{desired} range).\\}
+{The \emph{desired} temperature range is $\mv{dl} \upto \mv{dh}$. If the current temperature \mv{tm} is outside this range, the controller shall turn the heater on or off via the controlled variable \mv{hc} to maintain the desired state.\\~}
+\label{R2}
+\noindent \textbf{Rationale}: The \emph{desired temperature range} will be set by the nurse to the desired range based on the infant's weight and health. The controller shall maintain the current temperature within this range under normal operation.
+
+\reqm{REQ}
+{In \emph{normal} mode, the controller shall activate an alarm whenever 
+
+\begin{mylist}
+\item the current temperature falls outside the \emph{alarm} temperature range (either through temperature fluctuation or a change in the alarm range by an operator), or
+\item a failure is signalled in any of the input devices (temperature sensor and operator settings).
+\end{mylist}~}
+{The alarm temperature range is $\mv{al}\upto\mv{ah}$.
+Monitored variable \mv{st} 
+%in Table~\ref{fig:mv} 
+shows ``invalid'' when any of the input signals fail.}
+\label{R3}
+\noindent \textbf{Rationale}: During normal operation, if any conditions occur that could affect the wellbeing of the infant, the nurse should be notified by an alarm. This could include sensor or interface failure, or current temperature exceeding alarm values - even if this is caused by the nurse adjusting the values.
+
+\reqm{REQ}
+{Once the alarm is activated, it becomes deactivated in one of two ways:
+\begin{mylist}
+\item The nurse turns off the Isolette;
+\item The alarm has lasted for 10 seconds, and after 10 seconds or more the alarm conditions are removed.
+\end{mylist}~}
+{The alarm \emph{c\_al}, will remain on until \emph{c\_md} goes to state off, or has been held for 10 seconds.}
+\label{R4}
+\noindent \textbf{Rationale}: The alarm should stay on as long as the alarm condition remains. Once the conditions have been cleared, the alarm should only turn off after it has been on for at least 10 seconds to ensure that the nurse was in fact notified of the temperature fluctuation into dangerous areas or the possible failure of a component. This is because quick fluctuations in temperature or a component that could be shorting out momentarily might not occur long enough for the alarm to sound and notify the nurse.
+
+\reqm{REQ}
+{In \emph{normal} mode,the controller will enter the \emph{fail} mode if the sensors or operator controls stop working.\\}
+{If monitored variable \mv{st} shows ``invalid", the controller will enter the fail state. See statechart in Fig.~\ref{fig:modes}.\\~}
+\label{R5}
+\noindent \textbf{Rationale}: During normal operation, if the sensor or controls malfunction, the controller should enter the \emph{fail} mode display a message through the interface indicating so. No assumptions should be made in this state as the accuracy of the monitored data can no longer be trusted to be accurate.
+
+\reqm{REQ}
+{In \emph{init} the controller will only be able to transition to \emph{normal} if
+\begin{mylist}
+\item The current temperature is in the desired range and
+\item The desired range is valid and
+\item The alarm levels do not overlap the desired range and
+\item The operator controls and sensors are working
+\end{mylist}~}
+{The controller must only transition to \emph{normal} if $\mv{al} < \mv{dl} < \mv{dh} < \mv{ah}$ and \mv{st} does not show ``invalid"\\~}
+\label{R6}
+\noindent \textbf{Rationale}: After the nurse has configured the Isolette, it should not proceed to \emph{normal} mode before first validating the consistency of the configuration and ensuring that the environment is adjusted until it is consistent with the configuration. This ensures the proper functioning of the Isolette as well as ensuring that the desired temperature range is reached before the infant is placed inside which is critical to the infant's wellbeing.
+
+\subsection{Environmental Descriptions}
+\reqm{ENV}
+{The current temperature received from the sensor is a a real number in the range $68.0$ to $105.0 \degree{F}$.\\}
+{The temperature of the system \mv{tm} will only operate within the given range\\~}
+\label{E1}
+\noindent \textbf{Rationale}: The system will never encounter temperatures outside the range of $68.0$ to $105.0 \degree{F}$ in the environments they are deployed in, and does not have to deal with any values outside this range.
+
+\reqm{ENV}
+{The desired and alarm temperatures received from the operator are all in increments of $1 \degree{F}$.\\}
+{ \mv{ah}, \mv{al}, \mv{dh}, and \mv{dl} in Table 1: Monitored Variables.\\~}
+\label{E2}
+\noindent \textbf{Rationale}: The operator interface for the nurse is designed in such a way that the increments of the input temperatures from the control interface must change by whole numbers.
+
+\reqm{ENV}
+{Failure of the sensors or operator settings will cause the status to become invalid.\\}
+{If the sensor or operator settings fail, \mv{st} becomes invalid.\\~}
+\label{E3}
+\noindent \textbf{Rationale}: The environment has ways of detecting failures of the operator interface or the temperature sensor and indicating their status to the controller. The Isolette must constantly be monitoring the status of the sensors and controls to ensure that safe assumptions can be made on their values so as to not endanger the infant.
+
+\reqm{ENV}
+{The alarm levels may be set such that they are overlapping with the desired temperature range. \\}
+{The range of \mv{al} overlaps slightly with \mv{dl}, and \mv{ah} overlaps with \mv{dh}, the system should account for this and ensure the Isolette is properly configured, and display a message to the nurse if it is not.\\~}
+\label{E4}
+\noindent \textbf{Rationale}: The operator controls allow the nurse to set \mv{al} anywhere from $97 \upto 98$, and \mv{dl} to any value in $97 \upto 99$. It is then possible for the nurse to set \mv{al} such that it will cause an alarm while \mv{tm} is in the desired range of $\mv{dl} \upto \mv{dh}$. The same is true for \mv{ah} and \mv{dh}. The Isolette must be aware of this possibility, and display an appropriate error message to the nurse if the configuration of the Isolette is not valid.

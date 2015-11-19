@@ -1,0 +1,118 @@
+\section{Abstract variables needed for the Function Table}
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Name      & Conditional                                                       \\ \hline
+$c1(i)$     & $\mv{st(i)} = valid$                                                  \\ \hline
+$c2(i)$     & $\mv{dl(i)} \le \mv{tm(i)} \le \mv{dh(i)} $\\ \hline
+$c3(i)$     & $\mv{al(i)}\,\textless\,\mv{dl(i)}\,\textless\,\mv{dh(i)}\,\textless\,\mv{ah(i)}$ \\ \hline
+$c4(i)$     & $c1(i) \land c2(i) \land c3(i) $\\ \hline
+$c5(i)$     & $\mv{tm(i)}\,\le\,\mv{al(i)} + 0.5$\\ \hline
+$c6(i)$     & $\mv{tm(i)}\,\ge\,\mv{ah(i)} - 0.5$\\ \hline
+$c7(i)$     & $c1(i) \land c3(i) \land \mv{al(i)}\,\textless\,\mv{tm(i)}\,\textless\,\mv{ah(i)}$\\ \hline
+$c8(i)$     & $\neg c1(i) \lor \neg c3(i) \lor c5(i) \lor c6(i)$\\ \hline
+$held\_for(i)$ & $(\forall\,(j: int): i - 10 \le j \land 0 \le j \implies \cv{al(j)} = on)$\\ \hline
+\end{tabular}
+\caption{Abstract Variables used in Function Tables}
+\label{conditionals}
+\end{center}
+\end{figure}
+
+\section{Function Tables}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Function Table for Heat Control: \cv{hc}}
+\begin{figure}[!htb]
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\multicolumn{4}{|l|}{Monitored Inputs \cv{md(i)}} & c\_hc(i) \\ \hline
+\multicolumn{4}{|l|}{$i = 0$}& off \\ \hline
+\multirow{4}{*}{$i\,\textgreater\,0$} & \multicolumn{3}{l|}{$c\_md(i) = off \lor \neg c1 \lor \neg c3$}& off      \\ \cline{2-5} 
+& \multirow{3}{*}{$\neg c\_md(i) = off \land c1 \land c3$} & \multicolumn{2}{l|}{c2}                            & NC       \\ \cline{3-5} 
+&                                                  & \multicolumn{2}{l|}{$m\_tm(i)\,\textless\,m\_dl(i)$}    & on       \\ \cline{3-5} 
+& & \multicolumn{2}{l|}{$m\_tm(i)\,\textgreater\,m\_dh(i)$} & off      \\ \hline
+\end{tabular}
+\caption{Function Table for heat control: \cv{hc}}
+\label{c_hc_ft}
+\end{center}
+\end{figure}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Function Table for Temperature Display: \cv{td}}
+\begin{figure}[!htb]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Monitored Inputs \mv{tm(i)}, \cv{md(i)} & \cv{td(i)} \\ \hline
+$\cv{md(i)} = normal$         & \mv{tm(i)}    \\ \hline
+$\neg \cv{md(i)} = normal$    & 0        \\ \hline
+\end{tabular}
+
+\caption{Function Table for Temperature Display: \cv{td}}
+\label{c_td_ft}
+\end{center}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Function Table for Mode: \cv{md}}
+\begin{figure}[!htb]
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\multicolumn{4}{|l|}{Monitored Inputs \mv{sw(i)}, \cv{md(i-1)}} & \cv{md(i)}          \\ \hline
+\multicolumn{4}{|l|}{$i=0$} & off    \\ \hline
+\multirow{6}{*}{$i\,\textgreater\,0$} & \multicolumn{3}{l|}{\mv{sw(i)} = off}  & off    \\ \cline{2-5} 
+                                & \multirow{5}{*}{\mv{sw(i)} = on} & \multicolumn{2}{l|}{$\cv{md(i-1)} = off$} & init  \\ \cline{3-5} 
+                                &                              & \multirow{2}{*}{$\cv{md(i-1)} = normal \lor \cv{md(i-1)} = failed$} & $c1(i)$ & normal \\ \cline{4-5} 
+                                &                              & & $\neg\,c1(i)$  & failed \\ \cline{3-5} 
+                                &                              & \multirow{2}{*}{$\cv{md(i-1)} = init$}& $c4(i)$ & init \\ \cline{4-5} 
+                                &                              &  & $\neg\,c4(i)$     & normal  \\\hline
+\end{tabular}
+\caption{Function Table for Mode: \cv{md}}
+\label{c_md_ft}
+\end{center}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Function Table for Messages: \cv{ms}}
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Monitored Inputs \mv{al(i)}, \mv{ah(i)}, \mv{tm(i)} & \cv{ms(i)}         \\ \hline
+$\neg\,c1(i)$ & invalid \\ \hline
+$\neg\,c3(i)$ & config \\ \hline
+$\mv{tm(i)} \,\textless\,\mv{al(i)}$ & low \\ \hline
+$\mv{tm(i)}\,\textgreater\,\mv{ah(i)}$ & high \\ \hline
+ELSE                                 & ok  \\ \hline
+\end{tabular}
+\caption{Function Table for Messages: \cv{ms}}
+\label{c_ms_ft}
+\end{center}
+\end{figure}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Function Table for Alarm: \cv{al}}
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\multicolumn{4}{|l|}{Monitored Inputs \mv{al(i)}, \mv{ah(i)}, \mv{tm(i)}} & \cv{al(i)}     \\ \hline
+\multicolumn{4}{|l|}{$i = 0$} & off \\ \hline
+\multirow{5}{*}{$i\,\textgreater\,0$} & \multirow{2}{*}{$\cv{al(i-1) = off}$} & \multicolumn{2}{l|}{$c7(i)$} & NC \\ \cline{3-5} 
+                                &                                & \multicolumn{2}{l|}{$\neg c7(i)$} & on \\ \cline{2-5}
+                                & \multirow{3}{*}{$\cv{al(i-1) = on}$} &   \multicolumn{2}{l|}{$c8(i)$} & NC \\ \cline{3-5} 
+                                &                                & \multirow{2}{*}{$\neg c8(i)$} & $held\_for(i)$ & off  \\ \cline{4-5} 
+                                &                                &                                    & $\neg held\_for(i) $ & on \\ \hline
+                                
+\end{tabular}
+\caption{Function Table for Alarm: \cv{al}}
+\label{c_al_ft}
+\end{center}
+\end{figure}

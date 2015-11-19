@@ -1,0 +1,172 @@
+\newpage
+\section{Isolette PVS}
+\begin{pvs}
+isolette[delta:posreal]: THEORY
+BEGIN
+
+  %% Import timing resolution
+  importing Time[delta]
+  i: VAR DTIME
+
+  %% TYPE declarations
+  SWITCH: TYPE = {on, off}
+  MSTATE: TYPE =  {valid, invalid}
+  CONTROL: TYPE = {on, off}
+  STATE: TYPE = {off, init, normal, failed}
+  ERROR: TYPE = {ok, invalid, config, low, high}
+  DISPLAY: TYPE = {i: nat | i = 0 OR (68 <= i AND i <= 105)}
+  	CONTAINING 0
+  ALARM: TYPE = {on, off}
+  TM: TYPE+ = {r: real | r >= 68.0 AND r <= 105.0} CONTAINING 68.0
+  DL: TYPE+ = {i: nat | i >= 97 AND i <= 99} CONTAINING 97
+  DH: TYPE+ =  {i: nat | i >= 98 AND i <= 100} CONTAINING 98
+  AL: TYPE+ = {i: nat | i >= 93 AND i <= 98} CONTAINING 93
+  AH: TYPE+ = {i: nat | i >= 99 AND i <= 103} CONTAINING 99
+
+  %% Monitored Variables
+  m_tm: [DTIME -> TM]
+  m_dl: [DTIME -> DL]
+  m_dh: [DTIME -> DH]
+  m_al: [DTIME -> AL]
+  m_ah: [DTIME -> AH]
+  m_st: [DTIME -> MSTATE]
+  m_sw: [DTIME -> SWITCH]
+
+  %% Controlled Variables
+  c_hc: [DTIME -> CONTROL]
+  c_td: [DTIME -> DISPLAY]
+  c_al: [DTIME -> ALARM]
+  c_md: [DTIME -> STATE]
+  c_ms: [DTIME -> ERROR]
+  
+\end{pvs}
+\newpage
+\begin{pvs}
+
+  al_on(i): bool = c_al(i) = on %% Alarm is on
+
+  % General Function table conditions
+  c1(i): bool = m_st(i) = valid
+  c2(i): bool = m_dl(i) <= m_tm(i) <= m_dh(i)
+  c3(i): bool = m_al(i) < m_dl(i) < m_dh(i) < m_ah(i)
+  c4(i): bool = c1(i) AND c2(i) AND c3(i)
+  c5(i): bool = m_tm(i) <= m_al(i) + 0.5
+  c6(i): bool = m_tm(i) <= m_al(i) - 0.5
+  c7(i): bool = c1(i) AND c3(i) AND m_al(i) < m_tm(i) < m_ah(i)
+  c8(i): bool = NOT c1(i) OR NOT c3(i) OR c5(i) OR c6(i)
+  held_for(i): bool = held_for(al_on, 10)(i)
+
+  % Mode Function Table
+  c_md_ft(i): bool =
+  COND
+    	i = 0 ->  c_md(i) = off,
+	i > 0 ->
+	COND
+	  	m_sw(i) = off -> c_md(i) = off,
+		m_sw(i) = on ->
+		COND
+			c_md(i-1) = off -> c_md(i) = init,
+			c_md(i-1) = normal OR c_md(i-1) = failed ->
+			COND
+				NOT c1(i) -> c_md(i) = failed,
+				c1(i) -> c_md(i) = normal
+			ENDCOND,
+			c_md(i-1) = init ->
+			COND
+				NOT c4(i) ->  c_md(i) = normal,
+				c4(i) ->  c_md(i) = init
+			 ENDCOND
+		ENDCOND
+	ENDCOND
+  ENDCOND
+  
+\end{pvs}
+\newpage
+\begin{pvs}
+
+  % Temperature Display Function Table
+  c_td_ft(i): bool =
+  COND
+  	c_md(i) = normal -> c_td(i) = m_tm(i),
+	NOT c_md(i) = normal -> c_td(i)= 0
+  ENDCOND
+
+  % Heat Control Function Table
+  c_hc_ft(i): bool =
+	    COND
+		i = 0 -> c_hc(i) = off,
+		i > 0 ->
+		  COND
+		    c_md(i) = off OR (NOT c1(i)) 
+		      OR (NOT c3(i)) -> c_hc(i) = off,
+  		  (NOT c_md(i) = off) AND c1(i) AND c3(i) ->
+ 		        COND
+  			      c2(i) ->  c_hc(i) =  c_hc(i-1),
+  				    m_tm(i) < m_dl(i) 
+				      -> c_hc(i) = on,
+  				    m_tm(i) > m_dh(i) 
+				      -> c_hc(i) = off
+		        ENDCOND
+		    ENDCOND
+	    ENDCOND
+
+\end{pvs}
+\newpage
+\begin{pvs}
+
+  % Alarm Function Table
+  c_al_ft(i): bool =
+  COND
+	i = 0 ->  c_al(i) = off,
+	i > 0 ->
+	COND
+		c_al(i-1) = off ->
+		COND
+			c7(i) ->  c_al(i) =  c_al(i-1),
+			NOT c7(i) -> c_al(i) = on
+		ENDCOND,
+		c_al(i-1) = on ->
+		COND
+			c8(i) ->  c_al(i) =  c_al(i-1),
+			NOT c8(i) ->
+			COND
+				held_for(i) -> c_al(i) = off,
+				NOT held_for(i) -> c_al(i) = on
+			ENDCOND
+		 ENDCOND
+	ENDCOND
+  ENDCOND
+
+  % Message Display Function Table
+  c_ms_ft(i): bool =
+	    IF m_st(i) = invalid THEN c_ms(i) = invalid
+	    ELSIF NOT c3(i) THEN c_ms(i) = config
+	    ELSIF m_tm(i) < m_al(i) THEN c_ms(i) = low
+	    ELSIF m_tm(i) > m_ah(i) THEN c_ms(i) = high
+	    ELSE c_ms(i) = ok
+	    ENDIF
+
+
+  % Isolette Specification
+  isolette(i): bool = c_hc_ft(i) AND c_td_ft(i) AND c_al_ft(i)
+  	AND c_md_ft(i) AND c_ms_ft(i)
+
+\end{pvs}
+\newpage
+\begin{pvs}
+
+  % Checks
+  inv_hc(i): bool = NOT (c1(i) AND c3(i)) IMPLIES c_hc(i) = off
+  inv_hc_holds: CONJECTURE (FORALL i: isolette(i)) =>
+  				(FORALL i: inv_hc(i))
+
+  inv_al(i): bool = i > 0 AND (
+    (NOT al_on(i-1) AND NOT c7(i))
+    OR (al_on(i-1) AND c8(i))
+    OR (al_on(i-1) AND NOT c8(i) AND NOT held_for(i))
+  ) IMPLIES c_al(i) = on
+  inv_al_holds: CONJECTURE (FORALL i: i>0 IMPLIES isolette(i))
+  				=> (FORALL i: i>0 IMPLIES inv_al(i))
+
+END isolette
+\end{pvs}

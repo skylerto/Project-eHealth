@@ -1,0 +1,15 @@
+\section{Additional Requirements}
+
+\reqm{REQ}
+{In \emph{fail} mode, the controller shall only return to \emph{normal} mode if
+\begin{mylist}
+\item The sensor is working and
+\item The operator controls are working
+\end{mylist}~}
+{In \emph{fail} mode the controller shall return to \emph{normal} mode when \mv{st} returns ``valid"~\\}
+\label{R7}
+
+\reqm{REQ}
+{In any mode, the controller will transition to the \emph{off} mode if the nurse turns the switch off.~\\}
+{The controller will transition to \emph{off} mode from any mode if \mv{sw} becomes \emph{off}\\~}
+\label{R8}

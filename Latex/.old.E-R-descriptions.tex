@@ -1,0 +1,50 @@
+\section{E/R-descriptions}
+
+\hl{To be Done}
+
+\hl{Include the REQ descriptions provided in the write-up and add the next two most important REQ}. (You may include the remaining REQs in an appendix to this document, if you wish). Provide a rationale for each REQ.
+
+\hl{Include the ENV descriptions provided in the write-up and add the next two most important ENV}. (You may include the rest in an appendix to this document, if you wish). Provide a rationale for each ENV.
+
+\reqm{REQ}
+{The \emph{controller} shall operate in one of four modes: \emph{off}, \emph{init}, \emph{normal} and \emph{fail}.\\}
+{See statechart in Fig.~\ref{fig:sc}.}
+\label{R1}
+
+\reqm{REQ}
+{In the \emph{normal} mode, the temperature controller shall maintain current temperature inside the Isolette within a set temperature range (the \emph{desired} range).\\}
+{The \emph{desired} temperature range is $\mv{dl} \upto \mv{dh}$. If the current temperature \mv{tm} is outside this range, the controller shall turn the heater on or off via the controlled variable \mv{hc} to maintain the desired state.\smallskip}
+\label{R2}
+
+\reqm{REQ}
+{In \emph{normal} mode, the controller shall activate an alarm whenever 
+
+\begin{mylist}
+\item the current temperature falls outside the \emph{alarm} temperature range (either through temperature fluctuation or a change in the alarm range by an operator), or
+\item a failure is signalled in any of the input devices (temperature sensor and operator settings).
+\end{mylist}~}
+{The alarm temperature range is $\mv{al}\upto\mv{ah}$.
+
+Monitored variable \mv{st} 
+%in Table~\ref{fig:mv} 
+shows ``invalid'' when any of the input signals fail.}
+\label{R3}
+
+\reqm{REQ}
+{Once the alarm is activated, it becomes deactivated in one of two ways:
+\begin{mylist}
+\item The nurse turns off the Isolette;
+\item The alarm has lasted for 10 seconds, and after 10 seconds or more the alarm conditions are removed.
+\end{mylist}~\\}
+{\hl{Refer to the relevant tables of monitored and/or controlled variables and function tables.}}
+\label{R4}
+
+\reqm{ENV}
+{The current temperature received from the sensor is a a real number in the range $68.0$ to $105.0 \degree{F}$.\\}
+{\hl{Refer to the relevant tables of monitored and/or controlled variables and function tables.}}
+\label{E1}
+
+\reqm{ENV}
+{The desired and alarm temperatures received from the operator are all in increments of $1 \degree{F}$.\\}
+{\hl{Refer to the relevant tables of monitored and/or controlled variables and function tables.}}
+\label{E2}
