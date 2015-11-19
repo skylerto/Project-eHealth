@@ -1,0 +1,7 @@
+Latex/*.log
+Latex/*.aux
+Latex/*.lof
+Latex/*.lot
+Latex/*.gz
+
+
