@@ -1,0 +1,28 @@
+ehealth[delta:posreal]: THEORY
+BEGIN
+
+  %% Import timing resolution
+  importing Time[delta]
+  i: VAR DTIME
+
+  %% TYPE DECLARIATIONS
+
+  %%% DATATYPE
+
+  %% MONITORED VARIABLES
+
+  %% CONTROLLED VARIABLES
+
+  %% ABSTRACT STATES
+
+  %% FUNCTION TABLE CONDITIONS
+
+  %% FUNCTION TABLES
+
+  %% INVARIANTS
+
+  %% INVARIANT PROOF
+
+  %% USECASES
+
+END ehealth

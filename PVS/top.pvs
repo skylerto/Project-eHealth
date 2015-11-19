@@ -1,0 +1,6 @@
+% proveit --importchain --clean top.pvs
+top : THEORY
+BEGIN
+  IMPORTING Time
+  IMPORTING ehealth
+END top
