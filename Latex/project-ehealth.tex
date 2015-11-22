@@ -70,19 +70,20 @@ Date & Revision& Description \\
 
 \section{System Overview}
 
-\hl{TODO} The System Under Development (SUD) is a computer controller for the thermostat of an Isolette.\footnote{%
-The image in Fig~\ref{fig:isolette} is from: \url{www.nufer-medical.ch}.}
-An Isolette is an incubator for for an infant that provides controlled temperature, humidity and oxygen (Fig.~\ref{fig:isolette}). Isolettes are used extensively in Neonatal Intensive Care Units for the care of premature infants.
+The System Under Development (SUD) is a computer system to create and manage health prescription records for Ontario.
 
-This requirements document is specifically for the control of temperature. The purpose of the Isolette computer controller is to maintain the air temperature of an Isolette within a desired range. It senses the current temperature of the Isolette and turns the heat source on and off to warm the air as needed. If the temperature falls too far below or rises too far above the desired temperature range, it activates an alarm to alert the nurse. The system allows the nurse to set the desired temperature range and to set the alarm temperature range outside the desired temperature range of which the alarm should be activated. This requirements documents follows the specification in \cite{REMH} (Appendix A) except where noted.
+This requirements document is specifically for prescription management. 
+The purpose of prescription management is to maintain patient prescriptions and avoid undesirable interactions between medications. 
+General physicians should be allowed to prescribe medications, so long as they do not create undesirable interactions.
+Only specialist physicians should be allowed to prescribe undesirable interactions. 
 
-\begin{figure}[!htb]
-\begin{center}
-\includegraphics[width=.4\textwidth]{pics/isolette.png}
-\end{center}
-\caption{Isolette}
-\label{fig:isolette}
-\end{figure}
+%\begin{figure}[!htb]
+%\begin{center}
+%\includegraphics[width=.4\textwidth]{pics/isolette.png}
+%\end{center}
+%\caption{Isolette}
+%\label{fig:isolette}
+%\end{figure}
 
 \newpage
 
