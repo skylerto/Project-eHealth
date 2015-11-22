@@ -1,3 +1,5 @@
+*.swp
+/**/*.swp
 Latex/*.aux
 Latex/*.gz
 Latex/*.log
