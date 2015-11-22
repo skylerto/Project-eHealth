@@ -1,6 +1,0 @@
-# Errors in eHealth System
-
-## Derrived from at1.expected.txt
-Line 115 in at1.expected.txt: "->add_medication(5,["m4", liquid, 10, 25.5])" - Medication with this name already exists
-Line 185 in at1.expected.txt: "->add_interaction(2,1)" - Interaction already exists
-Line 166/204 in at1.expected.txt: "->add_interaction(1,2)" - Interaction already exists
