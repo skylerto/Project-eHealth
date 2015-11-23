@@ -78,7 +78,7 @@ remove_medicine(id: ID_RX; medicine:ID_MN)
 prescriptions_q(medication_id: ID_MN)  
 * Not enough arguments
 * *id* must be positive
-* No medications with *id* exist  
+* Medication *ID_MN* does not exist in any prescription
 
   -- shows list of [patient,physician] with this medication  
 
