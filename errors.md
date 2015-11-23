@@ -1,6 +1,6 @@
 
 # eHealth System: Error Documentaion
-**Team**: Siraj Rauff (212592192), Skyler Layne(212166906)  
+**Team**: Siraj Rauff (212592192), Skyler Layne (212166906)  
 **Date**: 23/11/2015  
 
 \pagebreak
