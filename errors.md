@@ -55,6 +55,8 @@ new_prescription(id: ID_RX; doctor: ID_MD; patient: ID_PT)
 * Patient *id* must be positive
 * ID *ID_RX* already in use
 * Prescription already exists
+* No doctor associated with *ID_MD*.
+* No patient associated with *ID_PT*
 
 add_medicine(id: ID_RX; medicine:ID_MN; dose: VALUE)  
 * Not enough arguments
