@@ -1,7 +1,14 @@
 \section{Context Diagram}
  
-See Fig. A-1 in \cite{REMH}. The System Under Description (SUD) is a computer \emph{controller} to regulate the temperature of the Isolette. Everything else including the Operator Interface (described in \cite{REMH}) is in the ecosystem (i.e. in the environment of the controller). The monitored variables and controlled variables for the controller are in Table~\ref{table:monitored} and 
-Table~\ref{tbl:cv}, respectively. For clarity, simplicity and safety, there are some differences between the specifications in this document and the descriptions in \cite{REMH}.\footnote{%
-Documented in the write-up to this assignment: \texttt{assign1-spec.pdf}.} 
+The System Under Description (SUD) is a computer \emph{controller} to keep track of the physicians, patients, patient prescriptions, medications, and medication interactions. The monitored variables and controlled variables for this computer system can be found in Table~\ref{table:monitored} and 
+Table~\ref{tbl:cv} respectively. 
 
-The differences in the SUD include, it will display an error message as well as the temperature back to the nurse at their station (see \emph{\cv{ms}} in table~\ref{tbl:cv}). The SUD will also employ an alarm as priority when the temperature becomes undesirable (set by the nurse, see \mv{al} in table~\ref{table:monitored}). Finally the SUD will keep track of the Isolette's state, that is it will have more states than the nurse can set (see \emph{\cv{md}} in table~\ref{tbl:cv}). For updated context diagram, see Fig.\ref{fig:modes}.
+The system must keep track of abstract state which isn't available to the user. For a list of the abstract states within the controller see Table~\ref{table:abstractState}.
+
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{pics/ContextDiagramExpanded.pdf}
+\end{center}
+\caption{Context Diagram}
+\label{fig:modes}
+\end{figure}
