@@ -1,4 +1,4 @@
-----Status Messages for eHealth v1.2---------------------------------
+----Status Messages for eHealth v1.4---------------------------------
 -- The order of error checking on the arguments of input commands 
 -- decreases from high precedence at the top to low at the bottom. 
 -- Only the first error, in precedence order, is reported 
@@ -30,6 +30,7 @@ add_interaction (id1:ID_MN;id2:ID_MN)
     medication ids must be different
     medications with these ids must be registered
     interaction already exists
+    first remove conflicting medicine prescribed by generalist
 
 new_prescription (id: ID_RX; doctor: ID_MD; patient: ID_PT)
     prescription id must be a positive integer
@@ -53,6 +54,7 @@ remove_medicine  (id: ID_RX; medicine:ID_MN)
     prescription id must be a positive integer
     prescription with this id does not exist
     medication id must be a positive integer
+    medication id must be registered
     medication is not in the prescription
 
 prescriptions_q  (medication_id: ID_MN)

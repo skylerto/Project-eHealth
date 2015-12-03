@@ -113,7 +113,7 @@
   Interactions: 
   Prescriptions:
 ->add_medication(5,["m4", liquid, 10, 25.5])
-  10: medication name already in use
+  10: some meaningful error message
   Physicians:
     1->[Hippocrates,gn]
     2->[Galen,sp]
@@ -183,7 +183,7 @@
     [Sulfamethizole,pl,2]->[Wafarin,pl,1]
   Prescriptions:
 ->add_interaction(2,1)
-  14: interaction already exists
+  14: some meaningful error message
   Physicians:
     1->[Hippocrates,gn]
     2->[Galen,sp]
@@ -202,7 +202,7 @@
     [Sulfamethizole,pl,2]->[Wafarin,pl,1]
   Prescriptions:
 ->add_interaction(1,2)
-  15: interaction already exists
+  15: some meaningful error message
   Physicians:
     1->[Hippocrates,gn]
     2->[Galen,sp]

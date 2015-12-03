@@ -1,28 +1,196 @@
-ehealth[delta:posreal]: THEORY
-BEGIN
+% This is a partial theory to help you get started encoding your
+% function tables in PVS for the eHealth project. 
+% This theory type checks but the function tables are
+% not valid as the requirements have not been properly elicited.
+% Furthermore the function tables do not respect our format
+% as completeness and disjointness is circumvented by the
+% ELSE keyword.You may not use the ELSE keyword in function tables
+% for this project.
+% You are not required to prove any invariants.
+% Nevertheless, we show you below how to prove some simple
+% invariants as part of the state as TCCs. See fields inv1 and
+% inv2 in the STATE record using the unit ADT. You may omit these
+% invariants in the state if you choose, but they do help to ensure
+% the correct requirements if kept.
+% Note that we show a change of state using the override WITH
+% operator so that any part of the state not overriden is left
+% unchanged. 
 
-  %% Import timing resolution
-  importing Time[delta]
+ehealth: THEORY
+BEGIN
+  delta: posreal % sampling time
+  IMPORTING Time[delta]
+  IMPORTING structures@Unit_adt
   i: VAR DTIME
 
-  %% TYPE DECLARIATIONS
+  % Definition of an empty function
+  emptyfun [T, U : TYPE] (x : {x : T | FALSE}) : RECURSIVE U = 
+    emptyfun(x) 
+    MEASURE (LAMBDA (x : {x : T | FALSE}): 1) 
 
-  %%% DATATYPE
+  ID_MD: TYPE+  %physicians
+  ID_PT: TYPE+  %patients
+  ID_RX: TYPE+  %prescriptions
+  ID_MN: TYPE+  %medications
 
-  %% MONITORED VARIABLES
+  % Physician type
+  GS: TYPE+ = {gn, sp}
+  
+  UNIT: TYPE+ = {cc, mg}
 
-  %% CONTROLLED VARIABLES
+  DOSE: TYPE = [nnreal, UNIT]
 
-  %% ABSTRACT STATES
+%  Monitored events
+  COMMAND : DATATYPE
+    BEGIN
+      m_np(id:ID_RX, md: ID_MD, pt: ID_PT): np?
+    END COMMAND
+  cmd: VAR [POS_DTIME -> COMMAND]
 
-  %% FUNCTION TABLE CONDITIONS
+  invariant (p : bool) : TYPE = { x : Unit | p }
+  	    % unit : { x : Unit | 2 is even }
+	    %  (type correct IFF: 2 is even [ x := unit ]
+	    %  	     	     ...  2 is even
+	    %		     	  TRUE
+	    % 
+	    % unit : { x : Unit | 3 is even }
+	    %  (type correct IFF: 3 is even [x := unit]
+	    %  	     	     ...  3 is even
+	    %		     	  FALSE
+	    %
+	    % { x : Unit | p } = IF p THEN {unit} ELSE {} ENDIF
 
-  %% FUNCTION TABLES
+  has [T : TYPE] (m : T, p : [T -> DOSE]) : bool = p(m)`1 > 0
+      % does prescription p have a non-zero dose of m?
 
-  %% INVARIANTS
+  % Have to place the state in a record
 
-  %% INVARIANT PROOF
+  STATE: TYPE =
+    [#
+        mnid: set[ID_MN]  % medication ids
+      ,	ptid: set[ID_PT]  % patient ids
+      , mdid: set[ID_MD]  % doctor ids
+      ,	rxid: set[ID_RX]  % prescription ids
+      , mdpt: set[[(mdid),(ptid)]] % (doctor, patient) care relation
+      , rx:   [(rxid) -> (mdpt)]   % care to rx ids,  needs to be a bijection
+      , prs: [(rxid) -> [(mnid) -> DOSE]] % prescriptions
+      , di: set[[(mnid), (mnid)]]  % dangerous interactions, invariant needed?
+      , gs: [(mdid) -> GS] % kind of doctor
+      , dpr : [(rxid) -> set[[(mnid), (mnid)]]]
+      , inv1 : invariant( FORALL (x : (mnid)): NOT di((x,x)) )
+      	     % irreflexivity
+      , inv2 : invariant( FORALL (x,y : (mnid)): di((x,y)) <=> di((y,x)) )
+      	     % symmetry 
+   #]
 
-  %% USECASES
+  PRES (s : STATE) : TYPE =  [(s`mnid) -> DOSE]
+       % type of PRESCRIPTIONS for a given state
+
+          % would prescriptions p0 and p1 cause dangerous interactions
+	  % if they were prescribed to the same patient?
+  interact (s : STATE)(p0, p1 : PRES (s)) : bool =
+  	   EXISTS (m0,m1 : (s`mnid)): 
+	   	  s`di((m0,m1)) 
+	      AND has(m0,p0) 
+	      AND has(m1,p1)
+
+	  % given state s, does medication m1 cause a problem
+	  % for the patient of prescription p0?
+  interactWith (s: STATE)(p0 : PRES (s), m1 : (s`mnid)) : bool =
+  	   EXISTS (m0 : (s`mnid)): s`di((m0,m1)) AND has(m0,p0)
+
+  isValidDose(s : STATE)(m : ID_MN, d : DOSE) : bool
+  	   % is d a valid dose of medication m?
+	   % kept abstract; will need a counterpart in the state
+	   % in order to be refined
+
+  prsOfPt (s: STATE)(p: (s`ptid)) : set [(s`rxid)] = 
+  	  { r : (s`rxid) | s`rx(r)`2 = p }
+
+  ptOf (s: STATE)(r : (s`rxid)) : (s`ptid) = s`rx(r)`2
+
+  mdOf (s: STATE)(r : (s`rxid)) : (s`mdid) = s`rx(r)`1
+
+  s: VAR [ DTIME -> STATE ]
+
+  empty_prs (mns : set[ID_MN])(m : (mns)) : DOSE = (0, mg)
+
+  init_mdid : set[ID_MD]
+  init_gs : [(init_mdid) -> GS]
+
+  init_state : STATE =
+       (# mnid := epsilon({ x : set[ID_MN] | TRUE })
+        , ptid := epsilon({ x : set[ID_PT] | TRUE })
+        , mdid := init_mdid
+        , rxid := emptyset
+        , mdpt := emptyset
+        , rx := emptyfun
+        , prs := emptyfun
+        , di := emptyset
+        , gs := epsilon({ x : [(init_mdid) -> GS] | TRUE })
+        , dpr := emptyfun
+        , inv1 := unit
+        , inv2 := unit
+        #)
+
+	% new_prescription (id: ID_RX; doctor: ID_MD; patient: ID_PT)
+	%     prescription id must be a positive integer
+	%     prescription id already in use
+	%     physician id must be a positive integer
+	%     physician with this id not registered
+	%     patient id must be a positive integer
+	%     patient with this id not registered
+	%     prescription already exists for this physican and patient
+  np_ft(id:ID_RX, md: ID_MD, pt: ID_PT)(s)(i:POS_DTIME): bool =
+    s(i) = 
+    COND
+	   NOT rxid_(id) 
+       AND s(i-1)`mdid(md)
+       AND s(i-1)`ptid(pt) -> 
+	       s(i-1) WITH  [ rxid := add(id,rxid_) 
+		            , rx  := rx_ WITH [id := (md,pt)] 
+			    , prs := prs_ WITH [id := empty_prs(mnid_) ] 
+			    , dpr := dpr_ WITH [id := emptyset ] ] ,
+       ELSE -> s(i-1)
+    ENDCOND
+    where
+       rxid_ = s(i-1)`rxid
+      ,rx_   = s(i-1)`rx
+      ,dpr_  = s(i-1)`dpr
+      ,mnid_ = s(i-1)`mnid
+      ,prs_  = s(i-1)`prs
+ 
+ % add_medicine (id: ID_RX; medicine:ID_MN; dose: VALUE)
+ %     prescription id must be a positive integer
+ %     prescription with this id does not exist
+ %     medication id must be a positive integer
+ %     medication id must be registered
+ %     medication is already prescribed
+ %     specialist is required to add a dangerous interaction
+ %     dose is outside allowed range
+  am_ft(id:ID_RX, m: ID_MN, d: DOSE)(s)(i: POS_DTIME): bool =
+    s(i) =
+    COND
+	    rxid_(id) AND mnid_(m) AND NOT has(m,prs_(id))
+	AND (EXISTS (r : (prsOfPt_(ptOf_(id)))): interactWith_(prs_(r),m)) 
+		       % does medication m introduce an interaction?
+		       % if so, is doctor 'md' a specialist?
+	AND isValidDose_(m,d)
+            -> s(i-1) WITH [ prs := prs_ WITH [id := prs_(id) WITH [m := d] ] ]
+	       	      % s_ WITH [ prs := s_`prs | id -> (s_`prs.id | m -> d) ]
+     , ELSE -> s(i-1)
+    ENDCOND
+    where
+       rxid_ = s(i-1)`rxid
+      ,rx_   = s(i-1)`rx
+      ,gs_   = s(i-1)`gs
+      ,dpr_  = s(i-1)`dpr
+      ,mnid_ = s(i-1)`mnid
+      ,prs_  = s(i-1)`prs
+      ,mdOf_ = mdOf(s(i-1))
+      ,ptOf_ = ptOf(s(i-1))
+      ,interactWith_ = interactWith(s(i-1))
+      ,prsOfPt_ = prsOfPt(s(i-1))
+      ,isValidDose_ = isValidDose(s(i-1))
 
 END ehealth

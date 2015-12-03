@@ -36,7 +36,8 @@ prescriptions_q(medication_id: ID_MN)
 
 dpr_q
   -- dangerous prescription report
-  -- PATIENT -> INTERACTION
+  -- e.g. There are dangerous prescriptions:
+  --(Dora,3)->{ [Sulfamethizole,pl,2]->[Wafarin,pl,1] }
 
 
 
