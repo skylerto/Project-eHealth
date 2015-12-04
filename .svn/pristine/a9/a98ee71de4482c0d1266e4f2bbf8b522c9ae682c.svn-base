@@ -1,0 +1,80 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This is only a partial theory to help you get started
+% with the eHealth requirements function tables
+% This the theory presented and discussed in class
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+ehealth	: THEORY
+BEGIN
+  delta: posreal % sampling time
+  IMPORTING Time[delta]
+  i: VAR DTIME
+
+  % Definition of an empty function
+  emptyfun [T, U : TYPE] (x : {x : T | FALSE}) : RECURSIVE U = 
+    emptyfun(x) 
+    MEASURE (LAMBDA (x : {x : T | FALSE}): 1) 
+
+  ID_MD: TYPE+  %physicians
+  ID_PT: TYPE+  %patients
+  ID_RX: TYPE+  %prescriptions
+  ID_MN: TYPE+  %medications
+
+  % Physician type
+  GS: TYPE+ = {gn, sp}
+  
+  UNIT: TYPE+ = {cc, mg}
+
+  DOSE: TYPE = [nnreal, UNIT]
+
+ %IMPORTING PartialFunctions [ID_MN, DOSE]
+
+%  Monitored events
+  COMMAND : DATATYPE
+    BEGIN
+      m_np(id:ID_RX, md: ID_MD, pt: ID_PT): np?
+    END COMMAND
+  cmd: VAR [POS_DTIME -> COMMAND]
+
+  %IMPORTING relations[ID_MD,ID_PT]
+
+  % Have to place the above in a record
+
+  STATE: TYPE =
+    [#
+        mnid: set[ID_MN]  % medication ids
+      ,	ptid: set[ID_PT]  % patient ids
+      , mdid: set[ID_MD]  % doctor ids
+      ,	rxid: set[ID_RX]  % prescription ids
+      , mdpt: set[[(mdid),(ptid)]] % (doctor, patient) care relation
+      , rx:   [(rxid) -> (mdpt)]   % care to rx ids,  needs to be a bijection
+      , prs: [(rxid) -> [(mnid) -> DOSE]] % prescriptions
+      , di: set[[(mnid), (mnid)]]  % dangerous interactions, invariant needed?
+      , gs: [(mdid) -> GS] % kind of doctor
+   #]
+
+  s: VAR [ DTIME -> STATE ]
+
+  empty_prs (mns : set[ID_MN])(m : (mns)) : DOSE = (0, mg)
+
+  np_ft(id:ID_RX, md: ID_MD, pt: ID_PT)(s)(i:POS_DTIME): bool =
+    s(i) = 
+    COND
+	   NOT rxid_(id) 
+       AND s(i-1)`mdid(md)
+       AND s(i-1)`ptid(pt)
+       AND s(i-1)`mdpt((md,pt)) -> s(i-1) WITH 
+       	   			[ rxid := add(id,rxid_) 
+				, rx := rx_ WITH [id := (md,pt)] 
+				, prs := prs_ WITH [id := empty_prs(mnid_) ] ] ,
+       ELSE -> s(i-1)
+    ENDCOND
+    where
+       rxid_ = s(i-1)`rxid
+      ,rx_   = s(i-1)`rx
+      ,mnid_ = s(i-1)`mnid
+      ,prs_  = s(i-1)`prs
+  
+
+END ehealth
