@@ -1,24 +1,4 @@
-\section{Abstract variables needed for the Function Table}
 
-\begin{figure}[!htb]
-\begin{center}
-\begin{tabular}{|l|l|}
-\hline
-Name      & Conditional                                                       \\ \hline
-$c1(i)$     & $\mv{st(i)} = valid$                                                  \\ \hline
-$c2(i)$     & $\mv{dl(i)} \le \mv{tm(i)} \le \mv{dh(i)} $\\ \hline
-$c3(i)$     & $\mv{al(i)}\,\textless\,\mv{dl(i)}\,\textless\,\mv{dh(i)}\,\textless\,\mv{ah(i)}$ \\ \hline
-$c4(i)$     & $c1(i) \land c2(i) \land c3(i) $\\ \hline
-$c5(i)$     & $\mv{tm(i)}\,\le\,\mv{al(i)} + 0.5$\\ \hline
-$c6(i)$     & $\mv{tm(i)}\,\ge\,\mv{ah(i)} - 0.5$\\ \hline
-$c7(i)$     & $c1(i) \land c3(i) \land \mv{al(i)}\,\textless\,\mv{tm(i)}\,\textless\,\mv{ah(i)}$\\ \hline
-$c8(i)$     & $\neg c1(i) \lor \neg c3(i) \lor c5(i) \lor c6(i)$\\ \hline
-$held\_for(i)$ & $(\forall\,(j: int): i - 10 \le j \land 0 \le j \implies \cv{al(j)} = on)$\\ \hline
-\end{tabular}
-\caption{Abstract Variables used in Function Tables}
-\label{conditionals}
-\end{center}
-\end{figure}
 
 \section{Function Tables}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%

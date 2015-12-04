@@ -1,18 +1,21 @@
 \section{Controlled Variables}
 The controlled variables are a subset of those described in \cite{REMH}.\footnote{With some change of nomenclature. Controlled variables have a ``c'' prefix.} In addition, there is a mode display \cv{md} and a message display \cv{ms}.\footnote{The mode ``off'' is added to that of Fig.~A-4 in \cite{REMH}, and the mode transitions have been changed.}
 
-% Please add the following required packages to your document preamble:
-% \usepackage[table,xcdraw]{xcolor}
-% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+
+
+
+
 \begin{table}[h]
-\begin{tabular}{|l|l|l|l|l|}
+\centering
+\begin{tabular}{|l|l|l|}
 \hline
-\cellcolor[HTML]{EFEFEF}Name & \cellcolor[HTML]{EFEFEF}Type & \cellcolor[HTML]{EFEFEF}Range                                                                    & \cellcolor[HTML]{EFEFEF}Units & \cellcolor[HTML]{EFEFEF}Physical Interpretation                                                         \\ \hline
-\cv{hc}                      & Enumerated                   & \{on, off\}                                                              &                               & \begin{tabular}[c]{@{}l@{}}heat control: command to\\ turn heat source on or off\end{tabular}           \\ \hline
-\cv{td}                      & $\intg$                      & $\{0\} \bunion \{68 \upto 105\}$                                         & $\degree{F}$                  & \begin{tabular}[c]{@{}l@{}}displayed temperature of Isolette\\ (zero when Isolette is off)\end{tabular} \\ \hline
-\cv{al}                      & Enumerated                   & \{off, on\}                                                              &                               & sound alarm to call nurse                                                                               \\ \hline
-\cv{md}                      & Enumerated                   & \begin{tabular}[c]{@{}l@{}}\{off, init, \\ normal, failed\}\end{tabular} &                               & \begin{tabular}[c]{@{}l@{}}mode of Isolette operation\\ (failed if $\mv{st} = invalid$)\end{tabular}    \\ \hline
-\cv{ms}                      & Enumerated                   & \{ok, invalid, config, low, high\} &                               & messages to display to nurse                                                                            \\ \hline
+Name          & Interpretation                                             & Abstract State \\ \hline
+Physicians    & A list of all the Physicians currently within the system   & See table \ref{abs-state}  \\ \hline
+Patients      & A list of all the Patients currently in the system         & See table \ref{abs-state}  \\ \hline
+Medications   & A list of all the Medications currently within the system  & See table \ref{abs-state}  \\ \hline
+Interactions  & A list of all the Interactions currently within the system & See table \ref{abs-state}  \\ \hline
+Prescriptions & A list of all the Prescriptions within the system          & See table \ref{abs-state}  \\ \hline
+Error         & A message displaying the highest priority error, or ok     & See table \ref{abs-state}  \\ \hline
 \end{tabular}
 \caption {Controlled Variables}
 \label{tbl:cv}
