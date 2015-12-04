@@ -1,0 +1,25 @@
+\section{Abstract variables needed for the Function Table}
+
+\begin{figure}[!htb]
+\begin{center}
+
+\begin{tabular}{|l|l|l|l|}
+\hline
+Name & Type                                                                                                & Interpredation                                                                                 & Purpose                                                                                                               \\ \hline
+mnid & set{[}ID\_MN{]}                                                                                     & \begin{tabular}[c]{@{}l@{}}The set of all\\ medication ids\end{tabular}                        & \begin{tabular}[c]{@{}l@{}}Keep track of all the  medication\\ ids in the system\end{tabular}                         \\ \hline
+ptid & set{[}ID\_PT{]}                                                                                     & \begin{tabular}[c]{@{}l@{}}The set of all\\ patient ids\end{tabular}                           & \begin{tabular}[c]{@{}l@{}}Keep track of all the patient ids\\ in the system\end{tabular}                             \\ \hline
+mdid & set{[}ID\_MD{]}                                                                                     & \begin{tabular}[c]{@{}l@{}}The set of all\\ doctor ids\end{tabular}                            & \begin{tabular}[c]{@{}l@{}}Keep track of all the doctor ids\\ in the system\end{tabular}                              \\ \hline
+rxid & set{[}ID\_RX{]}                                                                                     & \begin{tabular}[c]{@{}l@{}}The set of all\\ prescription ids\end{tabular}                      & \begin{tabular}[c]{@{}l@{}}Keep track of all the prescription\\ ids in the system\end{tabular}                        \\ \hline
+mdpt & set{[}{[}(mdid),(ptid){]}{]}                                                                        & \begin{tabular}[c]{@{}l@{}}Relationship between\\ Doctor and Patient\end{tabular}              & \begin{tabular}[c]{@{}l@{}}Keep track of the doctor and \\ the patient\end{tabular}                                   \\ \hline
+rx   & \begin{tabular}[c]{@{}l@{}}{[}(rid) \\ -\textgreater(mdpt){]}\end{tabular}                          & \begin{tabular}[c]{@{}l@{}}care to rx ids, needs \\ to be a bijection\end{tabular}             & \begin{tabular}[c]{@{}l@{}}Keep track of all the medical\\ reactions between medications\\ in the system\end{tabular} \\ \hline
+prs  & \begin{tabular}[c]{@{}l@{}}{[}(rid) \\ -\textgreater {[}(mind)\\ -\textgreater DOSE{]}\end{tabular} & \begin{tabular}[c]{@{}l@{}}List of all prescriptions\\ including dosage\end{tabular}           & \begin{tabular}[c]{@{}l@{}}Keep track of all the \\ prescriptions in the system\end{tabular}                          \\ \hline
+di   & set{[}{[}(mnid), (mnid){]}                                                                          & \begin{tabular}[c]{@{}l@{}}Set of dangerous \\ interactions between\\ medications\end{tabular} & \begin{tabular}[c]{@{}l@{}}Keep track of all the dangerous\\ interactions in the system\end{tabular}                  \\ \hline
+gs   & \begin{tabular}[c]{@{}l@{}}{[}(mdid) \\ -\textgreater GS{]}\end{tabular}                            & The kind of doctor                                                                             & Keep track of all the type of doctor                                                                                  \\ \hline
+dpi  & \begin{tabular}[c]{@{}l@{}}{[}(rxid) -\textgreater \\ set{[}{[}(mnid), (mnid){]}{]}{]}\end{tabular} & \begin{tabular}[c]{@{}l@{}}The dangerous\\  prescription report\end{tabular}                   & \begin{tabular}[c]{@{}l@{}}Notify dangerous interactions,\\ if they exist\end{tabular}                                \\ \hline
+\end{tabular}
+
+
+\caption{Abstract Variables used in Function Tables}
+\label{abs-state}
+\end{center}
+\end{figure}
