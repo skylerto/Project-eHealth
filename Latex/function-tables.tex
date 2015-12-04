@@ -2,6 +2,61 @@
 
 \section{Function Tables}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Table of Error codes and Warnings}
+
+\begin{figure}[]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Name  & Meaning                                                    \\ \hline
+err1  & physician id must be a positive integer                    \\ \hline
+err2  & physician id already in use                                \\ \hline
+err3  & name must start with a letter                              \\ \hline
+err4  & patient id must be a positive integer                      \\ \hline
+err5  & patient id already in use                                  \\ \hline
+err6  & name must start with a letter                              \\ \hline
+err7  & medication id must be a positive integer                   \\ \hline
+err8  & medication id already in use                               \\ \hline
+err9  & medication name must start with a letter                   \\ \hline
+err10 & medication name already in use                             \\ \hline
+err11 & require 0 \textless low-dose \textless= hi-dose            \\ \hline
+err12 & medication ids must be positive integers                   \\ \hline
+err13 & medication ids must be different                           \\ \hline
+err14 & medications with these ids must be registered              \\ \hline
+err15 & interaction already exists                                 \\ \hline
+err16 & first remove conflicting medicine prescribed by generalist \\ \hline
+err17 & prescription id must be a positive integer                 \\ \hline
+err18 & prescription id already in use                             \\ \hline
+err19 & physician id must be a positive integer                    \\ \hline
+err20 & physician with this id not registered                      \\ \hline
+err21 & patient id must be a positive integer                      \\ \hline
+err22 & patient with this id not registered                        \\ \hline
+err23 & prescription already exists for this physician and patient \\ \hline
+err24 & prescription id must be a positive integer                 \\ \hline
+err25 & prescription with this id does not exist                   \\ \hline
+err26 & medication id must be a positive integer                   \\ \hline
+err27 & medication id must be registered                           \\ \hline
+err28 & medication is already prescribed                           \\ \hline
+err29 & specialist is required to add a dangerous interaction      \\ \hline
+err30 & dose is outside allowed range                              \\ \hline
+err31 & prescription id must be a positive integer                 \\ \hline
+err32 & prescription with this id does not exist                   \\ \hline
+err33 & medication id must be a positive integer                   \\ \hline
+err34 & medication id must be registered                           \\ \hline
+err35 & medication is not in the prescription                      \\ \hline
+err36 & medication id must be a positive integer                   \\ \hline
+err37 & medication id must be registered                           \\ \hline
+warn1 & There are dangerous prescriptions                          \\ \hline
+warn2 & There are no dangerous prescriptions                       \\ \hline
+\end{tabular}
+\caption{Table of errors and warnings}
+\label{err-table}
+\end{center}
+\end{figure}
+
+\newpage
+
 \subsection{Function Table for Heat Control: \cv{hc}}
 \begin{figure}[!htb]
 \begin{center}
