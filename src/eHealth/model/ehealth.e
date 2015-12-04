@@ -5,7 +5,7 @@ note
 	revision: "$Revision$"
 
 class
-	ETF_MODEL
+	EHEALTH
 
 inherit
 	ANY
@@ -13,7 +13,7 @@ inherit
 			out
 		end
 
-create {ETF_MODEL_ACCESS}
+create {EHEALTH_ACCESS}
 	make
 
 feature {NONE} -- Initialization

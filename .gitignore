@@ -8,3 +8,5 @@ Latex/*.lot
 Latex/*.toc
 Latex/*.out
 src/EIFGENs
+src/session.txt
+src/User

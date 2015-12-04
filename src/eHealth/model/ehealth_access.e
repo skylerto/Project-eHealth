@@ -5,10 +5,10 @@ note
 	revision: "$Revision$"
 
 expanded class
-	ETF_MODEL_ACCESS
+	EHEALTH_ACCESS
 
 feature
-	m: ETF_MODEL
+	m: EHEALTH
 		once
 			create Result.make
 		end
