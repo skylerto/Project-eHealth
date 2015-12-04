@@ -24,7 +24,7 @@ feature -- command
           -- ERROR: medication name must start with a letter
         elseif false then
           -- ERROR: medication name already in use
-        elseif medicine.low > medicine.hi or medicine.low < 0 then
+        elseif medicine.low > medicine.hi or medicine.low < 0.0 then
           -- ERROR: require 0 < low-dose <= hi-dose
         else
 			-- perform some update on the model state

@@ -19,9 +19,9 @@ feature -- command
 			-- perform some update on the model state
         if id <= 0 then
           -- ERROR:     patient id must be a positive integer
-        elseif then
+        elseif false then
           -- ERROR:     patient id already in use
-        elseif then
+        elseif false then
           -- ERROR:    name must start with a letter 
         else
 			    model.default_update
