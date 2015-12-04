@@ -17,8 +17,16 @@ feature -- command
 			add_patient_precond(id, name)
     	do
 			-- perform some update on the model state
-			model.default_update
-			etf_cmd_container.on_change.notify ([Current])
+        if id <= 0 then
+          -- ERROR:     patient id must be a positive integer
+        elseif then
+          -- ERROR:     patient id already in use
+        elseif then
+          -- ERROR:    name must start with a letter 
+        else
+			    model.default_update
+			    etf_cmd_container.on_change.notify ([Current])
+        end 
     	end
 
 end

@@ -41,7 +41,44 @@ feature -- model operations
 			make
 		end
 
+feature -- commands
+  add_interaction(id1: INTEGER; id2: INTEGER)
+    do
+    end
+
+  add_medication(id: INTEGER ; medicine: TUPLE[name: STRING; kind: INTEGER; low: VALUE; hi: VALUE])
+    do
+    end
+
+  add_medicine(id: INTEGER ; medicine: INTEGER ; dose: VALUE)
+    do
+    end
+
+ 	add_patient(id: INTEGER ; name: STRING)
+	   do
+    end
+
+ 	add_physician(id: INTEGER ; name: STRING ; kind: INTEGER)
+	   do
+    end
+
+ 	new_prescription(id: INTEGER ; doctor: INTEGER ; patient: INTEGER)
+	   do
+    end
+
+ 	remove_medicine(id: INTEGER ; medicine: INTEGER)
+	   do
+    end
+
 feature -- queries
+	dpr_q
+    do
+    end
+ 
+	prescriptions_q(medication_id: INTEGER)
+    do
+    end
+	
 	out : STRING
 		do
 			create Result.make_from_string ("  ")

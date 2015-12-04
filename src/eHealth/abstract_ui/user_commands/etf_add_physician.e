@@ -17,8 +17,17 @@ feature -- command
 			add_physician_precond(id, name, kind)
     	do
 			-- perform some update on the model state
-			model.default_update
-			etf_cmd_container.on_change.notify ([Current])
+      if id < 0 then
+        -- ERROR: physician id must be a positive integer 
+      elseif false then
+        -- ERROR: physician id already in use
+      elseif false then
+        -- ERROR: name must start with a letter
+      else
+  			model.default_update
+	  		etf_cmd_container.on_change.notify ([Current])         
+      end
+
     	end
 
 end
