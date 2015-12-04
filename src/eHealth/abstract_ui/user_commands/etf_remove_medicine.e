@@ -16,9 +16,20 @@ feature -- command
 		require else 
 			remove_medicine_precond(id, medicine)
     	do
-			-- perform some update on the model state
-			model.default_update
-			etf_cmd_container.on_change.notify ([Current])
+        if id <= 0 then
+          -- ERROR:     prescription id must be a positive integer
+        elseif false then
+          -- ERROR:     prescription with this id does not exist
+        elseif medicine <= 0 then
+          -- ERROR:     medication id must be a positive integer
+        elseif false then
+          -- ERROR:     medication id must be registered
+        elseif false then
+          -- ERRORL     medication is not in the prescription
+        else
+		      	-- perform some update on the model state
+			    model.default_update
+			    etf_cmd_container.on_change.notify ([Current])
+    	  end
     	end
-
 end

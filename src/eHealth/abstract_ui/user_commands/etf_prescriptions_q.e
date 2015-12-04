@@ -16,9 +16,15 @@ feature -- command
 		require else 
 			prescriptions_q_precond(medication_id)
     	do
-			-- perform some update on the model state
-			model.default_update
-			etf_cmd_container.on_change.notify ([Current])
+        if medication_id <= 0 then
+          -- ERROR:     medication id must be a positive integer
+        elseif false then
+          -- ERROR:     medication id must be registered
+        else 
+		        -- perform some update on the model state
+			      model.default_update
+			      etf_cmd_container.on_change.notify ([Current])
+        end
     	end
 
 end
