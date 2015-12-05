@@ -17,14 +17,17 @@ feature {NONE}
 
 feature {NONE}
 	physician_list : HASH_TABLE[TUPLE[name: STRING; kind: INTEGER], INTEGER]
-	ordered_physicians: LINKED_LIST[INTEGER]
+	ordered_physicians : SORTED_TWO_WAY_LIST[INTEGER]
+
+feature {EHEALTH}
+	access : EHEALTH_ACCESS
 
 feature {EHEALTH}-- commands
 
 	add_physician(id: INTEGER ; name: STRING ; kind: INTEGER)
 		require
 			non_negative: id > 0
-			-- valid_string:
+			valid_string: access.m.is_valid_string (name)
 		do
 			physician_list.extend ([name,kind], id)
 			ordered_physicians.extend (id)
@@ -64,11 +67,10 @@ feature {EHEALTH}-- commands
 				if attached physician_list.item (physician.item) as physician_tuple then
 					Result := Result
 						+ "[" + physician_tuple.name
-						+ ","
-					if (physician_tuple.kind = 0) then
-						Result := Result + "gn"
-					else
-						Result := Result + "sp"
+					if (access.m.is_generalist(physician_tuple.kind)) then
+						Result := Result + ",gn"
+					elseif (access.m.is_specialist(physician_tuple.kind)) then
+						Result := Result + ",sp"
 					end
 					Result := Result + "]"
 				end

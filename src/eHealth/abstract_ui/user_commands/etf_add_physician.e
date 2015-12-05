@@ -18,7 +18,7 @@ feature -- command
 			local
 				m : STATUS_MESSAGE
 			do
-				if id < 0 then
+				if id < 1 then
 					create m.make_phys_id_pos
 				elseif model.physicians.physician_exists (id) then
 					create m.make_phys_id_in_use

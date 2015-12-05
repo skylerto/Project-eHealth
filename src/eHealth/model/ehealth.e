@@ -24,6 +24,7 @@ feature {NONE} -- Initialization
 			i := 0
 			create message.make_ok
 			create physicians.make
+			create constraints
 		end
 
 feature -- model attributes
@@ -31,6 +32,7 @@ feature -- model attributes
 	i : INTEGER
 	message : STATUS_MESSAGE
 	physicians : PHYSICIANS
+	constraints : ETF_TYPE_CONSTRAINTS
 
 feature -- model operations
 
@@ -106,7 +108,35 @@ feature -- queries
 				"%N  Prescriptions:"
 		end
 
-feature -- valid names
+	is_pill(kind: INTEGER) : BOOLEAN
+		require
+			constraints.is_kind (kind)
+		do
+			Result := "pill" ~ constraints.enum_items_inverse.at (kind)
+		end
+
+	is_liquid(kind: INTEGER) : BOOLEAN
+		require
+			constraints.is_kind (kind)
+		do
+			Result := "liquid" ~ constraints.enum_items_inverse.at (kind)
+		end
+
+	is_generalist(kind: INTEGER) : BOOLEAN
+		require
+			constraints.is_physician_type (kind)
+		do
+			Result := "generalist" ~ constraints.enum_items_inverse.at (kind)
+		end
+
+	is_specialist(kind: INTEGER) : BOOLEAN
+		require
+			constraints.is_physician_type (kind)
+		do
+			Result := "specialist" ~ constraints.enum_items_inverse.at (kind)
+		end
+
+feature {ANY}-- valid names
 
 	is_valid_string(a_name:STRING): BOOLEAN
 		do
