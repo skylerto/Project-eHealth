@@ -40,18 +40,25 @@ BEGIN
   NAME: TYPE+
   KIND: TYPE+ = {pill, liquid}
 
+  MEDICINE: DATATYPE
+    BEGIN
+	name: NAME
+	kind: KIND
+	low: posreal
+	hi: posreal
+    END MEDICINE
 
 %  Monitored events
   COMMAND : DATATYPE
     BEGIN
-      m_np(id:ID_RX, md: ID_MD, pt: ID_PT): np?,
-      m_aphys(id:ID_MD, n:NAME, kind: GS): aphys?,
-      m_apat(id:ID_PT, n:NAME): apat?,
-      m_amedn(id:ID_MN, medicine:MEDICINE): amedn?,
-      m_aint(id1:ID_MN, id2:ID_MN): aint?,
-      m_amed(id:ID_RX, med:ID_MN, dose:DOSE): amed?,
-      m_rmed(id:ID_RX, med: ID_MN): rmed?,
-      m_pres(m_id:ID_MN): pres?,
+      m_np(id:ID_RX, md: ID_MD, pt: ID_PT): np?
+      m_aphys(id:ID_MD, n:NAME, kind: GS): aphys?
+      m_apat(id:ID_PT, n:NAME): apat?
+      m_amedn(id:ID_MN, medicine:MEDICINE): amedn?
+      m_aint(id1:ID_MN, id2:ID_MN): aint?
+      m_amed(id:ID_RX, med:ID_MN, dose:DOSE): amed?
+      m_rmed(id:ID_RX, med: ID_MN): rmed?
+      m_pres(m_id:ID_MN): pres?
       m_dpr: dpr?
     END COMMAND
   cmd: VAR [POS_DTIME -> COMMAND]
@@ -204,17 +211,17 @@ BEGIN
 
 
 ehealth_ft(cmd)(s)(i): bool = COND
-  i = 0 ->,
+  i = 0 ->  init_state,
   i > 0 ->
     CASES cmd(i) OF
-      m_np(id:ID_RX, md: ID_MD, pt: ID_PT):  np_ft(id, md, pt)(s)(i),
-      m_aphys(id:ID_MD, n:NAME, kind: GS): aphys_ft(id, , kind)(s)(i),
-      m_apat(id:ID_PT, n:NAME): apat_ft(id, )(s)(i),
-      m_amedn(id:ID_MN, ): amedn_ft(id, )(s)(i),
-      m_aint(id1:ID_MN, id2:ID_MN): aint_ft(id1, id2)(s)(i),
-      m_amed(id:ID_RX, med:ID_MN, dose:DOSE): amed_ft(id, med, dose)(s)(i),
-      m_rmed(id:ID_RX, med: ID_MN): rmed_ft(id, med)(s)(i),
-      m_pres(m_id:ID_MN): pres_ft(m_id)(s)(i),
+      m_np(id, md, pt):  np_ft(id, md, pt)(s)(i),
+      m_aphys(id, n, kind): aphys_ft(id, n, kind)(s)(i),
+      m_apat(id, n): apat_ft(id, n)(s)(i),
+      m_amedn(id, medicine): amedn_ft(id, medicine)(s)(i),
+      m_aint(id1, id2): aint_ft(id1, id2)(s)(i),
+      m_amed(id, med, dose): amed_ft(id, med, dose)(s)(i),
+      m_rmed(id, med): rmed_ft(id, med)(s)(i),
+      m_pres(m_id): pres_ft(m_id)(s)(i),
       m_dpr: dpr?
     ENDCASES
 ENDCOND
