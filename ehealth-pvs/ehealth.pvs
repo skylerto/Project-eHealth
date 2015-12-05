@@ -40,6 +40,7 @@ BEGIN
   NAME: TYPE+
   KIND: TYPE+ = {pill, liquid}
 
+%MEDICATION = TUPLE [name: NAME; kind: KIND; low: VALUE; hi: VALUE]
   MEDICINE: TYPE+ = [name :NAME, kind :KIND, low :posreal, hi :posreal]
 
 %  Monitored events
@@ -204,7 +205,10 @@ BEGIN
       ,isValidDose_ = isValidDose(s(i-1))
 
 
-      %% add_physician
+      %add_physician  (id: ID_MD; name: NAME; kind: PHYSICIAN_TYPE)
+      %    physician id must be a positive integer
+      %    physician id already in use
+      %    name must start with a letter
       aphys_ft(id:ID_MD, n:NAME, kind: GS)(s)(i): bool = s(i) = COND
           true -> true,
           ELSE -> s(i-1)
@@ -216,7 +220,10 @@ BEGIN
         ,mnid_ = s(i-1)`mnid
         ,prs_  = s(i-1)`prs
 
-      %% add_patient
+      %add_patient  (id: ID_PT; name: NAME)
+      %    patient id must be a positive integer
+      %    patient id already in use
+      %    name must start with a letter
       apat_ft(id:ID_PT, n:NAME)(s)(i): bool = s(i) = COND
           true -> true,
           ELSE -> s(i-1)
@@ -228,10 +235,15 @@ BEGIN
         ,mnid_ = s(i-1)`mnid
         ,prs_  = s(i-1)`prs
 
-      %% add_medication
+      %add_medication  (id: ID_MN; medicine: MEDICATION)
+      %    medication id must be a positive integer
+      %    medication id already in use
+      %    medication name must start with a letter
+      %    medication name already in use
+      %    require 0 < low-dose <= hi-dose
       amedn_ft(id:ID_MN, medicine:MEDICINE)(s)(i): bool = s(i) = COND
          true -> true,
-         ELSE -> s(i-1)    
+         ELSE -> s(i-1)
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
@@ -240,10 +252,15 @@ BEGIN
         ,mnid_ = s(i-1)`mnid
         ,prs_  = s(i-1)`prs
 
-      %% add_interaction
+      %add_interaction (id1:ID_MN;id2:ID_MN)
+      %    medication ids must be positive integers
+      %    medication ids must be different
+      %    medications with these ids must be registered
+      %    interaction already exists
+      %    first remove conflicting medicine prescribed by generalist
       aint_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = s(i) = COND
        	  true -> true,
-          ELSE -> s(i-1)      
+          ELSE -> s(i-1)
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
@@ -252,10 +269,17 @@ BEGIN
         ,mnid_ = s(i-1)`mnid
         ,prs_  = s(i-1)`prs
 
-      %% add_medicine
+      %add_medicine (id: ID_RX; medicine:ID_MN; dose: VALUE)
+      %    prescription id must be a positive integer
+      %    prescription with this id does not exist
+      %    medication id must be a positive integer
+      %    medication id must be registered
+      %    medication is already prescribed
+      %    specialist is required to add a dangerous interaction
+      %    dose is outside allowed range
       amed_ft(id:ID_RX, med:ID_MN, dose:DOSE)(s)(i): bool = s(i) = COND
          true -> true,
-         ELSE -> s(i-1)      
+         ELSE -> s(i-1)
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
@@ -264,7 +288,12 @@ BEGIN
         ,mnid_ = s(i-1)`mnid
         ,prs_  = s(i-1)`prs
 
-      %% remove_medicine
+      %remove_medicine  (id: ID_RX; medicine:ID_MN)
+      %    prescription id must be a positive integer
+      %    prescription with this id does not exist
+      %    medication id must be a positive integer
+      %    medication id must be registered
+      %    medication is not in the prescription
       rmed_ft(id:ID_RX, med: ID_MN)(s)(i): bool = s(i) = COND
           true -> true,
           ELSE -> s(i-1)
@@ -276,7 +305,9 @@ BEGIN
         ,mnid_ = s(i-1)`mnid
         ,prs_  = s(i-1)`prs
 
-      %% prescription_q
+      %prescriptions_q  (medication_id: ID_MN)
+      %    medication id must be a positive integer
+      %    medication id must be registered
       pres_ft(m_id:ID_MN)(s)(i): bool = s(i) = COND
           true -> true,
           ELSE -> s(i-1)
@@ -288,7 +319,7 @@ BEGIN
         ,mnid_ = s(i-1)`mnid
         ,prs_  = s(i-1)`prs
 
-      %% dpr
+      %% dpr_q
       dpr(s)(i): bool = s(i) = COND
          true -> true,
        	 ELSE -> s(i-1)
