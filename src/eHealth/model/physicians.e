@@ -36,18 +36,6 @@ feature {EHEALTH}-- commands
 			correct_physician_added: physician_exists(id)
 		end
 
-	remove_physician(physician_id: INTEGER)
-		require
-			positive: physician_id > 0
-			exists: physician_exists (physician_id)
-		do
-			physician_list.remove (physician_id)
-			ordered_physicians.prune_all (physician_id)
-		ensure
-			physician_removed: physician_list.count = old physician_list.count - 1
-			correct_physician_removed: not physician_exists(physician_id)
-		end
-
  feature  -- public queries
 
 	physician_exists(physician_id: INTEGER): BOOLEAN

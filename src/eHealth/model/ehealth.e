@@ -24,6 +24,7 @@ feature {NONE} -- Initialization
 			i := 0
 			create message.make_ok
 			create physicians.make
+			create patients.make
 			create constraints
 		end
 
@@ -32,6 +33,7 @@ feature -- model attributes
 	i : INTEGER
 	message : STATUS_MESSAGE
 	physicians : PHYSICIANS
+	patients : PATIENTS
 	constraints : ETF_TYPE_CONSTRAINTS
 
 feature -- model operations
@@ -67,8 +69,14 @@ feature -- commands
 	end
 
 	add_patient(id: INTEGER ; name: STRING)
-	do
-	end
+		require
+			valid_name: is_valid_string (name)
+			not_exists: not patients.patient_exists (id)
+		do
+			patients.add_patient (id, name)
+		ensure
+			patient_added: patients.patient_exists(id)
+		end
 
 	add_physician(id: INTEGER ; name: STRING ; kind: INTEGER)
 	require
@@ -102,7 +110,7 @@ feature -- queries
 			Result :=
 				"  " + i.out + ": " + message.out +
 				"%N  Physicians:" + physicians.physicians_output +
-				"%N  Patients:" +
+				"%N  Patients:" + patients.patients_output +
 				"%N  Medications:" +
 				"%N  Interactions:" +
 				"%N  Prescriptions:"

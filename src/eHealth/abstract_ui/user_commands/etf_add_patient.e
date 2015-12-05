@@ -15,17 +15,21 @@ feature -- command
 	add_patient(id: INTEGER ; name: STRING)
 		require else
 			add_patient_precond(id, name)
-    	do
-	        if id <= 0 then
-	          -- ERROR:     patient id must be a positive integer
-	        elseif false then
-	          -- ERROR:     patient id already in use
-	        elseif false then
-	          -- ERROR:    name must start with a letter
-	        else
-			    model.default_update
-			    etf_cmd_container.on_change.notify ([Current])
-	        end
-    	end
+			local
+				m : STATUS_MESSAGE
+			do
+				if id < 1 then
+					create m.make_patient_id_pos
+				elseif model.patients.patient_exists (id) then
+					create m.make_patient_id_in_use
+				elseif not model.is_valid_string (name) then
+					create m.make_name_start
+				else
+					create m.make_ok
+					model.add_patient (id, name)
+				end
+				model.set_message(m)
+				etf_cmd_container.on_change.notify ([Current])
+			end
 
 end
