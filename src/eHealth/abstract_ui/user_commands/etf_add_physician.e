@@ -6,28 +6,26 @@ note
 
 class
 	ETF_ADD_PHYSICIAN
-inherit 
+inherit
 	ETF_ADD_PHYSICIAN_INTERFACE
 		redefine add_physician end
 create
 	make
-feature -- command 
+feature -- command
 	add_physician(id: INTEGER ; name: STRING ; kind: INTEGER)
-		require else 
+		require else
 			add_physician_precond(id, name, kind)
     	do
-			-- perform some update on the model state
-      if id < 0 then
-        -- ERROR: physician id must be a positive integer 
-      elseif false then
-        -- ERROR: physician id already in use
-      elseif false then
-        -- ERROR: name must start with a letter
-      else
-  			model.default_update
-	  		etf_cmd_container.on_change.notify ([Current])         
-      end
-
+     		if id < 0 then
+        		-- ERROR: physician id must be a positive integer
+      		elseif false then
+        		-- ERROR: physician id already in use
+      		elseif false then
+        		-- ERROR: name must start with a letter
+      		else
+  				model.default_update
+  				etf_cmd_container.on_change.notify ([Current])
+      		end
     	end
 
 end

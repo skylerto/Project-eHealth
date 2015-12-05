@@ -22,13 +22,21 @@ feature {NONE} -- Initialization
 		do
 			create s.make_empty
 			i := 0
+			create message.make_ok
 		end
 
 feature -- model attributes
 	s : STRING
 	i : INTEGER
+	message : STATUS_MESSAGE
 
 feature -- model operations
+
+	set_message(m: STATUS_MESSAGE)
+		do
+			message := m
+		end
+
 	default_update
 			-- Perform update to the model state.
 		do
@@ -74,22 +82,14 @@ feature -- queries
 	dpr_q
     do
     end
- 
+
 	prescriptions_q(medication_id: INTEGER)
     do
     end
-	
+
 	out : STRING
 		do
-			create Result.make_from_string ("  ")
-			Result.append ("System State: default model state ")
-			Result.append ("(")
-			Result.append (i.out)
-			Result.append (")")
+			create Result.make_from_string ("  System State: default model state (" + i.out + ")")
 		end
 
 end
-
-
-
-
