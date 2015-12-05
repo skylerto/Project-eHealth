@@ -1,5 +1,5 @@
 % This is a partial theory to help you get started encoding your
-% function tables in PVS for the eHealth project. 
+% function tables in PVS for the eHealth project.
 % This theory type checks but the function tables are
 % not valid as the requirements have not been properly elicited.
 % Furthermore the function tables do not respect our format
@@ -14,7 +14,7 @@
 % the correct requirements if kept.
 % Note that we show a change of state using the override WITH
 % operator so that any part of the state not overriden is left
-% unchanged. 
+% unchanged.
 
 ehealth: THEORY
 BEGIN
@@ -24,9 +24,9 @@ BEGIN
   i: VAR DTIME
 
   % Definition of an empty function
-  emptyfun [T, U : TYPE] (x : {x : T | FALSE}) : RECURSIVE U = 
-    emptyfun(x) 
-    MEASURE (LAMBDA (x : {x : T | FALSE}): 1) 
+  emptyfun [T, U : TYPE] (x : {x : T | FALSE}) : RECURSIVE U =
+    emptyfun(x)
+    MEASURE (LAMBDA (x : {x : T | FALSE}): 1)
 
   ID_MD: TYPE+  %physicians
   ID_PT: TYPE+  %patients
@@ -62,7 +62,7 @@ BEGIN
 	    %  (type correct IFF: 2 is even [ x := unit ]
 	    %  	     	     ...  2 is even
 	    %		     	  TRUE
-	    % 
+	    %
 	    % unit : { x : Unit | 3 is even }
 	    %  (type correct IFF: 3 is even [x := unit]
 	    %  	     	     ...  3 is even
@@ -90,7 +90,7 @@ BEGIN
       , inv1 : invariant( FORALL (x : (mnid)): NOT di((x,x)) )
       	     % irreflexivity
       , inv2 : invariant( FORALL (x,y : (mnid)): di((x,y)) <=> di((y,x)) )
-      	     % symmetry 
+      	     % symmetry
    #]
 
   PRES (s : STATE) : TYPE =  [(s`mnid) -> DOSE]
@@ -99,9 +99,9 @@ BEGIN
           % would prescriptions p0 and p1 cause dangerous interactions
 	  % if they were prescribed to the same patient?
   interact (s : STATE)(p0, p1 : PRES (s)) : bool =
-  	   EXISTS (m0,m1 : (s`mnid)): 
-	   	  s`di((m0,m1)) 
-	      AND has(m0,p0) 
+  	   EXISTS (m0,m1 : (s`mnid)):
+	   	  s`di((m0,m1))
+	      AND has(m0,p0)
 	      AND has(m1,p1)
 
 	  % given state s, does medication m1 cause a problem
@@ -114,7 +114,7 @@ BEGIN
 	   % kept abstract; will need a counterpart in the state
 	   % in order to be refined
 
-  prsOfPt (s: STATE)(p: (s`ptid)) : set [(s`rxid)] = 
+  prsOfPt (s: STATE)(p: (s`ptid)) : set [(s`rxid)] =
   	  { r : (s`rxid) | s`rx(r)`2 = p }
 
   ptOf (s: STATE)(r : (s`rxid)) : (s`ptid) = s`rx(r)`2
@@ -151,15 +151,15 @@ BEGIN
 	%     patient id must be a positive integer
 	%     patient with this id not registered
 	%     prescription already exists for this physican and patient
-  np_ft(id:ID_RX, md: ID_MD, pt: ID_PT)(s)(i:POS_DTIME): bool =
-    s(i) = 
+  np_ft(id:ID_RX, md: ID_MD, pt: ID_PT)(s)(i): bool =
+    s(i) =
     COND
-	   NOT rxid_(id) 
+	   NOT rxid_(id)
        AND s(i-1)`mdid(md)
-       AND s(i-1)`ptid(pt) -> 
-	       s(i-1) WITH  [ rxid := add(id,rxid_) 
-		            , rx  := rx_ WITH [id := (md,pt)] 
-			    , prs := prs_ WITH [id := empty_prs(mnid_) ] 
+       AND s(i-1)`ptid(pt) ->
+	       s(i-1) WITH  [ rxid := add(id,rxid_)
+		            , rx  := rx_ WITH [id := (md,pt)]
+			    , prs := prs_ WITH [id := empty_prs(mnid_) ]
 			    , dpr := dpr_ WITH [id := emptyset ] ] ,
        ELSE -> s(i-1)
     ENDCOND
@@ -169,7 +169,7 @@ BEGIN
       ,dpr_  = s(i-1)`dpr
       ,mnid_ = s(i-1)`mnid
       ,prs_  = s(i-1)`prs
- 
+
  % add_medicine (id: ID_RX; medicine:ID_MN; dose: VALUE)
  %     prescription id must be a positive integer
  %     prescription with this id does not exist
@@ -178,11 +178,11 @@ BEGIN
  %     medication is already prescribed
  %     specialist is required to add a dangerous interaction
  %     dose is outside allowed range
-  am_ft(id:ID_RX, m: ID_MN, d: DOSE)(s)(i: POS_DTIME): bool =
+  am_ft(id:ID_RX, m: ID_MN, d: DOSE)(s)(i): bool =
     s(i) =
     COND
 	    rxid_(id) AND mnid_(m) AND NOT has(m,prs_(id))
-	AND (EXISTS (r : (prsOfPt_(ptOf_(id)))): interactWith_(prs_(r),m)) 
+	AND (EXISTS (r : (prsOfPt_(ptOf_(id)))): interactWith_(prs_(r),m))
 		       % does medication m introduce an interaction?
 		       % if so, is doctor 'md' a specialist?
 	AND isValidDose_(m,d)
@@ -205,28 +205,84 @@ BEGIN
 
 
       %% add_physician
-      aphys_ft(id, n, kind)(s)(i)
+      aphys_ft(id:ID_MD, n:NAME, kind: GS)(s)(i): bool = s(i) = COND
+      ENDCOND
+      where
+         rxid_ = s(i-1)`rxid
+        ,rx_   = s(i-1)`rx
+        ,dpr_  = s(i-1)`dpr
+        ,mnid_ = s(i-1)`mnid
+        ,prs_  = s(i-1)`prs
 
       %% add_patient
-      apat_ft(id, n)(s)(i)
-      
+      apat_ft(id:ID_PT, n:NAME)(s)(i): bool = s(i) = COND
+      ENDCOND
+      where
+         rxid_ = s(i-1)`rxid
+        ,rx_   = s(i-1)`rx
+        ,dpr_  = s(i-1)`dpr
+        ,mnid_ = s(i-1)`mnid
+        ,prs_  = s(i-1)`prs
+
       %% add_medication
-      amedn_ft(id, medicine)(s)(i)
+      amedn_ft(id:ID_MN, medicine:MEDICINE)(s)(i): bool = s(i) = COND
+      ENDCOND
+      where
+         rxid_ = s(i-1)`rxid
+        ,rx_   = s(i-1)`rx
+        ,dpr_  = s(i-1)`dpr
+        ,mnid_ = s(i-1)`mnid
+        ,prs_  = s(i-1)`prs
 
       %% add_interaction
-      aint_ft(id1, id2)(s)(i)
-      
+      aint_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = s(i) = COND
+      ENDCOND
+      where
+         rxid_ = s(i-1)`rxid
+        ,rx_   = s(i-1)`rx
+        ,dpr_  = s(i-1)`dpr
+        ,mnid_ = s(i-1)`mnid
+        ,prs_  = s(i-1)`prs
+
       %% add_medicine
-      amed_ft(id, med, dose)(s)(i)
+      amed_ft(id:ID_RX, med:ID_MN, dose:DOSE)(s)(i): bool = s(i) = COND
+      ENDCOND
+      where
+         rxid_ = s(i-1)`rxid
+        ,rx_   = s(i-1)`rx
+        ,dpr_  = s(i-1)`dpr
+        ,mnid_ = s(i-1)`mnid
+        ,prs_  = s(i-1)`prs
 
       %% remove_medicine
-      rmed_ft(id, med)(s)(i)
+      rmed_ft(id:ID_RX, med: ID_MN)(s)(i): bool = s(i) = COND
+      ENDCOND
+      where
+         rxid_ = s(i-1)`rxid
+        ,rx_   = s(i-1)`rx
+        ,dpr_  = s(i-1)`dpr
+        ,mnid_ = s(i-1)`mnid
+        ,prs_  = s(i-1)`prs
 
       %% prescription_q
-      pres_ft(m_id)(s)(i)
+      pres_ft(m_id:ID_MN)(s)(i): bool = s(i) = COND
+      ENDCOND
+      where
+         rxid_ = s(i-1)`rxid
+        ,rx_   = s(i-1)`rx
+        ,dpr_  = s(i-1)`dpr
+        ,mnid_ = s(i-1)`mnid
+        ,prs_  = s(i-1)`prs
 
       %% dpr
-      dpr(s)(i)
+      dpr(s)(i): bool = s(i) = COND
+      ENDCOND
+      where
+         rxid_ = s(i-1)`rxid
+        ,rx_   = s(i-1)`rx
+        ,dpr_  = s(i-1)`dpr
+        ,mnid_ = s(i-1)`mnid
+        ,prs_  = s(i-1)`prs
 
 ehealth_ft(cmd)(s)(i): bool = COND
   i = 0 ->  init_state,
