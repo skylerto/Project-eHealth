@@ -40,13 +40,7 @@ BEGIN
   NAME: TYPE+
   KIND: TYPE+ = {pill, liquid}
 
-  MEDICINE: DATATYPE
-    BEGIN
-	name: NAME
-	kind: KIND
-	low: posreal
-	hi: posreal
-    END MEDICINE
+  MEDICINE: TYPE+ = [name :NAME, kind :KIND, low :posreal, hi :posreal]
 
 %  Monitored events
   COMMAND : DATATYPE
