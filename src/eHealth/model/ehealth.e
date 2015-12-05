@@ -20,20 +20,20 @@ feature {NONE} -- Initialization
 	make
 			-- Initialization for `Current'.
 		do
-			create s.make_empty
 			i := 0
 			create message.make_ok
 			create physicians.make
 			create patients.make
+			create medications.make
 			create constraints
 		end
 
 feature -- model attributes
-	s : STRING
 	i : INTEGER
 	message : STATUS_MESSAGE
 	physicians : PHYSICIANS
 	patients : PATIENTS
+	medications : MEDICATIONS
 	constraints : ETF_TYPE_CONSTRAINTS
 
 feature -- model operations
@@ -61,7 +61,15 @@ feature -- commands
 	end
 
 	add_medication(id: INTEGER ; medicine: TUPLE[name: STRING; kind: INTEGER; low: VALUE; hi: VALUE])
+	require
+		non_negative: id > 0
+		valid_string: is_valid_string (medicine.name)
+		-- name_unused: not medications.medication_name_used(medicine.name)
 	do
+		medications.add_medication(id, medicine)
+	ensure
+		medication_added: medications.medication_exists(id) and
+			medications.medication_name_used(medicine.name)
 	end
 
 	add_medicine(id: INTEGER ; medicine: INTEGER ; dose: VALUE)
@@ -69,14 +77,14 @@ feature -- commands
 	end
 
 	add_patient(id: INTEGER ; name: STRING)
-		require
-			valid_name: is_valid_string (name)
-			not_exists: not patients.patient_exists (id)
-		do
-			patients.add_patient (id, name)
-		ensure
-			patient_added: patients.patient_exists(id)
-		end
+	require
+		valid_name: is_valid_string (name)
+		not_exists: not patients.patient_exists (id)
+	do
+		patients.add_patient (id, name)
+	ensure
+		patient_added: patients.patient_exists(id)
+	end
 
 	add_physician(id: INTEGER ; name: STRING ; kind: INTEGER)
 	require
@@ -111,7 +119,7 @@ feature -- queries
 				"  " + i.out + ": " + message.out +
 				"%N  Physicians:" + physicians.physicians_output +
 				"%N  Patients:" + patients.patients_output +
-				"%N  Medications:" +
+				"%N  Medications:" + medications.medications_output +
 				"%N  Interactions:" +
 				"%N  Prescriptions:"
 		end
