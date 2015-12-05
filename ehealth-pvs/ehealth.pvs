@@ -28,10 +28,10 @@ BEGIN
     emptyfun(x)
     MEASURE (LAMBDA (x : {x : T | FALSE}): 1)
 
-  ID_MD: TYPE+  %physicians
-  ID_PT: TYPE+  %patients
-  ID_RX: TYPE+  %prescriptions
-  ID_MN: TYPE+  %medications
+  ID_MD: TYPE+ = posreal %physicians
+  ID_PT: TYPE+ = posreal %patients
+  ID_RX: TYPE+ = posreal %prescriptions
+  ID_MN: TYPE+ = posreal %medications
 
   % Physician type
   GS: TYPE+ = {gn, sp}
@@ -41,7 +41,7 @@ BEGIN
   KIND: TYPE+ = {pill, liquid}
 
 %MEDICATION = TUPLE [name: NAME; kind: KIND; low: VALUE; hi: VALUE]
-  MEDICINE: TYPE+ = [name :NAME, kind :KIND, low :posreal, hi :posreal]
+  MEDICINE: TYPE+ = [name:NAME, kind:KIND, low:posreal, hi:posreal]
 
 %  Monitored events
   COMMAND : DATATYPE
@@ -135,7 +135,9 @@ BEGIN
         , ptid := epsilon({ x : set[ID_PT] | TRUE })
         , mdid := init_mdid
         , rxid := emptyset
-        , mdpt := emptyset
+        , mn := emptyset
+	, mns := emptyfun
+	, mdpt := emptyset
         , rx := emptyfun
         , prs := emptyfun
         , di := emptyset
@@ -219,7 +221,7 @@ BEGIN
             AND NOT mdid_(id) ->
               s(i-1) WITH [
                 mdid := add(id, mdid_),
-                gs := gs_ WITH [id := (id,kind)]
+                gs := gs_ WITH [id := (kind)]
               ],
           ELSE -> s(i-1)
       ENDCOND
@@ -235,16 +237,12 @@ BEGIN
         id > 0
           AND NOT ptid_(id) ->
             s(i-1) WITH [
-              mdid := add(id, ptid_)
+              ptid := add(id, ptid_)
             ],
         ELSE -> s(i-1)
       ENDCOND
       where
         ptid_ = s(i-1)`ptid
-
-
-
-
 
       %add_medication  (id: ID_MN; medicine: MEDICATION)
       %    medication id must be a positive integer
@@ -255,14 +253,14 @@ BEGIN
       amedn_ft(id:ID_MN, medicine:MEDICINE)(s)(i): bool = s(i) = COND
         id > 0
           AND NOT mnid_(id)
-          AND NOT mn_`name(medicine`name)
-          AND 0 < medicine`low
-          AND medicine`low <= medicine`hi
+          AND NOT  (EXISTS (a:MEDICINE): member(a, mn_) AND a`1 = (medicine`1))
+          AND 0 < medicine`3
+          AND medicine`3 <= medicine`4
           ->
             s(i-1) WITH [
-              mdid := add(id, ptid_),
-              mn := add(medicine, mn),
-              mns := mns_ WITH [id := (id, medicine)]
+              mnid := add(id, mnid_),
+              mn := add(medicine, mn_),
+              mns := mns_ WITH [id := (medicine)]
             ],
         ELSE -> s(i-1)
       ENDCOND
@@ -278,12 +276,17 @@ BEGIN
       %    interaction already exists
       %    first remove conflicting medicine prescribed by generalist
       aint_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = s(i) = COND
-       	  true -> true,
+       	  id1 > 0
+	  AND id2 > 0
+	  AND NOT (id1 = id2)
+	  AND mns_(id1)
+	  AND mns_(id2)
+	  AND NOT di_(id1, id2) -> s(i-1) WITH [],
           ELSE -> s(i-1)
       ENDCOND
       where
-         rxid_ = s(i-1)`rxid
-        ,rx_   = s(i-1)`rx
+         mns_ = s(i-1)`mns
+        ,di_   = s(i-1)`di
         ,dpr_  = s(i-1)`dpr
         ,mnid_ = s(i-1)`mnid
         ,prs_  = s(i-1)`prs
