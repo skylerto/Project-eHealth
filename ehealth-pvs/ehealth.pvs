@@ -75,13 +75,14 @@ BEGIN
       % does prescription p have a non-zero dose of m?
 
   % Have to place the state in a record
-
   STATE: TYPE =
     [#
         mnid: set[ID_MN]  % medication ids
       ,	ptid: set[ID_PT]  % patient ids
       , mdid: set[ID_MD]  % doctor ids
       ,	rxid: set[ID_RX]  % prescription ids
+      , mn:   set[MEDICINE] % set of medicines
+      , mns:  [(mnid) -> (mn)] % (medication ids, medications)
       , mdpt: set[[(mdid),(ptid)]] % (doctor, patient) care relation
       , rx:   [(rxid) -> (mdpt)]   % care to rx ids,  needs to be a bijection
       , prs: [(rxid) -> [(mnid) -> DOSE]] % prescriptions
@@ -97,8 +98,8 @@ BEGIN
   PRES (s : STATE) : TYPE =  [(s`mnid) -> DOSE]
        % type of PRESCRIPTIONS for a given state
 
-          % would prescriptions p0 and p1 cause dangerous interactions
-	  % if they were prescribed to the same patient?
+  % would prescriptions p0 and p1 cause dangerous interactions
+	% if they were prescribed to the same patient?
   interact (s : STATE)(p0, p1 : PRES (s)) : bool =
   	   EXISTS (m0,m1 : (s`mnid)):
 	   	  s`di((m0,m1))
@@ -205,35 +206,45 @@ BEGIN
       ,isValidDose_ = isValidDose(s(i-1))
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% FUN FUN FUNCTION TABLES %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
       %add_physician  (id: ID_MD; name: NAME; kind: PHYSICIAN_TYPE)
       %    physician id must be a positive integer
       %    physician id already in use
       %    name must start with a letter
       aphys_ft(id:ID_MD, n:NAME, kind: GS)(s)(i): bool = s(i) = COND
-          true -> true,
+          id > 0
+            AND NOT mdid_(id) ->
+              s(i-1) WITH [
+                mdid := add(id, mdid_),
+                gs := gs_ WITH [id := (id,kind)]
+              ],
           ELSE -> s(i-1)
       ENDCOND
       where
-         rxid_ = s(i-1)`rxid
-        ,rx_   = s(i-1)`rx
-        ,dpr_  = s(i-1)`dpr
-        ,mnid_ = s(i-1)`mnid
-        ,prs_  = s(i-1)`prs
+         mdid_ = s(i-1)`mdid,
+         gs_ = s(i-1)`gs
 
       %add_patient  (id: ID_PT; name: NAME)
       %    patient id must be a positive integer
       %    patient id already in use
       %    name must start with a letter
       apat_ft(id:ID_PT, n:NAME)(s)(i): bool = s(i) = COND
-          true -> true,
-          ELSE -> s(i-1)
+        id > 0
+          AND NOT ptid_(id) ->
+            s(i-1) WITH [
+              mdid := add(id, ptid_)
+            ],
+        ELSE -> s(i-1)
       ENDCOND
       where
-         rxid_ = s(i-1)`rxid
-        ,rx_   = s(i-1)`rx
-        ,dpr_  = s(i-1)`dpr
-        ,mnid_ = s(i-1)`mnid
-        ,prs_  = s(i-1)`prs
+        ptid_ = s(i-1)`ptid
+
+
+
+
 
       %add_medication  (id: ID_MN; medicine: MEDICATION)
       %    medication id must be a positive integer
@@ -242,15 +253,23 @@ BEGIN
       %    medication name already in use
       %    require 0 < low-dose <= hi-dose
       amedn_ft(id:ID_MN, medicine:MEDICINE)(s)(i): bool = s(i) = COND
-         true -> true,
-         ELSE -> s(i-1)
+        id > 0
+          AND NOT mnid_(id)
+          AND NOT mn_`name(medicine`name)
+          AND 0 < medicine`low
+          AND medicine`low <= medicine`hi
+          ->
+            s(i-1) WITH [
+              mdid := add(id, ptid_),
+              mn := add(medicine, mn),
+              mns := mns_ WITH [id := (id, medicine)]
+            ],
+        ELSE -> s(i-1)
       ENDCOND
       where
-         rxid_ = s(i-1)`rxid
-        ,rx_   = s(i-1)`rx
-        ,dpr_  = s(i-1)`dpr
-        ,mnid_ = s(i-1)`mnid
-        ,prs_  = s(i-1)`prs
+        mnid_ = s(i-1)`mnid
+        , mn_ = s(i-1)`mn
+        , mns_ = s(i-1)`mns
 
       %add_interaction (id1:ID_MN;id2:ID_MN)
       %    medication ids must be positive integers
