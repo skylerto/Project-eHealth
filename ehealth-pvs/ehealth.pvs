@@ -206,6 +206,8 @@ BEGIN
 
       %% add_physician
       aphys_ft(id:ID_MD, n:NAME, kind: GS)(s)(i): bool = s(i) = COND
+          true -> true,
+          ELSE -> s(i-1)
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
@@ -216,6 +218,8 @@ BEGIN
 
       %% add_patient
       apat_ft(id:ID_PT, n:NAME)(s)(i): bool = s(i) = COND
+          true -> true,
+          ELSE -> s(i-1)
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
@@ -226,6 +230,8 @@ BEGIN
 
       %% add_medication
       amedn_ft(id:ID_MN, medicine:MEDICINE)(s)(i): bool = s(i) = COND
+         true -> true,
+         ELSE -> s(i-1)    
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
@@ -236,6 +242,8 @@ BEGIN
 
       %% add_interaction
       aint_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = s(i) = COND
+       	  true -> true,
+          ELSE -> s(i-1)      
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
@@ -246,6 +254,8 @@ BEGIN
 
       %% add_medicine
       amed_ft(id:ID_RX, med:ID_MN, dose:DOSE)(s)(i): bool = s(i) = COND
+         true -> true,
+         ELSE -> s(i-1)      
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
@@ -256,6 +266,8 @@ BEGIN
 
       %% remove_medicine
       rmed_ft(id:ID_RX, med: ID_MN)(s)(i): bool = s(i) = COND
+          true -> true,
+          ELSE -> s(i-1)
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
@@ -266,6 +278,8 @@ BEGIN
 
       %% prescription_q
       pres_ft(m_id:ID_MN)(s)(i): bool = s(i) = COND
+          true -> true,
+          ELSE -> s(i-1)
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
@@ -276,6 +290,8 @@ BEGIN
 
       %% dpr
       dpr(s)(i): bool = s(i) = COND
+         true -> true,
+       	 ELSE -> s(i-1)
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
