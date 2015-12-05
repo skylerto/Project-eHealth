@@ -15,17 +15,21 @@ feature -- command
 	add_physician(id: INTEGER ; name: STRING ; kind: INTEGER)
 		require else
 			add_physician_precond(id, name, kind)
-    	do
-     		if id < 0 then
-        		-- ERROR: physician id must be a positive integer
-      		elseif false then
-        		-- ERROR: physician id already in use
-      		elseif false then
-        		-- ERROR: name must start with a letter
-      		else
-  				model.default_update
-  				etf_cmd_container.on_change.notify ([Current])
-      		end
-    	end
+			local
+				m : STATUS_MESSAGE
+			do
+				if id < 0 then
+					create m.make_phys_id_pos
+				elseif model.physicians.physician_exists (id) then
+					create m.make_phys_id_in_use
+				elseif not model.is_valid_string (name) then
+					create m.make_name_start
+				else
+					create m.make_ok
+					model.add_physician (id, name, kind)
+				end
+				model.set_message(m)
+				etf_cmd_container.on_change.notify ([Current])
+			end
 
 end
