@@ -204,6 +204,30 @@ BEGIN
       ,isValidDose_ = isValidDose(s(i-1))
 
 
+      %% add_physician
+      aphys_ft(id, n, kind)(s)(i)
+
+      %% add_patient
+      apat_ft(id, n)(s)(i)
+      
+      %% add_medication
+      amedn_ft(id, medicine)(s)(i)
+
+      %% add_interaction
+      aint_ft(id1, id2)(s)(i)
+      
+      %% add_medicine
+      amed_ft(id, med, dose)(s)(i)
+
+      %% remove_medicine
+      rmed_ft(id, med)(s)(i)
+
+      %% prescription_q
+      pres_ft(m_id)(s)(i)
+
+      %% dpr
+      dpr(s)(i)
+
 ehealth_ft(cmd)(s)(i): bool = COND
   i = 0 ->  init_state,
   i > 0 ->
@@ -216,7 +240,7 @@ ehealth_ft(cmd)(s)(i): bool = COND
       m_amed(id, med, dose): amed_ft(id, med, dose)(s)(i),
       m_rmed(id, med): rmed_ft(id, med)(s)(i),
       m_pres(m_id): pres_ft(m_id)(s)(i),
-      m_dpr: dpr?
+      m_dpr: dpr_ft(s)(i)
     ENDCASES
 ENDCOND
 
