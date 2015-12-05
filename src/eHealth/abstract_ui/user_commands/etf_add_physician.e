@@ -28,6 +28,7 @@ feature -- command
 					create m.make_ok
 					model.add_physician (id, name, kind)
 				end
+				model.default_update
 				model.set_message(m)
 				etf_cmd_container.on_change.notify ([Current])
 			end

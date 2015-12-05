@@ -22,7 +22,7 @@ feature {NONE}
 feature {EHEALTH}
 	access : EHEALTH_ACCESS
 
-feature {EHEALTH}-- commands
+feature {EHEALTH} -- commands
 
 	add_patient(id: INTEGER ; name: STRING)
 		require
