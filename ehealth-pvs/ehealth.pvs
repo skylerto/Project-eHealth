@@ -128,9 +128,9 @@ BEGIN
   init_ptid: set[ID_PT]
 
   init_state : STATE =
-       (# mnid := init_mnid
-        , ptid := init_ptid
-        , mdid := init_mdid
+       (# mnid := emptyset
+        , ptid := emptyset
+        , mdid := emptyset
         , rxid := emptyset
         , mn := emptyset
 	, mdns := emptyfun
