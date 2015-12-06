@@ -156,7 +156,6 @@ BEGIN
 	%     patient with this id not registered
 	%     prescription already exists for this physican and patient
   np_ft(id:ID_RX, md: ID_MD, pt: ID_PT)(s)(i): bool =
-    s(i) =
     COND
 	id > 0
 	AND NOT rxid_(id)
@@ -165,11 +164,11 @@ BEGIN
 	AND pt > 0
         AND ptid_ (pt)
 	AND mdpt_ (md, pt) ->
-	       s(i-1) WITH  [ rxid := add(id,rxid_)
+	       s(i) = s(i-1) WITH  [ rxid := add(id,rxid_)
 		            , rx  := rx_ WITH [id := (md,pt)]
 			    , prs := prs_ WITH [id := empty_prs(mnid_) ]
 			    , dpr := dpr_ WITH [id := emptyset ] ] ,
-       ELSE -> s(i-1)
+       ELSE -> s(i) = s(i-1)
     ENDCOND
     where
        rxid_ = s(i-1)`rxid
@@ -190,7 +189,6 @@ BEGIN
  %     specialist is required to add a dangerous interaction
  %     dose is outside allowed range
   am_ft(id:ID_RX, m: ID_MN, d: DOSE)(s)(i): bool =
-    s(i) =
     COND
 	id > 0 AND NOT rxid_(id)
 	AND m > 0 AND mnid_(m)
@@ -199,9 +197,9 @@ BEGIN
 		       % does medication m introduce an interaction?
 		       % if so, is doctor 'md' a specialist?
 	AND isValidDose_(m,d)
-            -> s(i-1) WITH [ prs := prs_ WITH [id := prs_(id) WITH [m := d] ] ]
+            -> s(i) = s(i-1) WITH [ prs := prs_ WITH [id := prs_(id) WITH [m := d] ] ]
 	       	      % s_ WITH [ prs := s_`prs | id -> (s_`prs.id | m -> d) ]
-     , ELSE -> s(i-1)
+     , ELSE -> s(i) = s(i-1)
     ENDCOND
     where
        rxid_ = s(i-1)`rxid
@@ -227,19 +225,20 @@ BEGIN
       %    medications with these ids must be registered
       %    interaction already exists
       %    first remove conflicting medicine prescribed by generalist
-      aint_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = s(i) = COND
+      aint_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = COND
           id1 > 0
           AND id2 > 0
           AND NOT (id1 = id2)
 	  AND mnid_ (id1)
 	  AND mnid_ (id2)
-    AND ((EXISTS a: ID_MN): prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0 )
+    	  AND (EXISTS (a: ID_MN): prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0)
    	 % AND like rm_med > 0 and the doctor associated with this interaction is
-          AND NOT di_ (id1, id2) -> s(i-1) WITH [
+          AND NOT di_ (id1, id2) 
+	  -> s(i) = s(i-1) WITH [
               di := add((id1, id2), di_ ), %di_ WITH [(id1 := id2)],
               di := add((id2, id1), di_ ) %di_ WITH [(id2 :=id1])
           ],
-          ELSE -> s(i-1)
+          ELSE -> s(i) = s(i-1)
       ENDCOND
       where
          mns_ = s(i-1)`mns
@@ -254,16 +253,16 @@ BEGIN
       %    medication id must be a positive integer
       %    medication id must be registered
       %    medication is not in the prescription
-      rmed_ft(id:ID_RX, med: ID_MN)(s)(i): bool = s(i) = COND
+      rmed_ft(id:ID_RX, med: ID_MN)(s)(i): bool = COND
           id > 0
 	  AND rxid_ (id)
 	  AND med > 0
 	  AND mnid_ (med)
 	  AND prs_ (id)(med)`1 > 0
-	  -> s(i-1) WITH [
+	  -> s(i) = s(i-1) WITH [
 	    prs := prs_ WITH [id := emptyfun]
 	  ],
-          ELSE -> s(i-1)
+          ELSE -> s(i) = s(i-1)
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
@@ -272,7 +271,7 @@ BEGIN
         ,prs_  = s(i-1)`prs
 
 ehealth_ft(cmd)(s)(i): bool = COND
-  i = 0 ->  init_state,
+  i = 0 -> s(0) = init_state,
   i > 0 ->
     CASES cmd(i) OF
       m_np(id, md, pt):  np_ft(id, md, pt)(s)(i),
@@ -296,7 +295,7 @@ ENDCOND
       %    name must start with a letter
       aphys_ft(id:ID_MD, n:NAME, kind: GS)(s)(i): bool = s(i) = COND
           id > 0
-          AND NOT mdid(id) ->
+          AND NOT mdid_ (id) ->
               s(i-1) WITH [
                 mdid := add(id, mdid_),
                 gs := gs_ WITH [id := (kind)]
