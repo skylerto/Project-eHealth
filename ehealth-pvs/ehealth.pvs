@@ -235,8 +235,8 @@ BEGIN
 	  AND mnid_ (id2)
    	 % AND like rm_med > 0 and the doctor associated with this interaction is 
           AND NOT di_ (id1, id2) -> s(i-1) WITH [
-              di := add(di_ WITH [id1 := id2], di_ ),
-              di := add(di_ WITH [id2 := id1], di_ )
+              di := add((id1, id2), di_ ), %di_ WITH [(id1 := id2)],
+              di := add((id2, id1), di_ ) %di_ WITH [(id2 :=id1])
           ],
           ELSE -> s(i-1)
       ENDCOND
@@ -277,10 +277,10 @@ ehealth_ft(cmd)(s)(i): bool = COND
       m_np(id, md, pt):  np_ft(id, md, pt)(s)(i),
      % m_amedn(id, medicine): amedn_ft(id, medicine)(s)(i),
       m_aint(id1, id2): aint_ft(id1, id2)(s)(i),
-      m_amed(id, med, dose): amed_ft(id, med, dose)(s)(i),
-      m_rmed(id, med): rmed_ft(id, med)(s)(i),
-      m_pres(m_id): pres_ft(m_id)(s)(i),
-      m_dpr: dpr_ft(s)(i)
+      m_amed(id, med, dose): am_ft(id, med, dose)(s)(i),
+      m_rmed(id, med): rmed_ft(id, med)(s)(i)
+     % m_pres(m_id): pres_ft(m_id)(s)(i),
+     % m_dpr: dpr_ft(s)(i)
     ENDCASES
 ENDCOND
 
