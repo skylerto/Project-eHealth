@@ -126,12 +126,14 @@ BEGIN
   init_gs: [(init_mdid) -> GS]
   init_mnid: set[ID_MN]
   init_ptid: set[ID_PT]
+  init_rxid: set[ID_RX]
+  init_dpr: [(init_rxid) -> set[[(init_mnid), (init_mnid)]]]
 
   init_state : STATE =
-       (# mnid := emptyset
-        , ptid := emptyset
-        , mdid := emptyset
-        , rxid := emptyset
+       (# mnid := init_mnid
+        , ptid := init_ptid
+        , mdid := init_mdid
+        , rxid := init_rxid
         , mn := emptyset
 	, mdns := emptyfun
 	, mdpt := emptyset
@@ -139,7 +141,7 @@ BEGIN
         , prs := emptyfun
         , di := emptyset
         , gs := init_gs
-        , dpr := emptyfun
+        , dpr := init_dpr
         , inv1 := unit
         , inv2 := unit
         #)
