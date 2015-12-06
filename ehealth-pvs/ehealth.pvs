@@ -158,9 +158,13 @@ BEGIN
   np_ft(id:ID_RX, md: ID_MD, pt: ID_PT)(s)(i): bool =
     s(i) =
     COND
-	   NOT rxid_(id)
-       AND s(i-1)`mdid(md)
-       AND s(i-1)`ptid(pt) ->
+	id > 0
+	AND NOT rxid_(id)
+	AND md > 0
+        AND mdid_(md)
+	AND pt > 0
+        AND ptid_ (pt)
+	AND mdpt_ (md, pt) ->
 	       s(i-1) WITH  [ rxid := add(id,rxid_)
 		            , rx  := rx_ WITH [id := (md,pt)]
 			    , prs := prs_ WITH [id := empty_prs(mnid_) ]
@@ -169,6 +173,9 @@ BEGIN
     ENDCOND
     where
        rxid_ = s(i-1)`rxid
+      ,mdid_ = s(i-1)`mdid
+      ,ptid_ = s(i-1)`ptid
+      ,mdpt_ = s(i-1)`mdpt
       ,rx_   = s(i-1)`rx
       ,dpr_  = s(i-1)`dpr
       ,mnid_ = s(i-1)`mnid
@@ -214,6 +221,32 @@ BEGIN
 %% FUN FUN FUNCTION TABLES %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+      %add_interaction (id1:ID_MN;id2:ID_MN)
+      %    medication ids must be positive integers
+      %    medication ids must be different
+      %    medications with these ids must be registered
+      %    interaction already exists
+      %    first remove conflicting medicine prescribed by generalist
+      aint_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = s(i) = COND
+          id1 > 0
+          AND id2 > 0
+          AND NOT (id1 = id2)
+	  AND mnid_ (id1)
+	  AND mnid_ (id2)
+   	 % AND like rm_med > 0 and the doctor associated with this interaction is 
+          AND NOT di_ (id1, id2) -> s(i-1) WITH [
+              di := add(di_ WITH [id1 := id2], di_ ),
+              di := add(di_ WITH [id2 := id1], di_ )
+          ],
+          ELSE -> s(i-1)
+      ENDCOND
+      where
+         mns_ = s(i-1)`mns
+        ,di_   = s(i-1)`di
+        ,dpr_  = s(i-1)`dpr
+        ,mnid_ = s(i-1)`mnid
+        ,prs_  = s(i-1)`prs
+
       %remove_medicine  (id: ID_RX; medicine:ID_MN)
       %    prescription id must be a positive integer
       %    prescription with this id does not exist
@@ -222,13 +255,17 @@ BEGIN
       %    medication is not in the prescription
       rmed_ft(id:ID_RX, med: ID_MN)(s)(i): bool = s(i) = COND
           id > 0
+	  AND rxid_ (id)
 	  AND med > 0
-	  -> true,
+	  AND mnid_ (med)
+	  AND prs_ (id)(med)`1 > 0 
+	  -> s(i-1) WITH [
+	    prs := prs_ WITH [id := emptyfun] 
+	  ],
           ELSE -> s(i-1)
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
-        ,rx_   = s(i-1)`rx
         ,dpr_  = s(i-1)`dpr
         ,mnid_ = s(i-1)`mnid
         ,prs_  = s(i-1)`prs
@@ -238,9 +275,7 @@ ehealth_ft(cmd)(s)(i): bool = COND
   i > 0 ->
     CASES cmd(i) OF
       m_np(id, md, pt):  np_ft(id, md, pt)(s)(i),
-      m_aphys(id, n, kind): aphys_ft(id, n, kind)(s)(i),
-      m_apat(id, n): apat_ft(id, n)(s)(i),
-      m_amedn(id, medicine): amedn_ft(id, medicine)(s)(i),
+     % m_amedn(id, medicine): amedn_ft(id, medicine)(s)(i),
       m_aint(id1, id2): aint_ft(id1, id2)(s)(i),
       m_amed(id, med, dose): amed_ft(id, med, dose)(s)(i),
       m_rmed(id, med): rmed_ft(id, med)(s)(i),
@@ -296,8 +331,8 @@ ENDCOND
           id1 > 0
           AND id2 > 0
           AND NOT (id1 = id2)
-          AND member(id1, mns₎
-          AND mns₍id2)
+          AND member(id1, mns_ )
+          AND mns_ (id2)
           AND NOT di_ (id1, id2) -> s(i-1) WITH [
               di := add(di_ WITH [id1 := id2], di_ ),
               di := add(di_ WITH [id2 := id1], di_ )
