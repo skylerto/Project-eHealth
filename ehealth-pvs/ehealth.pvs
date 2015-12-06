@@ -47,9 +47,9 @@ BEGIN
   COMMAND : DATATYPE
     BEGIN
       m_np(id:ID_RX, md: ID_MD, pt: ID_PT): np?
-      m_aint(id1:ID_MN, id2:ID_MN): aint?
-      m_amed(id:ID_RX, med:ID_MN, dose:DOSE): amed?
-      m_rmed(id:ID_RX, med: ID_MN): rmed?
+      m_ai(id1:ID_MN, id2:ID_MN): ai?
+      m_am(id:ID_RX, med:ID_MN, dose:DOSE): am?
+      m_rm(id:ID_RX, med: ID_MN): rm?
     END COMMAND
   cmd: VAR [POS_DTIME -> COMMAND]
 
@@ -106,7 +106,7 @@ BEGIN
   interactWith (s: STATE)(p0 : PRES (s), m1 : (s`mnid)) : bool =
   	   EXISTS (m0 : (s`mnid)): s`di((m0,m1)) AND has(m0,p0)
 
-  isValidDose(s : STATE)(m : ID_MN, d : DOSE) : bool
+  isValidDose(s : STATE)(m : ID_MN, d : DOSE) : bool = true
   	   % is d a valid dose of medication m?
 	   % kept abstract; will need a counterpart in the state
 	   % in order to be refined
@@ -191,22 +191,16 @@ BEGIN
  %     dose is outside allowed range
   am_ft(id:ID_RX, m: ID_MN, d: DOSE)(s)(i): bool =
     COND
-	id > 0 AND NOT rxid_(id)
-	AND m > 0 AND mnid_(m)
-	AND NOT has(m,prs_(id))
-	AND (EXISTS (r : (prsOfPt_(ptOf_(id)))): interactWith_(prs_(r),m))
+	id > 0 AND NOT rxid_ (id)
+	AND m > 0 AND mnid_ (m)
+	AND NOT has(m,prs_ (id))
+	AND (EXISTS (r : (prsOfPt_ (ptOf_ (id)))): interactWith_ (prs_(r),m))
 		       % does medication m introduce an interaction?
 		       % if so, is doctor 'md' a specialist?
-	AND isValidDose_(m,d)
+	AND isValidDose_ (m,d)
             -> s(i) = s(i-1) WITH [ prs := prs_ WITH [id := prs_(id) WITH [m := d] ] ]
 	       	      % s_ WITH [ prs := s_`prs | id -> (s_`prs.id | m -> d) ]
-     , NOT (id > 0 AND NOT rxid_ (id)
-        AND m > 0 AND mnid_ (m)
-        AND NOT has(m,prs_ (id))
-        AND (EXISTS (r : (prsOfPt_ (ptOf_ (id)))): interactWith_ (prs_ (r),m))
-                       % does medication m introduce an interaction?
-                       % if so, is doctor 'md' a specialist?
-        AND isValidDose_ (m,d)) -> s(i) = s(i-1)
+     , ELSE -> s(i) = s(i-1)
     ENDCOND
     where
        rxid_ = s(i-1)`rxid
@@ -232,7 +226,7 @@ BEGIN
       %    medications with these ids must be registered
       %    interaction already exists
       %    first remove conflicting medicine prescribed by generalist
-      aint_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = COND
+      ai_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = COND
           id1 > 0
           AND id2 > 0
           AND NOT (id1 = id2)
@@ -267,7 +261,7 @@ BEGIN
       %    medication id must be a positive integer
       %    medication id must be registered
       %    medication is not in the prescription
-      rmed_ft(id:ID_RX, med: ID_MN)(s)(i): bool = COND
+      rm_ft(id:ID_RX, med: ID_MN)(s)(i): bool = COND
           id > 0
 	  AND rxid_ (id)
 	  AND med > 0
@@ -294,9 +288,9 @@ ehealth_ft(cmd)(s)(i): bool = COND
   i > 0 ->
     CASES cmd(i) OF
       m_np(id, md, pt):  np_ft(id, md, pt)(s)(i),
-      m_aint(id1, id2): aint_ft(id1, id2)(s)(i),
-      m_amed(id, med, dose): am_ft(id, med, dose)(s)(i),
-      m_rmed(id, med): rmed_ft(id, med)(s)(i)
+      m_ai(id1, id2): ai_ft(id1, id2)(s)(i),
+      m_am(id, med, dose): am_ft(id, med, dose)(s)(i),
+      m_rm(id, med): rm_ft(id, med)(s)(i)
     ENDCASES
 ENDCOND
 
