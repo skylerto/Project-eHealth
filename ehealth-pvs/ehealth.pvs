@@ -233,7 +233,7 @@ BEGIN
 	  AND mnid_ (id2)
     	  AND (EXISTS (a: ID_MN): prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0)
    	 % AND like rm_med > 0 and the doctor associated with this interaction is
-          AND NOT di_ (id1, id2) 
+          AND NOT di_ (id1, id2)
 	  -> s(i) = s(i-1) WITH [
               di := add((id1, id2), di_ ), %di_ WITH [(id1 := id2)],
               di := add((id2, id1), di_ ) %di_ WITH [(id2 :=id1])
@@ -283,92 +283,5 @@ ehealth_ft(cmd)(s)(i): bool = COND
      % m_dpr: dpr_ft(s)(i)
     ENDCASES
 ENDCOND
-
-
-%%%%%%%%%%%%%%%%%%%%%%
-% Add Function Table %
-%%%%%%%%%%%%%%%%%%%%%%
-
-      %add_physician  (id: ID_MD; name: NAME; kind: PHYSICIAN_TYPE)
-      %    physician id must be a positive integer
-      %    physician id already in use
-      %    name must start with a letter
-      aphys_ft(id:ID_MD, n:NAME, kind: GS)(s)(i): bool = s(i) = COND
-          id > 0
-          AND NOT mdid_ (id) ->
-              s(i-1) WITH [
-                mdid := add(id, mdid_),
-                gs := gs_ WITH [id := (kind)]
-              ],
-          ELSE -> s(i-1)
-      ENDCOND
-      where
-         mdid_ = s(i-1)`mdid,
-         gs_ = s(i-1)`gs
-
-      %add_patient  (id: ID_PT; name: NAME)
-      %    patient id must be a positive integer
-      %    patient id already in use
-      %    name must start with a letter
-      apat_ft(id:ID_PT, n:NAME)(s)(i): bool = s(i) = COND
-        id > 0
-          AND NOT ptid_(id) ->
-            s(i-1) WITH [
-              ptid := add(id, ptid_ )
-            ],
-        ELSE -> s(i-1)
-      ENDCOND
-      where
-        ptid_ = s(i-1)`ptid
-
-      %add_interaction (id1:ID_MN;id2:ID_MN)
-      %    medication ids must be positive integers
-      %    medication ids must be different
-      %    medications with these ids must be registered
-      %    interaction already exists
-      %    first remove conflicting medicine prescribed by generalist
-      aint_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = s(i) = COND
-          id1 > 0
-          AND id2 > 0
-          AND NOT (id1 = id2)
-          AND member(id1, mns_ )
-          AND mns_ (id2)
-          AND NOT di_ (id1, id2) -> s(i-1) WITH [
-              di := add(di_ WITH [id1 := id2], di_ ),
-              di := add(di_ WITH [id2 := id1], di_ )
-          ],
-          ELSE -> s(i-1)
-      ENDCOND
-      where
-         mns_ = s(i-1)`mns
-        ,di_   = s(i-1)`di
-        ,dpr_  = s(i-1)`dpr
-        ,mnid_ = s(i-1)`mnid
-        ,prs_  = s(i-1)`prs
-
-     %add_medication  (id: ID_MN; medicine: MEDICATION)
-      %    medication id must be a positive integer
-      %    medication id already in use
-      %    medication name must start with a letter
-      %    medication name already in use
-      %    require 0 < low-dose <= hi-dose
-      amedn_ft(id:ID_MN, medicine:MEDICINE)(s)(i): bool = s(i) = COND
-        id > 0
-          AND NOT mnid_ (id)
-          AND NOT  (EXISTS (a:MEDICINE): member(a, mn_ ) AND a`1 = (medicine`1))
-          AND 0 < medicine`3
-          AND medicine`3 <= medicine`4
-          ->
-            s(i-1) WITH [
-              mnid := add( id, mnid_ ),
-              mn := add(medicine, mn_ ),
-              mns := mns_ WITH [id := (medicine)]
-            ],
-        ELSE -> s(i-1)
-      ENDCOND
-      where
-        mnid_ = s(i-1)`mnid
-        , mn_ = s(i-1)`mn
-        , mns_ = s(i-1)`mns
 
 END ehealth
