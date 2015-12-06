@@ -19,7 +19,7 @@ feature {NONE}
 	medication_list : HASH_TABLE[TUPLE[name: STRING; kind: INTEGER; low: VALUE; hi: VALUE],INTEGER]
 	ordered_medications : SORTED_TWO_WAY_LIST[INTEGER]
 
-feature {EHEALTH,ETF_ADD_MEDICATION}
+feature
 	access : EHEALTH_ACCESS
 
 feature {EHEALTH} -- commands
@@ -35,11 +35,11 @@ feature {EHEALTH} -- commands
 		correct_medication_added: medication_exists(id) and medication_name_used(medicine.name)
 	end
 
-feature {EHEALTH,ETF_ADD_MEDICATION} -- public queries
+feature -- public queries
 
 medication_exists(medication_id: INTEGER): BOOLEAN
 	require
-		positive: medication_id > 0
+		valid_id: medication_id > 0
 	do
 		Result := medication_list.has (medication_id)
 	ensure
@@ -75,6 +75,26 @@ medications_output: STRING
 					+ medicine_tuple.low.out + ","
 					+ medicine_tuple.hi.out + "]"
 			end
+		end
+	end
+
+format_medication(medication_id: INTEGER) : STRING
+	require
+		valid_id: medication_id > 0
+		exists: medication_exists(medication_id)
+	do
+		if attached medication_list.item (medication_id) as medication then
+			Result := "[" + medication.name
+
+			if (access.m.is_pill(medication.kind)) then
+				Result := Result + ",pl"
+			elseif (access.m.is_liquid(medication.kind)) then
+				Result := Result + ",lq"
+			end
+
+			Result := Result + "," + medication_id.out + "]"
+		else
+			Result := ""
 		end
 	end
 

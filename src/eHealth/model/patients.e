@@ -19,7 +19,7 @@ feature {NONE}
 	patient_list : HASH_TABLE[STRING, INTEGER]
 	ordered_patients : SORTED_TWO_WAY_LIST[INTEGER]
 
-feature {EHEALTH}
+feature
 	access : EHEALTH_ACCESS
 
 feature {EHEALTH} -- commands
@@ -36,7 +36,7 @@ feature {EHEALTH} -- commands
 			correct_patient_added: patient_exists(id)
 		end
 
- feature  -- public queries
+feature -- public queries
 
 	patient_exists(patient_id: INTEGER): BOOLEAN
 		require
