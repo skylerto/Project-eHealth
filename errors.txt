@@ -39,7 +39,7 @@ new_prescription (id: ID_RX; doctor: ID_MD; patient: ID_PT)
     physician with this id not registered
     patient id must be a positive integer
     patient with this id not registered
-    prescription already exists for this physican and patient
+    prescription already exists for this physician and patient
 
 add_medicine (id: ID_RX; medicine:ID_MN; dose: VALUE)
     prescription id must be a positive integer

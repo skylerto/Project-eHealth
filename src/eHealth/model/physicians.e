@@ -19,7 +19,7 @@ feature {NONE}
 	physician_list : HASH_TABLE[TUPLE[name: STRING; kind: INTEGER], INTEGER]
 	ordered_physicians : SORTED_TWO_WAY_LIST[INTEGER]
 
-feature {EHEALTH}
+feature
 	access : EHEALTH_ACCESS
 
 feature {EHEALTH} -- commands
@@ -36,7 +36,7 @@ feature {EHEALTH} -- commands
 			correct_physician_added: physician_exists(id)
 		end
 
- feature  -- public queries
+feature -- public queries
 
 	physician_exists(physician_id: INTEGER): BOOLEAN
 		require

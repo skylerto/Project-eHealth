@@ -25,6 +25,7 @@ feature {NONE} -- Initialization
 			create physicians.make
 			create patients.make
 			create medications.make
+			create interactions.make
 			create constraints
 		end
 
@@ -34,6 +35,7 @@ feature -- model attributes
 	physicians : PHYSICIANS
 	patients : PATIENTS
 	medications : MEDICATIONS
+	interactions : INTERACTIONS
 	constraints : ETF_TYPE_CONSTRAINTS
 
 feature -- model operations
@@ -57,7 +59,15 @@ feature -- model operations
 
 feature -- commands
 	add_interaction(id1: INTEGER; id2: INTEGER)
+	require
+		ids_non_zero: id1 > 0 and id2 > 0
+		ids_not_same: not (id1 = id2)
+		medications_exist: medications.medication_exists(id1) and medications.medication_exists(id2)
+		interaction_not_exists: not interactions.interaction_exists(id1,id2)
 	do
+		interactions.add_interaction(id1,id2)
+	ensure
+		interaction_added: interactions.interaction_exists(id1,id2)
 	end
 
 	add_medication(id: INTEGER ; medicine: TUPLE[name: STRING; kind: INTEGER; low: VALUE; hi: VALUE])
@@ -120,7 +130,7 @@ feature -- queries
 				"%N  Physicians:" + physicians.physicians_output +
 				"%N  Patients:" + patients.patients_output +
 				"%N  Medications:" + medications.medications_output +
-				"%N  Interactions:" +
+				"%N  Interactions:" + interactions.interactions_output +
 				"%N  Prescriptions:"
 		end
 
