@@ -158,9 +158,9 @@ BEGIN
   np_ft(id:ID_RX, md: ID_MD, pt: ID_PT)(s)(i): bool =
     COND
 	id > 0
-	AND NOT rxid_(id)
+	AND NOT rxid_ (id)
 	AND md > 0
-        AND mdid_(md)
+        AND mdid_ (md)
 	AND pt > 0
         AND ptid_ (pt)
 	AND mdpt_ (md, pt) ->
@@ -168,7 +168,13 @@ BEGIN
 		            , rx  := rx_ WITH [id := (md,pt)]
 			    , prs := prs_ WITH [id := empty_prs(mnid_) ]
 			    , dpr := dpr_ WITH [id := emptyset ] ] ,
-       ELSE -> s(i) = s(i-1)
+        NOT (id > 0
+        AND NOT rxid_ (id)
+        AND md > 0
+        AND mdid_ (md)
+        AND pt > 0
+        AND ptid_ (pt)
+        AND mdpt_ (md, pt)) -> s(i) = s(i-1)
     ENDCOND
     where
        rxid_ = s(i-1)`rxid
@@ -199,7 +205,13 @@ BEGIN
 	AND isValidDose_(m,d)
             -> s(i) = s(i-1) WITH [ prs := prs_ WITH [id := prs_(id) WITH [m := d] ] ]
 	       	      % s_ WITH [ prs := s_`prs | id -> (s_`prs.id | m -> d) ]
-     , ELSE -> s(i) = s(i-1)
+     , NOT (id > 0 AND NOT rxid_ (id)
+        AND m > 0 AND mnid_ (m)
+        AND NOT has(m,prs_ (id))
+        AND (EXISTS (r : (prsOfPt_ (ptOf_ (id)))): interactWith_ (prs_ (r),m))
+                       % does medication m introduce an interaction?
+                       % if so, is doctor 'md' a specialist?
+        AND isValidDose_ (m,d)) -> s(i) = s(i-1)
     ENDCOND
     where
        rxid_ = s(i-1)`rxid
@@ -238,7 +250,14 @@ BEGIN
               di := add((id1, id2), di_ ), %di_ WITH [(id1 := id2)],
               di := add((id2, id1), di_ ) %di_ WITH [(id2 :=id1])
           ],
-          ELSE -> s(i) = s(i-1)
+          NOT (id1 > 0
+          AND id2 > 0
+          AND NOT (id1 = id2)
+          AND mnid_ (id1)
+          AND mnid_ (id2)
+          AND (EXISTS (a: ID_MN): prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0)
+         % AND like rm_med > 0 and the doctor associated with this interaction is
+          AND NOT di_ (id1, id2)) -> s(i) = s(i-1)
       ENDCOND
       where
          mns_ = s(i-1)`mns
@@ -262,7 +281,11 @@ BEGIN
 	  -> s(i) = s(i-1) WITH [
 	    prs := prs_ WITH [id := emptyfun]
 	  ],
-          ELSE -> s(i) = s(i-1)
+          NOT (id > 0
+          AND rxid_ (id)
+          AND med > 0
+          AND mnid_ (med)
+          AND prs_ (id)(med)`1 > 0) -> s(i) = s(i-1)
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
