@@ -77,7 +77,7 @@ BEGIN
       , mdid: set[ID_MD]  % doctor ids
       ,	rxid: set[ID_RX]  % prescription ids
       , mn:   set[MEDICINE] % set of medicines
-      , mns:  [(mnid) -> (mn)] % (medication ids, medications)
+      , mdns:  [(mnid) -> (mn)] % (medication ids, medications)
       , mdpt: set[[(mdid),(ptid)]] % (doctor, patient) care relation
       , rx:   [(rxid) -> (mdpt)]   % care to rx ids,  needs to be a bijection
       , prs: [(rxid) -> [(mnid) -> DOSE]] % prescriptions
@@ -120,23 +120,25 @@ BEGIN
 
   s: VAR [ DTIME -> STATE ]
 
-  empty_prs (mns : set[ID_MN])(m : (mns)) : DOSE = (0, mg)
+  empty_prs (mdns : set[ID_MN])(m : (mdns)) : DOSE = (0, mg)
 
-  init_mdid : set[ID_MD]
-  init_gs : [(init_mdid) -> GS]
+  init_mdid: set[ID_MD]
+  init_gs: [(init_mdid) -> GS]
+  init_mnid: set[ID_MN]
+  init_ptid: set[ID_PT]
 
   init_state : STATE =
-       (# mnid := epsilon({ x : set[ID_MN] | TRUE })
-        , ptid := epsilon({ x : set[ID_PT] | TRUE })
+       (# mnid := init_mnid
+        , ptid := init_ptid
         , mdid := init_mdid
         , rxid := emptyset
         , mn := emptyset
-	, mns := emptyfun
+	, mdns := emptyfun
 	, mdpt := emptyset
         , rx := emptyfun
         , prs := emptyfun
         , di := emptyset
-        , gs := epsilon({ x : [(init_mdid) -> GS] | TRUE })
+        , gs := init_gs
         , dpr := emptyfun
         , inv1 := unit
         , inv2 := unit
@@ -169,7 +171,8 @@ BEGIN
         AND mdid_ (md)
         AND pt > 0
         AND ptid_ (pt)
-        AND mdpt_ (md, pt)) -> s(i) = s(i-1)
+        AND mdpt_ (md, pt))
+          -> s(i) = s(i-1)
     ENDCOND
     where
        rxid_ = s(i-1)`rxid
@@ -200,7 +203,8 @@ BEGIN
 	AND isValidDose_ (m,d)
             -> s(i) = s(i-1) WITH [ prs := prs_ WITH [id := prs_(id) WITH [m := d] ] ]
 	       	      % s_ WITH [ prs := s_`prs | id -> (s_`prs.id | m -> d) ]
-     , ELSE -> s(i) = s(i-1)
+     , ELSE
+        -> s(i) = s(i-1)
     ENDCOND
     where
        rxid_ = s(i-1)`rxid
@@ -239,17 +243,18 @@ BEGIN
               di := add((id1, id2), di_ ), %di_ WITH [(id1 := id2)],
               di := add((id2, id1), di_ ) %di_ WITH [(id2 :=id1])
           ],
-          NOT (id1 > 0
-          AND id2 > 0
-          AND NOT (id1 = id2)
-          AND mnid_ (id1)
-          AND mnid_ (id2)
-          AND (EXISTS (a: ID_MN): prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0)
-         % AND like rm_med > 0 and the doctor associated with this interaction is
-          AND NOT di_ (id1, id2)) -> s(i) = s(i-1)
+          NOT (
+            id1 > 0
+            AND id2 > 0
+            AND NOT (id1 = id2)
+            AND mnid_ (id1)
+            AND mnid_ (id2)
+            AND (EXISTS (a: ID_MN): prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0)
+            AND NOT di_ (id1, id2)
+          ) -> s(i) = s(i-1)
       ENDCOND
       where
-         mns_ = s(i-1)`mns
+         mdns_ = s(i-1)`mdns
         ,di_   = s(i-1)`di
         ,dpr_  = s(i-1)`dpr
         ,mnid_ = s(i-1)`mnid
@@ -270,11 +275,13 @@ BEGIN
 	  -> s(i) = s(i-1) WITH [
 	    prs := prs_ WITH [id := emptyfun]
 	  ],
-          NOT (id > 0
-          AND rxid_ (id)
-          AND med > 0
-          AND mnid_ (med)
-          AND prs_ (id)(med)`1 > 0) -> s(i) = s(i-1)
+          NOT (
+            id > 0
+            AND rxid_ (id)
+            AND med > 0
+            AND mnid_ (med)
+            AND prs_ (id)(med)`1 > 0
+          ) -> s(i) = s(i-1)
       ENDCOND
       where
          rxid_ = s(i-1)`rxid
