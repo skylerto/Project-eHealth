@@ -6,11 +6,8 @@
   (init_state_TCC1-1 nil 3658011719 ("" (grind) nil nil)
    ((emptyset const-decl "set" sets nil)) nil))
  (init_state_TCC2 0
-  (init_state_TCC2-1 nil 3658011719
-   ("" (skeep) (("" (grind) nil nil)) nil)
-   ((emptyset const-decl "set" sets nil)
-    (finite_emptyset name-judgement "finite_set" finite_sets nil))
-   nil))
+  (init_state_TCC2-1 nil 3658011719 ("" (grind) nil nil)
+   ((emptyset const-decl "set" sets nil)) nil))
  (init_state_TCC3 0
   (init_state_TCC3-1 nil 3658011719 ("" (subtype-tcc) nil nil)
    ((emptyset const-decl "set" sets nil)) nil))

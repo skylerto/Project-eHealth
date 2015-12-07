@@ -41,8 +41,8 @@ BEGIN
   KIND: TYPE+ = {pill, liquid}
 
 %MEDICATION = TUPLE [name: NAME; kind: KIND; low: VALUE; hi: VALUE]
-  MEDICINE: TYPE+ = [name:NAME, kind:KIND, low:int, hi:int]
-
+  MEDICINE: TYPE = [name:NAME, kind:KIND, low:nnreal, hi:nnreal]
+%  medication: VAR MEDICINE
 %  Monitored events
   COMMAND : DATATYPE
     BEGIN
@@ -76,17 +76,17 @@ BEGIN
       ,	ptid: set[ID_PT]  % patient ids
       , mdid: set[ID_MD]  % doctor ids
       ,	rxid: set[ID_RX]  % prescription ids
-      , mn:   set[MEDICINE] % set of medicines
-      , mdns:  [(mnid) -> (mn)] % (medication ids, medications)
+     % , mn:   set[MEDICINE] % set of medicines
+     % , mdns:  [(mnid) -> (mn)] % (medication ids, medications)
       , mdpt: set[[(mdid),(ptid)]] % (doctor, patient) care relation
       , rx:   [(rxid) -> (mdpt)]   % care to rx ids,  needs to be a bijection
       , prs: [(rxid) -> [(mnid) -> DOSE]] % prescriptions
       , di: set[[(mnid), (mnid)]]  % dangerous interactions, invariant needed?
       , gs: [(mdid) -> GS] % kind of doctor
       , dpr : [(rxid) -> set[[(mnid), (mnid)]]]
-      , inv1 : invariant( FORALL (x : (mnid)): NOT di((x,x)) )
+      %, inv1 : invariant( FORALL (x : (mnid)): NOT di((x,x)) )
       	     % irreflexivity
-      , inv2 : invariant( FORALL (x,y : (mnid)): di((x,y)) <=> di((y,x)) )
+      %, inv2 : invariant( FORALL (x,y : (mnid)): di((x,y)) <=> di((y,x)) )
       	     % symmetry
    #]
 
@@ -106,7 +106,8 @@ BEGIN
   interactWith (s: STATE)(p0 : PRES (s), m1 : (s`mnid)) : bool =
   	   EXISTS (m0 : (s`mnid)): s`di((m0,m1)) AND has(m0,p0)
 
-  isValidDose(s : STATE)(m : ID_MN, d : DOSE) : bool = true
+	   medicine: MEDICINE
+  isValidDose(s : STATE)(m : ID_MN, d : DOSE) : bool = d`1 > 0 AND d`1 > medicine`3 AND medicine`4 > d`1
   	   % is d a valid dose of medication m?
 	   % kept abstract; will need a counterpart in the state
 	   % in order to be refined
@@ -128,22 +129,26 @@ BEGIN
   init_ptid: set[ID_PT]
   init_rxid: set[ID_RX]
   init_dpr: [(init_rxid) -> set[[(init_mnid), (init_mnid)]]]
-
+  %init_mn: set[MEDICINE]
+  %init_mdns: [(init_mnid) -> (init_mn)]
+  %init_mdpt: set[[(init_mdid),(init_ptid)]]
+  init_prs: [(init_rxid) -> [(init_mnid) -> DOSE]] 
+ 
   init_state : STATE =
        (# mnid := init_mnid
         , ptid := init_ptid
         , mdid := init_mdid
         , rxid := init_rxid
-        , mn := emptyset
-	, mdns := emptyfun
+       % , mn := emptyset
+	%, mdns := emptyfun
 	, mdpt := emptyset
         , rx := emptyfun
-        , prs := emptyfun
+        , prs := init_prs
         , di := emptyset
         , gs := init_gs
         , dpr := init_dpr
-        , inv1 := unit
-        , inv2 := unit
+       % , inv1 := unit
+       % , inv2 := unit
         #)
 
 	% new_prescription (id: ID_RX; doctor: ID_MD; patient: ID_PT)
@@ -198,7 +203,7 @@ BEGIN
     COND
 	id > 0 AND NOT rxid_ (id)
 	AND m > 0 AND mnid_ (m)
-	AND NOT has(m,prs_ (id))
+	AND NOT (prs_ (a)(id)`1 > 0)
 	AND (EXISTS (r : (prsOfPt_ (ptOf_ (id)))): interactWith_ (prs_(r),m))
 		       % does medication m introduce an interaction?
 		       % if so, is doctor 'md' a specialist?
@@ -239,13 +244,13 @@ BEGIN
 	  AND mnid_ (id1)
 	  AND mnid_ (id2)
     	  %AND (EXISTS (a: ID_MN): (prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0))
-        AND NOT di_ (id1)(id2)
-        AND NOT (EXISTS (a: ID_RX): (prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0) ( EXISTS (b: ID_MD): ( EXISTS (c :ID_PT): rx_ (a)(b)(c) AND gs_ (b) = gn )))
+        AND NOT member((id1,id2), di_ )
+        AND NOT (EXISTS (a: ID_RX, b: ID_MD, c: ID_PT): ((prs_ (a)(id1)`1 > 0) AND (prs_ (a)(id2)`1 > 0) AND (rx_ (a) = (b,c) AND gs_ (b) = gn )))
    	 % AND like rm_med > 0 and the doctor associated with this interaction is
           AND NOT di_ (id1, id2)
 	  -> s(i) = s(i-1) WITH [
-              di := add((id1, id2), di_ ), %di_ WITH [(id1 := id2)],
-              di := add((id2, id1), di_ ) %di_ WITH [(id2 :=id1])
+              di := add((id1, id2), di_ ),
+              di := add((id2, id1), di_ )
           ],
           NOT (
             id1 > 0
@@ -258,11 +263,14 @@ BEGIN
           ) -> s(i) = s(i-1)
       ENDCOND
       where
-         mdns_ = s(i-1)`mdns
-        ,di_   = s(i-1)`di
+        % mdns_ = s(i-1)`mdns
+        di_   = s(i-1)`di
         ,dpr_  = s(i-1)`dpr
         ,mnid_ = s(i-1)`mnid
         ,prs_  = s(i-1)`prs
+	,rx_ = s(i-1)`rx
+	,mdpt_ = s(i-1)`mdpt
+	,gs_ = s(i-1)`gs
 
       %remove_medicine  (id: ID_RX; medicine:ID_MN)
       %    prescription id must be a positive integer
