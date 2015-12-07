@@ -1,5 +1,5 @@
 note
-	description: "Summary description for {STATUS_MESSAGE}."
+	description: "Status messages for EHEALTH System."
 	author: "created by JSO, modified by Siraj Rauff for EHEALTH"
 	date: "$Date$"
 	revision: "$Revision$"

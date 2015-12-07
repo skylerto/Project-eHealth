@@ -1,6 +1,6 @@
 note
-	description: "Summary description for {PATIENTS}."
-	author: ""
+	description: "Patients in the EHEALTH system."
+	author: "Siraj Rauff"
 	date: "$Date$"
 	revision: "$Revision$"
 
@@ -13,6 +13,7 @@ feature {NONE}
 		do
 			create patient_list.make (1)
 			create ordered_patients.make
+			model := access.m
 		end
 
 feature {NONE}
@@ -21,13 +22,14 @@ feature {NONE}
 
 feature
 	access : EHEALTH_ACCESS
+	model : EHEALTH
 
 feature {EHEALTH} -- commands
 
 	add_patient(id: INTEGER ; name: STRING)
 		require
 			non_negative: id > 0
-			valid_string: access.m.is_valid_string (name)
+			valid_string: model.is_valid_string (name)
 			not_exists: not patient_exists(id)
 		do
 			patient_list.extend (name, id)
@@ -51,12 +53,12 @@ feature -- public queries
 	patients_prescribed_medicine(medication_id: INTEGER): STRING
 		require
 			not_negative: medication_id > 0
-			registered: access.m.medications.medication_exists(medication_id)
+			registered: model.medication_exists(medication_id)
 		do
 			create Result.make_empty
 			across ordered_patients as patient loop
 				if attached patient_list.item (patient.item) as patientobject then
-					if access.m.prescriptions.patient_prescribed_medicine(patient.item, medication_id) then
+					if model.patient_prescribed_medicine(patient.item, medication_id) then
 						Result := Result
 							+ "%N    " + patient.item.out
 							+ "->" + patientobject
