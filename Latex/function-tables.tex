@@ -28,25 +28,15 @@ err15 & interaction already exists                                 \\ \hline
 err16 & first remove conflicting medicine prescribed by generalist \\ \hline
 err17 & prescription id must be a positive integer                 \\ \hline
 err18 & prescription id already in use                             \\ \hline
-err19 & physician id must be a positive integer                    \\ \hline
-err20 & physician with this id not registered                      \\ \hline
-err21 & patient id must be a positive integer                      \\ \hline
-err22 & patient with this id not registered                        \\ \hline
-err23 & prescription already exists for this physician and patient \\ \hline
-err24 & prescription id must be a positive integer                 \\ \hline
-err25 & prescription with this id does not exist                   \\ \hline
-err26 & medication id must be a positive integer                   \\ \hline
-err27 & medication id must be registered                           \\ \hline
-err28 & medication is already prescribed                           \\ \hline
-err29 & specialist is required to add a dangerous interaction      \\ \hline
-err30 & dose is outside allowed range                              \\ \hline
-err31 & prescription id must be a positive integer                 \\ \hline
-err32 & prescription with this id does not exist                   \\ \hline
-err33 & medication id must be a positive integer                   \\ \hline
-err34 & medication id must be registered                           \\ \hline
-err35 & medication is not in the prescription                      \\ \hline
-err36 & medication id must be a positive integer                   \\ \hline
-err37 & medication id must be registered                           \\ \hline
+err19 & physician with this id not registered                      \\ \hline
+err20 & patient with this id not registered                        \\ \hline
+err21 & prescription already exists for this physician and patient \\ \hline
+err22 & prescription with this id does not exist                   \\ \hline
+err23 & medication id must be registered                           \\ \hline
+err24 & medication is already prescribed                           \\ \hline
+err25 & specialist is required to add a dangerous interaction      \\ \hline
+err26 & dose is outside allowed range                              \\ \hline
+err27 & medication is not in the prescription                      \\ \hline
 warn1 & There are dangerous prescriptions                          \\ \hline
 warn2 & There are no dangerous prescriptions                       \\ \hline
 \end{tabular}
@@ -57,97 +47,174 @@ warn2 & There are no dangerous prescriptions                       \\ \hline
 
 \newpage
 
-\subsection{Function Table for Heat Control: \cv{hc}}
-\begin{figure}[!htb]
+
+\subsection{Function Table for eHealth}
+\begin{figure}[h]
 \begin{center}
-\begin{tabular}{|l|l|l|l|l|}
+\begin{tabular}{|l|l|l|}
 \hline
-\multicolumn{4}{|l|}{Monitored Inputs \cv{md(i)}} & c\_hc(i) \\ \hline
-\multicolumn{4}{|l|}{$i = 0$}& off \\ \hline
-\multirow{4}{*}{$i\,\textgreater\,0$} & \multicolumn{3}{l|}{$c\_md(i) = off \lor \neg c1 \lor \neg c3$}& off      \\ \cline{2-5} 
-& \multirow{3}{*}{$\neg c\_md(i) = off \land c1 \land c3$} & \multicolumn{2}{l|}{c2}                            & NC       \\ \cline{3-5} 
-&                                                  & \multicolumn{2}{l|}{$m\_tm(i)\,\textless\,m\_dl(i)$}    & on       \\ \cline{3-5} 
-& & \multicolumn{2}{l|}{$m\_tm(i)\,\textgreater\,m\_dh(i)$} & off      \\ \hline
+\multicolumn{2}{|l|}{Monitored Inputs}                &             \\ \hline
+\multicolumn{2}{|l|}{i = 0}                           & See Table \ref{ft-init} \\ \hline
+\multirow{4}{*}{i \textgreater 0} & new\_prescription(id, doctor, patient) & See Table~\ref{ft-np} \\ \cline{2-3} 
+                                  & add\_medicine(id, medicine, dose)     & See Table~\ref{ft-am} \\ \cline{2-3} 
+                                  & remove\_medicine(id, medicine) & See Table~\ref{ft-rm} \\ \cline{2-3} 
+                                  & add\_interaction(id1, id2)  & See Table~\ref{ft-ai} \\ \hline
 \end{tabular}
-\caption{Function Table for heat control: \cv{hc}}
-\label{c_hc_ft}
+\caption{Function Table for eHealth}
+\label{ft-ehealth}
+\end{center}
+\end{figure}
+
+\subsection{Function Table for init}
+
+error: $false$
+
+\begin{figure}[h]
+\begin{center}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Abstract State & $\neg$ error & error \\ \hline
+mind(i)        &   $\emptyset$      & NC    \\ \hline
+ptid(i)        &       $\emptyset$    & NC    \\ \hline
+mdid(i)        &    $\emptyset$       & NC    \\ \hline
+rxid(i)        &      $\emptyset$     & NC    \\ \hline
+mn(i)          &       $\emptyset$    & NC    \\ \hline
+mns(i)         &   $ \varepsilon$       & NC    \\ \hline
+mdpt(i)        &      $\emptyset$     & NC    \\ \hline
+rx(i)          &    $ \varepsilon  $    & NC    \\ \hline
+prs(i)         &   $ \varepsilon $      & NC    \\ \hline
+di(i)          &     $\emptyset$      & NC    \\ \hline
+gs(i)          &      $\emptyset \mapsto \varepsilon$     & NC    \\ \hline
+dpr(i)         &       $\emptyset \mapsto \varepsilon $    & NC    \\ \hline
+r(i)           & ok        & error \\ \hline
+\end{tabular}
+
+\caption{Function Table for init}
+\label{ft-init}
 \end{center}
 \end{figure}
 
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Function Table for Temperature Display: \cv{td}}
-\begin{figure}[!htb]
+
+\subsection{Function Table for new\_prescription(id, md, pt)}
+
+error: $\neg (id > 0 \wedge \neg rxid_{1}(id) \wedge md > 0  \wedge mdid_{1}(md) \wedge pt > 0 \wedge ptid_{1}(pt) \wedge mdpt_{1}(md, pt))$
+
+\begin{figure}[h]
 \begin{center}
-\begin{tabular}{|l|l|}
+
+\begin{tabular}{|l|l|l|}
 \hline
-Monitored Inputs \mv{tm(i)}, \cv{md(i)} & \cv{td(i)} \\ \hline
-$\cv{md(i)} = normal$         & \mv{tm(i)}    \\ \hline
-$\neg \cv{md(i)} = normal$    & 0        \\ \hline
+Abstract State & $\neg$ error & error \\ \hline
+mind(i)        &     NC      & NC    \\ \hline
+ptid(i)        &       NC    & NC    \\ \hline
+mdid(i)        &     NC      & NC    \\ \hline
+rxid(i)        &     $rxid_{1} \cup \{id\}$      & NC    \\ \hline
+mn(i)          &      NC     & NC    \\ \hline
+mns(i)         &     NC      & NC    \\ \hline
+mdpt(i)        &    NC       & NC    \\ \hline
+rx(i)          &      $rx_{1} \upharpoonleft (id \mapsto (md, pt))$     & NC    \\ \hline
+prs(i)         &      $prs_{1} \upharpoonleft (id \mapsto empty\_prs(mnid_{1}))$      & NC    \\ \hline
+di(i)          &        NC   & NC    \\ \hline
+gs(i)          &       NC    & NC    \\ \hline
+dpr(i)         &     $dpr_{1} \upharpoonleft (id \mapsto \emptyset)$      & NC    \\ \hline
+r(i)           & ok        & error \\ \hline
 \end{tabular}
 
-\caption{Function Table for Temperature Display: \cv{td}}
-\label{c_td_ft}
-\end{center}
-\end{figure}
-
-%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Function Table for Mode: \cv{md}}
-\begin{figure}[!htb]
-\begin{center}
-\begin{tabular}{|l|l|l|l|l|}
-\hline
-\multicolumn{4}{|l|}{Monitored Inputs \mv{sw(i)}, \cv{md(i-1)}} & \cv{md(i)}          \\ \hline
-\multicolumn{4}{|l|}{$i=0$} & off    \\ \hline
-\multirow{6}{*}{$i\,\textgreater\,0$} & \multicolumn{3}{l|}{\mv{sw(i)} = off}  & off    \\ \cline{2-5} 
-                                & \multirow{5}{*}{\mv{sw(i)} = on} & \multicolumn{2}{l|}{$\cv{md(i-1)} = off$} & init  \\ \cline{3-5} 
-                                &                              & \multirow{2}{*}{$\cv{md(i-1)} = normal \lor \cv{md(i-1)} = failed$} & $c1(i)$ & normal \\ \cline{4-5} 
-                                &                              & & $\neg\,c1(i)$  & failed \\ \cline{3-5} 
-                                &                              & \multirow{2}{*}{$\cv{md(i-1)} = init$}& $c4(i)$ & init \\ \cline{4-5} 
-                                &                              &  & $\neg\,c4(i)$     & normal  \\\hline
-\end{tabular}
-\caption{Function Table for Mode: \cv{md}}
-\label{c_md_ft}
-\end{center}
-\end{figure}
-
-%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Function Table for Messages: \cv{ms}}
-
-\begin{figure}[!htb]
-\begin{center}
-\begin{tabular}{|l|l|}
-\hline
-Monitored Inputs \mv{al(i)}, \mv{ah(i)}, \mv{tm(i)} & \cv{ms(i)}         \\ \hline
-$\neg\,c1(i)$ & invalid \\ \hline
-$\neg\,c3(i)$ & config \\ \hline
-$\mv{tm(i)} \,\textless\,\mv{al(i)}$ & low \\ \hline
-$\mv{tm(i)}\,\textgreater\,\mv{ah(i)}$ & high \\ \hline
-ELSE                                 & ok  \\ \hline
-\end{tabular}
-\caption{Function Table for Messages: \cv{ms}}
-\label{c_ms_ft}
+\caption{Function Table for new\_prescription(id, doctor, patient)}
+\label{ft-np}
 \end{center}
 \end{figure}
 
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Function Table for Alarm: \cv{al}}
 
-\begin{figure}[!htb]
+\subsection{Function Table for add\_medicine(id, m, d)}
+
+error: $\neg (id > 0 \wedge \neg rxid_{1}(id) \wedge m > 0  \wedge mnid_{1}(m) \wedge pt > 0 has(m, prs_{1}(id))\wedge sumthin \wedge isValidDose(m,d))$
+
+\begin{figure}[h]
 \begin{center}
-\begin{tabular}{|l|l|l|l|l|}
+\begin{tabular}{|l|l|l|}
 \hline
-\multicolumn{4}{|l|}{Monitored Inputs \mv{al(i)}, \mv{ah(i)}, \mv{tm(i)}} & \cv{al(i)}     \\ \hline
-\multicolumn{4}{|l|}{$i = 0$} & off \\ \hline
-\multirow{5}{*}{$i\,\textgreater\,0$} & \multirow{2}{*}{$\cv{al(i-1) = off}$} & \multicolumn{2}{l|}{$c7(i)$} & NC \\ \cline{3-5} 
-                                &                                & \multicolumn{2}{l|}{$\neg c7(i)$} & on \\ \cline{2-5}
-                                & \multirow{3}{*}{$\cv{al(i-1) = on}$} &   \multicolumn{2}{l|}{$c8(i)$} & NC \\ \cline{3-5} 
-                                &                                & \multirow{2}{*}{$\neg c8(i)$} & $held\_for(i)$ & off  \\ \cline{4-5} 
-                                &                                &                                    & $\neg held\_for(i) $ & on \\ \hline
-                                
+Abstract State & $\neg$ error & error \\ \hline
+mind(i)        &   NC        & NC    \\ \hline
+ptid(i)        &     NC      & NC    \\ \hline
+mdid(i)        &   NC        & NC    \\ \hline
+rxid(i)        &     NC      & NC    \\ \hline
+mn(i)          &    NC       & NC    \\ \hline
+mns(i)         &   NC        & NC    \\ \hline
+mdpt(i)        &   NC        & NC    \\ \hline
+rx(i)          &      NC     & NC    \\ \hline
+prs(i)         &     $prs_{1}(id) \upharpoonleft (m \mapsto d))$      & NC    \\ \hline
+di(i)          &      NC     & NC    \\ \hline
+gs(i)          &     NC      & NC    \\ \hline
+dpr(i)         &     NC      & NC    \\ \hline
+r(i)           & ok        & error \\ \hline
 \end{tabular}
-\caption{Function Table for Alarm: \cv{al}}
-\label{c_al_ft}
+\caption{Function Table for add\_medicine(id, medicine, dose)}
+\label{ft-am}
 \end{center}
 \end{figure}
+
+\newpage
+
+\subsection{Function Table for remove\_medicine(id, med)}
+
+error: $\neg (id > 0 \wedge \neg rxid_{1}(id) \wedge med > 0  \wedge mnid_{1}(med) \wedge prs_{1}(id)(med)`1 > 0)$
+
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+Abstract State & $\neg$ error & error \\ \hline
+mind(i)        &    NC       & NC    \\ \hline
+ptid(i)        &      NC     & NC    \\ \hline
+mdid(i)        &    NC       & NC    \\ \hline
+rxid(i)        &      NC     & NC    \\ \hline
+mn(i)          &     NC      & NC    \\ \hline
+mns(i)         &    NC       & NC    \\ \hline
+mdpt(i)        &    NC       & NC    \\ \hline
+rx(i)          &       NC    & NC    \\ \hline
+prs(i)         &      $prs_{1} \upharpoonleft (id \mapsto \varepsilon)$     & NC    \\ \hline
+di(i)          &       NC   & NC    \\ \hline
+gs(i)          &      NC     & NC    \\ \hline
+dpr(i)         &      NC     & NC    \\ \hline
+r(i)           & ok        & error \\ \hline
+\end{tabular}
+\caption{Function Table for remove\_medicine(id, medicine)}
+\label{ft-rm}
+\end{center}
+\end{figure}
+
+\newpage
+
+\subsection{Function Table for add\_interaction(id1, id2)}
+
+error: $\neg (id1 > 0 \wedge id2 > 0 \wedge \neg id1 = id2 \wedge mnid_{1}(id1)  \wedge mnid_{1}(id2) \wedge (\exists a: (prs_{1}(a)(id1)`1 > 0 \wedge sumin ) \vee (prs_{1}(id)(med)`1 > 0 \wedge sumin)))$
+
+\begin{figure}[!htp]
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+Abstract State & $\neg$ error & error \\ \hline
+mind(i)        &   NC        & NC    \\ \hline
+ptid(i)        &     NC      & NC    \\ \hline
+mdid(i)        &   NC       & NC    \\ \hline
+rxid(i)        &     NC      & NC    \\ \hline
+mn(i)          &    NC       & NC    \\ \hline
+mns(i)         &   NC        & NC    \\ \hline
+mdpt(i)        &   NC        & NC    \\ \hline
+rx(i)          &      NC     & NC    \\ \hline
+prs(i)         &     NC      & NC    \\ \hline
+di(i)          &      $di_{1} \cup (id1, id2) \wedge di_{1} \cup (id2, id1) $     & NC    \\ \hline
+gs(i)          &     NC      & NC    \\ \hline
+dpr(i)         &     NC      & NC    \\ \hline
+r(i)           & ok        & error \\ \hline
+\end{tabular}
+\caption{Function Table for add\_interaction(id1, id2)}
+\label{ft-ai}
+\end{center}
+\end{figure}
+
+\newpage
