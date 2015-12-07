@@ -1,4 +1,4 @@
--- at2.txt: Ordering of prescriptions
+-- at3.txt: Ordering of Dangerous Prescriptions Report
 
 -- Add a physician
 add_physician	   (1, "Mayo", specialist)
@@ -25,8 +25,6 @@ new_prescription   (2, 1, 3)
 new_prescription   (1, 1, 1)
 -- TEST ORDER OF PRESCRIPTIONS
 
-dpr_q
-
 -- TEST BY ALPHA
 
 -- ADD FOR DREW
@@ -38,8 +36,6 @@ add_medicine       (1, 2, 5.5)
 add_medicine       (1, 3, 5.5)
 -- ADD MEDICINE IN ID ORDER
 
-dpr_q
-
 -- ADD FOR DORA
 -- add Wafarin 5.5 mg to prescription id 1 "DREW"
 add_medicine       (2, 2, 5.5)
@@ -50,29 +46,12 @@ add_medicine       (2, 1, 5.5)
 -- ADD MEDICINE IN ID ALPHA
 
 dpr_q
-
-remove_medicine(1,1)
-remove_medicine(1,2)
-remove_medicine(1,3)
 
 remove_medicine(2,1)
 remove_medicine(2,2)
 remove_medicine(2,3)
 
-dpr_q
-
--- REVERSE ADDITIONS, TEST BY ID
-
--- ADD FOR DORA
--- add Wafarin 5.5 mg to prescription id 1 "DREW"
-add_medicine       (2, 2, 5.5)
--- add caffeine 300.5 mg to prescription id 1 "DREW"
-add_medicine       (2, 3, 5.5)
--- add acetaminophen 5.5 mg to prescription id 1 "DREW"
-add_medicine       (2, 1, 5.5)
--- ADD MEDICINE IN ID ALPHA
-
-dpr_q
+-- REVERSE ADDITIONS, TEST BY PATIENT ID
 
 -- ADD FOR DREW
 -- add Wafarin 5.5 mg to prescription id 1 "DREW"
