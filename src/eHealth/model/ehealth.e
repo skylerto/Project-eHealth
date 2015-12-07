@@ -173,7 +173,7 @@ feature -- queries [GENERAL]
 			elseif state.command = 1 then
 				if state.report_type = 1 then
 					Result := "  " + i.out + ": " + message.out
-						+ prescriptions.dangerous_prescriptions
+						+ dangerous_prescriptions
 
 				elseif state.report_type = 2 then
 					Result := "  " + i.out + ": " + message.out
@@ -278,7 +278,7 @@ feature -- Interaction Queries
 			not_negative: patient_id > 0
 			registered: patient_exists(patient_id)
 		do
-			Result := patient_dangerous_interactions(patient_id)
+			Result := interactions.patient_dangerous_interactions(patient_id)
 		end
 
 	format_interactions(id1,id2: INTEGER): STRING

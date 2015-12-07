@@ -13,7 +13,6 @@ feature {NONE}
 		do
 			create medicines_list.make (1)
 			create ordered_medicines.make
-			model := access.m
 		end
 
 feature {NONE}
@@ -22,16 +21,15 @@ feature {NONE}
 
 feature
 	access : EHEALTH_ACCESS
-	model : EHEALTH
 
 feature {PRESCRIPTIONS} -- commands
 
 	add_medicine (medicine_id: INTEGER ; dose: VALUE)
 		require
 			not_negative: medicine_id > 0 and dose > 0.0
-			medication_registered: model.medication_exists(medicine_id)
+			medication_registered: access.m.medication_exists(medicine_id)
 			not_exists: not medicine_prescribed(medicine_id)
-			dose_in_range: model.valid_dose(medicine_id, dose)
+			dose_in_range: access.m.valid_dose(medicine_id, dose)
 		do
 			medicines_list.extend (dose, medicine_id)
 			ordered_medicines.extend (medicine_id)
@@ -43,7 +41,7 @@ feature {PRESCRIPTIONS} -- commands
 	remove_medicine (medicine_id: INTEGER)
 		require
 			not_negative: medicine_id > 0
-			registered: model.medication_exists (medicine_id)
+			registered: access.m.medication_exists (medicine_id)
 			prescribed: medicine_prescribed (medicine_id)
 		do
 			medicines_list.remove (medicine_id)
@@ -68,7 +66,7 @@ feature -- public queries
 			Result := false
 			across ordered_medicines as medicine1 loop
 				across ordered_medicines as medicine2 loop
-					if model.interaction_exists(medicine1.item, medicine2.item) then
+					if access.m.interaction_exists(medicine1.item, medicine2.item) then
 						Result := true
 					end
 				end
