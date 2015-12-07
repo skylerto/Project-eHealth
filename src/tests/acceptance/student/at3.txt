@@ -1,0 +1,71 @@
+ -- at3.txt\
+add_physician	   (1, "Mayo", specialist)
+add_physician	   (2, "Mayo", specialist)
+add_physician	   (3, "Mayo", generalist)
+
+add_patient        (3, "Drew")
+add_patient        (1, "Drew")
+
+add_medication     (1, ["Wafarin", pill, 1.0, 6.0])
+add_medication     (2, ["acetaminophen", liquid, 1.0, 25.5])
+
+new_prescription   (2, 1, 3)
+new_prescription   (4, 3, 1)
+new_prescription   (1, 1, 1)
+
+new_prescription   (3, 2, 3)
+
+add_medicine       (1, 1, 5.5)
+add_medicine       (1, 2, 5.5)
+
+add_medicine       (4, 2, 5.5)
+
+add_medicine       (2, 2, 5.5)
+add_medicine       (2, 1, 5.5)
+
+add_medicine       (3, 1, 5.5)
+add_medicine       (3, 2, 5.5)
+
+-- error cases
+-- add_physician
+add_physician	   (-1, "Mayo", specialist)
+add_physician	   (1, "Mayo", specialist)
+add_physician	   (1, "99Yo", specialist)
+
+-- add_patient
+add_patient        (-1, "Drew")
+add_patient        (1, "Drew")
+add_patient        (1, "76rew")
+
+-- add_medication
+add_medication     (-1, ["Wafarin", pill, 1.0, 6.0])
+add_medication     (1, ["Wafarin", pill, 1.0, 6.0])
+add_medication     (1, ["23afarin", pill, 1.0, 6.0])
+add_medication     (1, ["Wafarin", pill, 1.0, 6.0])
+add_medication     (1, ["Wafarin", pill, 6.0, 1.0])
+
+-- add_interaction
+add_interaction    (1,-2)
+add_interaction    (1,1)
+add_interaction    (7,9)
+add_interaction    (1,2)
+add_interaction    (1,2)
+
+-- new_prescription
+new_prescription   (-3, 2, 3)
+new_prescription   (4, 2, 3)
+new_prescription   (5, -2, 3)
+new_prescription   (6, 2, 3)
+new_prescription   (7, 2,-3)
+new_prescription   (8, 2, 3)
+new_prescription   (3, 2, 3)
+
+-- add_medicine
+add_medicine       (-2, 1, 5.5)
+add_medicine       (2, -1, 5.5)
+add_medicine       (2, 100, 5.5)
+add_medicine       (2, 1, 5.5)
+add_medicine       (2, 1, 5.5)
+
+prescriptions_q(-1000)
+prescriptions_q(1000)
