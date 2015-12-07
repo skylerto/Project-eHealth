@@ -42,7 +42,7 @@
     1->[Wafarin,pl,1.00,6.00]
   Interactions: 
   Prescriptions:
-->add_medication(3,["caffeine", liquid, 7, 16])
+->add_medication(3,["caffeine", liquid, 1, 16])
   5: ok
   Physicians:
     1->[Mayo,sp]
@@ -51,10 +51,10 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    3->[caffeine,lq,7.00,16.00]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
   Prescriptions:
-->add_medication(2,["acetaminophen", liquid, 10, 25.5])
+->add_medication(2,["acetaminophen", liquid, 1, 25.5])
   6: ok
   Physicians:
     1->[Mayo,sp]
@@ -63,8 +63,8 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
   Prescriptions:
 ->add_interaction(1,2)
@@ -76,8 +76,8 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
   Prescriptions:
@@ -90,8 +90,8 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
@@ -105,8 +105,8 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
@@ -121,8 +121,8 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
@@ -138,8 +138,8 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
@@ -159,8 +159,8 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
@@ -168,8 +168,8 @@
   Prescriptions:
     1->[1,1,1,(1->5.50)]
     2->[2,1,3,()]
-->add_medicine(1,2,300.5)
-  14: dose is outside allowed range
+->add_medicine(1,2,5.5)
+  14: ok
   Physicians:
     1->[Mayo,sp]
   Patients: 
@@ -177,17 +177,17 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
-    1->[1,1,1,(1->5.50)]
+    1->[1,1,1,(1->5.50,2->5.50)]
     2->[2,1,3,()]
 ->add_medicine(1,3,5.5)
-  15: dose is outside allowed range
+  15: ok
   Physicians:
     1->[Mayo,sp]
   Patients: 
@@ -195,20 +195,21 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
-    1->[1,1,1,(1->5.50)]
+    1->[1,1,1,(1->5.50,2->5.50,3->5.50)]
     2->[2,1,3,()]
 ->dpr_q
   16: ok
-  There are no dangerous prescriptions
+  There are dangerous prescriptions:
+    (Helen,1)->{ [Wafarin,pl,1]->[acetaminophen,lq,2],[Wafarin,pl,1]->[caffeine,lq,3],[acetaminophen,lq,2]->[caffeine,lq,3] }
 ->add_medicine(2,2,5.5)
-  17: dose is outside allowed range
+  17: ok
   Physicians:
     1->[Mayo,sp]
   Patients: 
@@ -216,17 +217,17 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
-    1->[1,1,1,(1->5.50)]
-    2->[2,1,3,()]
-->add_medicine(2,3,300.5)
-  18: dose is outside allowed range
+    1->[1,1,1,(1->5.50,2->5.50,3->5.50)]
+    2->[2,1,3,(2->5.50)]
+->add_medicine(2,3,5.5)
+  18: ok
   Physicians:
     1->[Mayo,sp]
   Patients: 
@@ -234,15 +235,15 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
-    1->[1,1,1,(1->5.50)]
-    2->[2,1,3,()]
+    1->[1,1,1,(1->5.50,2->5.50,3->5.50)]
+    2->[2,1,3,(2->5.50,3->5.50)]
 ->add_medicine(2,1,5.5)
   19: ok
   Physicians:
@@ -252,18 +253,20 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
-    1->[1,1,1,(1->5.50)]
-    2->[2,1,3,(1->5.50)]
+    1->[1,1,1,(1->5.50,2->5.50,3->5.50)]
+    2->[2,1,3,(1->5.50,2->5.50,3->5.50)]
 ->dpr_q
   20: ok
-  There are no dangerous prescriptions
+  There are dangerous prescriptions:
+    (Helen,1)->{ [Wafarin,pl,1]->[acetaminophen,lq,2],[Wafarin,pl,1]->[caffeine,lq,3],[acetaminophen,lq,2]->[caffeine,lq,3] }
+    (Drew,3)->{ [Wafarin,pl,1]->[acetaminophen,lq,2],[Wafarin,pl,1]->[caffeine,lq,3],[acetaminophen,lq,2]->[caffeine,lq,3] }
 ->remove_medicine(1,1)
   21: ok
   Physicians:
@@ -273,17 +276,17 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
-    1->[1,1,1,()]
-    2->[2,1,3,(1->5.50)]
+    1->[1,1,1,(2->5.50,3->5.50)]
+    2->[2,1,3,(1->5.50,2->5.50,3->5.50)]
 ->remove_medicine(1,2)
-  22: medication is not in the prescription
+  22: ok
   Physicians:
     1->[Mayo,sp]
   Patients: 
@@ -291,17 +294,17 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
-    1->[1,1,1,()]
-    2->[2,1,3,(1->5.50)]
+    1->[1,1,1,(3->5.50)]
+    2->[2,1,3,(1->5.50,2->5.50,3->5.50)]
 ->remove_medicine(1,3)
-  23: medication is not in the prescription
+  23: ok
   Physicians:
     1->[Mayo,sp]
   Patients: 
@@ -309,15 +312,15 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
     1->[1,1,1,()]
-    2->[2,1,3,(1->5.50)]
+    2->[2,1,3,(1->5.50,2->5.50,3->5.50)]
 ->remove_medicine(2,1)
   24: ok
   Physicians:
@@ -327,17 +330,17 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
     1->[1,1,1,()]
-    2->[2,1,3,()]
+    2->[2,1,3,(2->5.50,3->5.50)]
 ->remove_medicine(2,2)
-  25: medication is not in the prescription
+  25: ok
   Physicians:
     1->[Mayo,sp]
   Patients: 
@@ -345,17 +348,17 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
     1->[1,1,1,()]
-    2->[2,1,3,()]
+    2->[2,1,3,(3->5.50)]
 ->remove_medicine(2,3)
-  26: medication is not in the prescription
+  26: ok
   Physicians:
     1->[Mayo,sp]
   Patients: 
@@ -363,8 +366,8 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
@@ -376,7 +379,7 @@
   27: ok
   There are no dangerous prescriptions
 ->add_medicine(2,2,5.5)
-  28: dose is outside allowed range
+  28: ok
   Physicians:
     1->[Mayo,sp]
   Patients: 
@@ -384,17 +387,17 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
     1->[1,1,1,()]
-    2->[2,1,3,()]
-->add_medicine(2,3,300.5)
-  29: dose is outside allowed range
+    2->[2,1,3,(2->5.50)]
+->add_medicine(2,3,5.5)
+  29: ok
   Physicians:
     1->[Mayo,sp]
   Patients: 
@@ -402,15 +405,15 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
     1->[1,1,1,()]
-    2->[2,1,3,()]
+    2->[2,1,3,(2->5.50,3->5.50)]
 ->add_medicine(2,1,5.5)
   30: ok
   Physicians:
@@ -420,18 +423,19 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
     1->[1,1,1,()]
-    2->[2,1,3,(1->5.50)]
+    2->[2,1,3,(1->5.50,2->5.50,3->5.50)]
 ->dpr_q
   31: ok
-  There are no dangerous prescriptions
+  There are dangerous prescriptions:
+    (Drew,3)->{ [Wafarin,pl,1]->[acetaminophen,lq,2],[Wafarin,pl,1]->[caffeine,lq,3],[acetaminophen,lq,2]->[caffeine,lq,3] }
 ->add_medicine(1,1,5.5)
   32: ok
   Physicians:
@@ -441,17 +445,17 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
     1->[1,1,1,(1->5.50)]
-    2->[2,1,3,(1->5.50)]
-->add_medicine(1,2,300.5)
-  33: dose is outside allowed range
+    2->[2,1,3,(1->5.50,2->5.50,3->5.50)]
+->add_medicine(1,2,5.5)
+  33: ok
   Physicians:
     1->[Mayo,sp]
   Patients: 
@@ -459,17 +463,17 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
-    1->[1,1,1,(1->5.50)]
-    2->[2,1,3,(1->5.50)]
+    1->[1,1,1,(1->5.50,2->5.50)]
+    2->[2,1,3,(1->5.50,2->5.50,3->5.50)]
 ->add_medicine(1,3,5.5)
-  34: dose is outside allowed range
+  34: ok
   Physicians:
     1->[Mayo,sp]
   Patients: 
@@ -477,15 +481,17 @@
     3->Drew
   Medications: 
     1->[Wafarin,pl,1.00,6.00]
-    2->[acetaminophen,lq,10.00,25.50]
-    3->[caffeine,lq,7.00,16.00]
+    2->[acetaminophen,lq,1.00,25.50]
+    3->[caffeine,lq,1.00,16.00]
   Interactions: 
     [Wafarin,pl,1]->[acetaminophen,lq,2]
     [Wafarin,pl,1]->[caffeine,lq,3]
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
-    1->[1,1,1,(1->5.50)]
-    2->[2,1,3,(1->5.50)]
+    1->[1,1,1,(1->5.50,2->5.50,3->5.50)]
+    2->[2,1,3,(1->5.50,2->5.50,3->5.50)]
 ->dpr_q
   35: ok
-  There are no dangerous prescriptions
+  There are dangerous prescriptions:
+    (Helen,1)->{ [Wafarin,pl,1]->[acetaminophen,lq,2],[Wafarin,pl,1]->[caffeine,lq,3],[acetaminophen,lq,2]->[caffeine,lq,3] }
+    (Drew,3)->{ [Wafarin,pl,1]->[acetaminophen,lq,2],[Wafarin,pl,1]->[caffeine,lq,3],[acetaminophen,lq,2]->[caffeine,lq,3] }
