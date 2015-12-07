@@ -30,26 +30,29 @@ add_medicine       (3, 2, 5.5)
 -- add_physician
 add_physician	   (-1, "Mayo", specialist)
 add_physician	   (1, "Mayo", specialist)
-add_physician	   (1, "99Yo", specialist)
+add_physician	   (6, "99Yo", specialist)
 
 -- add_patient
 add_patient        (-1, "Drew")
 add_patient        (1, "Drew")
-add_patient        (1, "76rew")
+add_patient        (7, "76rew")
 
 -- add_medication
 add_medication     (-1, ["Wafarin", pill, 1.0, 6.0])
 add_medication     (1, ["Wafarin", pill, 1.0, 6.0])
-add_medication     (1, ["23afarin", pill, 1.0, 6.0])
-add_medication     (1, ["Wafarin", pill, 1.0, 6.0])
-add_medication     (1, ["Wafarin", pill, 6.0, 1.0])
+add_medication     (6, ["23afarin", pill, 1.0, 6.0])
+add_medication     (7, ["Wafarin", pill, 1.0, 6.0])
+add_medication     (8, ["Wafarin", pill, 6.0, 1.0])
 
+dpr_q
 -- add_interaction
 add_interaction    (1,-2)
 add_interaction    (1,1)
 add_interaction    (7,9)
 add_interaction    (1,2)
 add_interaction    (1,2)
+add_interaction    (2,1)
+dpr_q
 
 -- new_prescription
 new_prescription   (-3, 2, 3)
@@ -58,7 +61,8 @@ new_prescription   (5, -2, 3)
 new_prescription   (6, 2, 3)
 new_prescription   (7, 2,-3)
 new_prescription   (8, 2, 3)
-new_prescription   (3, 2, 3)
+new_prescription   (3, 20, 3)
+new_prescription   (3, 2, 30)
 
 -- add_medicine
 add_medicine       (-2, 1, 5.5)
@@ -66,6 +70,7 @@ add_medicine       (2, -1, 5.5)
 add_medicine       (2, 100, 5.5)
 add_medicine       (2, 1, 5.5)
 add_medicine       (2, 1, 5.5)
+add_medicine       (2, 100, 5500)
 
 prescriptions_q(-1000)
 prescriptions_q(1000)
