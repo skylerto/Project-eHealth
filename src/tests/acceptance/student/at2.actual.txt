@@ -254,12 +254,12 @@
     [acetaminophen,lq,2]->[caffeine,lq,3]
   Prescriptions:
     1->[1,1,1,(1->5.50,2->5.50,3->5.50)]
-    2->[2,1,3,(1->5.50,2->5.50,3->5.50)]
+    2->[2,1,3,(2->5.50,3->5.50,1->5.50)]
 ->dpr_q
   18: ok
   There are dangerous prescriptions:
-    (Helen,1)->{ [Wafarin,pl,1]->[acetaminophen,lq,2],[Wafarin,pl,1]->[caffeine,lq,3],[acetaminophen,lq,2]->[caffeine,lq,3] }
-    (Drew,3)->{ [Wafarin,pl,1]->[acetaminophen,lq,2],[Wafarin,pl,1]->[caffeine,lq,3],[acetaminophen,lq,2]->[caffeine,lq,3] }
+    (Helen,1)->{ [Wafarin,pl,1]->[acetaminophen,lq,2], [Wafarin,pl,1]->[caffeine,lq,3], [acetaminophen,lq,2]->[caffeine,lq,3] }
+    (Drew,3)->{ [Wafarin,pl,1]->[acetaminophen,lq,2], [Wafarin,pl,1]->[caffeine,lq,3], [acetaminophen,lq,2]->[caffeine,lq,3] }
 ->remove_medicine(2,1)
   19: ok
   Physicians:
@@ -371,4 +371,4 @@
 ->dpr_q
   25: ok
   There are dangerous prescriptions:
-    (Helen,1)->{ [Wafarin,pl,1]->[acetaminophen,lq,2],[Wafarin,pl,1]->[caffeine,lq,3],[acetaminophen,lq,2]->[caffeine,lq,3] }
+    (Helen,1)->{ [Wafarin,pl,1]->[acetaminophen,lq,2], [Wafarin,pl,1]->[caffeine,lq,3], [acetaminophen,lq,2]->[caffeine,lq,3] }

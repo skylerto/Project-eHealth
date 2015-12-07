@@ -1,11 +1,11 @@
--- at3.txt: Ordering of Dangerous Prescriptions Report
+-- at2.txt: Ordering of prescriptions
 
 -- Add a physician
 add_physician	   (1, "Mayo", specialist)
 
 -- Add a patient
-add_patient        (3, "Drew")
-add_patient        (1, "Helen")
+add_patient        (3, "Dora")
+add_patient        (1, "Drew")
 
 
 --add medications, not in order off ID
@@ -14,9 +14,8 @@ add_medication     (3, ["caffeine", liquid, 1.0, 16.0])
 add_medication     (2, ["acetaminophen", liquid, 1.0, 25.5])
 -- How are medications displayed?
 
-add_interaction    (1,2)
-add_interaction    (1,3)
 add_interaction    (2,3)
+add_interaction    (1,2)
 --interactions are displayed alphabetically by name
 
 -- prescription id 1: generalist Mayo prescribes for DORA
@@ -25,7 +24,7 @@ new_prescription   (2, 1, 3)
 new_prescription   (1, 1, 1)
 -- TEST ORDER OF PRESCRIPTIONS
 
--- TEST BY ALPHA
+dpr_q
 
 -- ADD FOR DREW
 -- add Wafarin 5.5 mg to prescription id 1 "DREW"
@@ -35,6 +34,7 @@ add_medicine       (1, 2, 5.5)
 -- add acetaminophen 5.5 mg to prescription id 1 "DREW"
 add_medicine       (1, 3, 5.5)
 -- ADD MEDICINE IN ID ORDER
+
 
 -- ADD FOR DORA
 -- add Wafarin 5.5 mg to prescription id 1 "DREW"
@@ -45,21 +45,6 @@ add_medicine       (2, 3, 5.5)
 add_medicine       (2, 1, 5.5)
 -- ADD MEDICINE IN ID ALPHA
 
-dpr_q
 
-remove_medicine(2,1)
-remove_medicine(2,2)
-remove_medicine(2,3)
-
--- REVERSE ADDITIONS, TEST BY PATIENT ID
-
--- ADD FOR DREW
--- add Wafarin 5.5 mg to prescription id 1 "DREW"
-add_medicine       (1, 1, 5.5)
--- add caffeine 300.5 mg to prescription id 1 "DREW"
-add_medicine       (1, 2, 5.5)
--- add acetaminophen 5.5 mg to prescription id 1 "DREW"
-add_medicine       (1, 3, 5.5)
--- ADD MEDICINE IN ID ORDER
-
-dpr_q
+-- Test prescription_q ORDER on Wafarin
+prescriptions_q(1)
