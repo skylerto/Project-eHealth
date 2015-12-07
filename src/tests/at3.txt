@@ -1,0 +1,86 @@
+-- at2.txt: Ordering of prescriptions
+
+-- Add a physician
+add_physician	   (1, "Mayo", specialist)
+
+-- Add a patient
+add_patient        (3, "Drew")
+add_patient        (1, "Helen")
+
+
+--add medications, not in order off ID
+add_medication     (1, ["Wafarin", pill, 1.0, 6.0])
+add_medication     (3, ["caffeine", liquid, 7.0, 16.0])
+add_medication     (2, ["acetaminophen", liquid, 10.0, 25.5])
+-- How are medications displayed?
+
+add_interaction    (1,2)
+add_interaction    (1,3)
+add_interaction    (2,3)
+--interactions are displayed alphabetically by name
+
+-- prescription id 1: generalist Mayo prescribes for DORA
+new_prescription   (2, 1, 3)
+-- prescription id 1: generalist Mayo prescribes for DREW
+new_prescription   (1, 1, 1)
+-- TEST ORDER OF PRESCRIPTIONS
+
+dpr_q
+
+-- TEST BY ALPHA
+
+-- ADD FOR DREW
+-- add Wafarin 5.5 mg to prescription id 1 "DREW"
+add_medicine       (1, 1, 5.5)
+-- add caffeine 300.5 mg to prescription id 1 "DREW"
+add_medicine       (1, 2, 300.5)
+-- add acetaminophen 5.5 mg to prescription id 1 "DREW"
+add_medicine       (1, 3, 5.5)
+-- ADD MEDICINE IN ID ORDER
+
+dpr_q
+
+-- ADD FOR DORA
+-- add Wafarin 5.5 mg to prescription id 1 "DREW"
+add_medicine       (2, 2, 5.5)
+-- add caffeine 300.5 mg to prescription id 1 "DREW"
+add_medicine       (2, 3, 300.5)
+-- add acetaminophen 5.5 mg to prescription id 1 "DREW"
+add_medicine       (2, 1, 5.5)
+-- ADD MEDICINE IN ID ALPHA
+
+dpr_q
+
+remove_medicine(1,1)
+remove_medicine(1,2)
+remove_medicine(1,3)
+
+remove_medicine(2,1)
+remove_medicine(2,2)
+remove_medicine(2,3)
+
+dpr_q
+
+-- REVERSE ADDITIONS, TEST BY ID
+
+-- ADD FOR DORA
+-- add Wafarin 5.5 mg to prescription id 1 "DREW"
+add_medicine       (2, 2, 5.5)
+-- add caffeine 300.5 mg to prescription id 1 "DREW"
+add_medicine       (2, 3, 300.5)
+-- add acetaminophen 5.5 mg to prescription id 1 "DREW"
+add_medicine       (2, 1, 5.5)
+-- ADD MEDICINE IN ID ALPHA
+
+dpr_q
+
+-- ADD FOR DREW
+-- add Wafarin 5.5 mg to prescription id 1 "DREW"
+add_medicine       (1, 1, 5.5)
+-- add caffeine 300.5 mg to prescription id 1 "DREW"
+add_medicine       (1, 2, 300.5)
+-- add acetaminophen 5.5 mg to prescription id 1 "DREW"
+add_medicine       (1, 3, 5.5)
+-- ADD MEDICINE IN ID ORDER
+
+dpr_q
