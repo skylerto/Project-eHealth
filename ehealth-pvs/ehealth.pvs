@@ -203,7 +203,7 @@ BEGIN
     COND
 	id > 0 AND NOT rxid_ (id)
 	AND m > 0 AND mnid_ (m)
-	AND NOT (prs_ (a)(id)`1 > 0)
+	AND NOT has(m,prs_ (id))
 	AND (EXISTS (r : (prsOfPt_ (ptOf_ (id)))): interactWith_ (prs_(r),m))
 		       % does medication m introduce an interaction?
 		       % if so, is doctor 'md' a specialist?
