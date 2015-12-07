@@ -258,8 +258,8 @@
 ->dpr_q
   18: ok
   There are dangerous prescriptions:
-    (Helen,1)->{ [Wafarin,pl,1]->[acetaminophen,lq,2], [Wafarin,pl,1]->[caffeine,lq,3], [acetaminophen,lq,2]->[caffeine,lq,3] }
     (Drew,3)->{ [Wafarin,pl,1]->[acetaminophen,lq,2], [Wafarin,pl,1]->[caffeine,lq,3], [acetaminophen,lq,2]->[caffeine,lq,3] }
+    (Helen,1)->{ [Wafarin,pl,1]->[acetaminophen,lq,2], [Wafarin,pl,1]->[caffeine,lq,3], [acetaminophen,lq,2]->[caffeine,lq,3] }
 ->remove_medicine(2,1)
   19: ok
   Physicians:

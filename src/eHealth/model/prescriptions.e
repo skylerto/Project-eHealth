@@ -128,33 +128,6 @@ feature -- public queries
 			end
 		end
 
-	dangerous_prescriptions: STRING
-		local
-			prescriptions : STRING
-			exists : BOOLEAN
-		do
-			create Result.make_empty
-			create prescriptions.make_empty
-			exists := false
-
-			across ordered_prescriptions as prescription loop
-				if attached prescription_list.item (prescription.item) as prescription_tuple then
-					if patient_dangerous_prescription(prescription_tuple.patient) then
-						exists := true
-						prescriptions := prescriptions + "%N    "
-							+ access.m.format_patient(prescription_tuple.patient) + "->{ "
-							+ access.m.patient_dangerous_interactions(prescription_tuple.patient) + " }"
-					end
-				end
-			end
-
-			if exists then
-				Result := "%N  There are dangerous prescriptions:" + prescriptions
-			else
-				Result := "%N  There are no dangerous prescriptions"
-			end
-		end
-
 	prescriptions_output: STRING
 		do
 			create Result.make_empty

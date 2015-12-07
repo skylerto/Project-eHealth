@@ -13,11 +13,13 @@ feature {NONE}
 		do
 			create patient_list.make (1)
 			create ordered_patients.make
+			create ordered_patients_name.make
 		end
 
 feature {NONE}
 	patient_list : HASH_TABLE[STRING, INTEGER]
 	ordered_patients : SORTED_TWO_WAY_LIST[INTEGER]
+	ordered_patients_name : SORTED_TWO_WAY_LIST[STRING]
 
 feature
 	access : EHEALTH_ACCESS
@@ -32,6 +34,7 @@ feature {EHEALTH} -- commands
 		do
 			patient_list.extend (name, id)
 			ordered_patients.extend (id)
+			ordered_patients_name.extend (name)
 		ensure
 			patient_added: patient_list.count = old patient_list.count + 1
 			correct_patient_added: patient_exists(id)
@@ -65,14 +68,45 @@ feature -- public queries
 			end
 		end
 
+	dangerous_prescriptions: STRING
+		local
+			prescriptions : STRING
+			exists : BOOLEAN
+			debug_string : STRING
+		do
+			create Result.make_empty
+			create prescriptions.make_empty
+			create debug_string.make_empty
+			exists := false
+
+			across ordered_patients_name as patient_name loop
+				across ordered_patients as patient_id loop
+					if attached patient_list.item (patient_id.item) as patient_object then
+						if patient_object ~ patient_name.item and access.m.patient_dangerous_prescription(patient_id.item) then
+							exists := true
+							prescriptions := prescriptions + "%N    "
+								+ format_patient(patient_id.item) + "->{ "
+								+ access.m.patient_dangerous_interactions(patient_id.item) + " }"
+						end
+					end
+				end
+			end
+
+			if exists then
+				Result := "%N  There are dangerous prescriptions:" + prescriptions
+			else
+				Result := "%N  There are no dangerous prescriptions"
+			end
+		end
+
 	patients_output: STRING
 		do
 			create Result.make_empty
 			across ordered_patients as patient loop
-				if attached patient_list.item (patient.item) as patientobject then
+				if attached patient_list.item (patient.item) as patient_object then
 					Result := Result
 						+ "%N    " + patient.item.out
-						+ "->" + patientobject
+						+ "->" + patient_object
 				end
 			end
 		end

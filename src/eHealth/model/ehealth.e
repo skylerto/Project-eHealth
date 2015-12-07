@@ -331,7 +331,7 @@ feature -- Prescription Queries
 
 	dangerous_prescriptions: STRING
 		do
-			Result := prescriptions.dangerous_prescriptions
+			Result := patients.dangerous_prescriptions
 		end
 
 feature -- queries [TYPE]
