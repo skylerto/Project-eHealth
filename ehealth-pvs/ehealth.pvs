@@ -238,7 +238,9 @@ BEGIN
           AND NOT (id1 = id2)
 	  AND mnid_ (id1)
 	  AND mnid_ (id2)
-    	  AND (EXISTS (a: ID_MN): prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0)
+    	  %AND (EXISTS (a: ID_MN): (prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0))
+        AND NOT di_ (id1)(id2)
+        AND NOT (EXISTS (a: ID_RX): (prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0) ( EXISTS (b: ID_MD): ( EXISTS (c :ID_PT): rx_ (a)(b)(c) AND gs_ (b) = gn )))
    	 % AND like rm_med > 0 and the doctor associated with this interaction is
           AND NOT di_ (id1, id2)
 	  -> s(i) = s(i-1) WITH [
