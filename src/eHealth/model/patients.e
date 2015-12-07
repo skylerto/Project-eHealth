@@ -65,7 +65,6 @@ feature -- public queries
 			end
 		end
 
-
 	patients_output: STRING
 		do
 			create Result.make_empty
@@ -75,6 +74,17 @@ feature -- public queries
 						+ "%N    " + patient.item.out
 						+ "->" + patientobject
 				end
+			end
+		end
+
+	format_patient(patient_id: INTEGER):STRING
+		require
+			not_negative: patient_id > 0
+			registered: patient_exists(patient_id)
+		do
+			create Result.make_empty
+			if attached patient_list.item (patient_id) as patient then
+				Result := "(" + patient + "," + patient_id.out + ")"
 			end
 		end
 

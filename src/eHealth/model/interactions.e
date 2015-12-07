@@ -12,7 +12,7 @@ feature {NONE}
 	make
 		do
 			create interaction_list.make (1)
-			interaction_id := 0
+			interaction_id := 1
 			create ordered_interactions.make
 		end
 
@@ -26,37 +26,61 @@ feature
 
 feature {EHEALTH}
 	add_interaction(id1,id2: INTEGER)
-	require
-		ids_non_zero: id1 > 0 and id2 > 0
-		ids_not_same: not (id1 = id2)
-		medications_exist: access.m.medications.medication_exists(id1) and access.m.medications.medication_exists(id2)
-		interaction_not_exists: not interaction_exists(id1,id2)
-	do
-		interaction_list.extend([id1, id2],interaction_id)
-		ordered_interactions.extend (interaction_id)
-		interaction_id := interaction_id + 1
-	end
+		require
+			ids_non_zero: id1 > 0 and id2 > 0
+			ids_not_same: not (id1 = id2)
+			medications_exist: access.m.medications.medication_exists(id1) and access.m.medications.medication_exists(id2)
+			interaction_not_exists: not interaction_exists(id1,id2)
+		do
+			interaction_list.extend([id1, id2],interaction_id)
+			ordered_interactions.extend (interaction_id)
+			interaction_id := interaction_id + 1
+		end
 
 feature -- public queries
 
 	interaction_exists(id1,id2: INTEGER): BOOLEAN
-	do
-		Result := false
-		across ordered_interactions as ordered_id loop
-			if attached interaction_list.item (ordered_id.item) as interaction then
-				if interaction.medicine1 = id1 and interaction.medicine2 = id2 or interaction.medicine1 = id2 and interaction.medicine2 = id1 then
-					Result := true
+		do
+			Result := false
+			across ordered_interactions as ordered_id loop
+				if attached interaction_list.item (ordered_id.item) as interaction then
+					if interaction.medicine1 = id1 and interaction.medicine2 = id2 or interaction.medicine1 = id2 and interaction.medicine2 = id1 then
+						Result := true
+					end
 				end
 			end
 		end
-	end
+
+	patient_dangerous_interactions(patient_id: INTEGER): STRING
+		require
+			not_negative: patient_id > 0
+			registered: access.m.patients.patient_exists(patient_id)
+		local
+			exists : BOOLEAN
+		do
+			create Result.make_empty
+			exists := false
+			across ordered_interactions as ordered_interaction loop
+				if attached interaction_list.item (ordered_interaction.item) as interaction then
+					if access.m.prescriptions.patient_prescribed_medicine(patient_id, interaction.medicine1)
+							and access.m.prescriptions.patient_prescribed_medicine(patient_id,  interaction.medicine2) then
+						Result := Result + format_interactions(interaction.medicine1, interaction.medicine2) + ","
+						exists := true
+					end
+				end
+			end
+			if exists then
+				Result.remove_tail(1)
+			end
+		end
 
 	interactions_output: string
 		do
 			create Result.make_empty
 			across ordered_interactions as ordered_id loop
 				if attached interaction_list.item (ordered_id.item) as interaction then
-					Result := Result + format_interactions(interaction.medicine1,interaction.medicine2)
+					Result := Result + "%N    "
+						+ format_interactions(interaction.medicine1,interaction.medicine2)
 				end
 			end
 		end
@@ -71,7 +95,6 @@ feature -- public queries
 			create Result.make_empty
 			formatted1 := access.m.medications.format_medication(id1)
 			formatted2 := access.m.medications.format_medication(id2)
-			Result := Result + "%N    "
 			if formatted1 < formatted2 then
 				Result := Result + formatted1 + "->" + formatted2
 			else

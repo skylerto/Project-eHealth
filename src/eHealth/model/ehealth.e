@@ -168,14 +168,16 @@ feature -- queries
 			if state.command = 0 then
 				Result := "  " + i.out + ": " + message.out
 					+ "%N  Physicians:" + physicians.physicians_output
-					+ "%N  Patients:" + patients.patients_output
-					+ "%N  Medications:" + medications.medications_output
-					+ "%N  Interactions:" + interactions.interactions_output
+					+ "%N  Patients: " + patients.patients_output
+					+ "%N  Medications: " + medications.medications_output
+					+ "%N  Interactions: " + interactions.interactions_output
 					+ "%N  Prescriptions:" + prescriptions.prescriptions_output
+
 			elseif state.command = 1 then
 				if state.report_type = 1 then
 					Result := "  " + i.out + ": " + message.out
-						+ "%N  dpr_q"
+						+ prescriptions.dangerous_prescriptions
+
 				elseif state.report_type = 2 then
 					Result := "  " + i.out + ": " + message.out
 						+ "%N  Output: medication is "

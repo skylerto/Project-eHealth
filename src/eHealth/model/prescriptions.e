@@ -113,6 +113,48 @@ feature -- public queries
 			end
 		end
 
+	patient_dangerous_prescription(patient_id: INTEGER): BOOLEAN
+		require
+			not_negative: patient_id > 0
+			registered: access.m.patients.patient_exists(patient_id)
+		do
+			Result := false
+			across ordered_prescriptions as prescription loop
+				if attached prescription_list.item (prescription.item) as prescription_tuple then
+				 	if prescription_tuple.patient = patient_id and prescription_tuple.prescribed.dangerous_interaction_exists then
+						Result := true
+					end
+				end
+			end
+		end
+
+	dangerous_prescriptions: STRING
+		local
+			prescriptions : STRING
+			exists : BOOLEAN
+		do
+			create Result.make_empty
+			create prescriptions.make_empty
+			exists := false
+
+			across ordered_prescriptions as prescription loop
+				if attached prescription_list.item (prescription.item) as prescription_tuple then
+					if patient_dangerous_prescription(prescription_tuple.patient) then
+						exists := true
+						prescriptions := prescriptions + "%N    "
+							+ access.m.patients.format_patient(prescription_tuple.patient) + "->{ "
+							+ access.m.interactions.patient_dangerous_interactions(prescription_tuple.patient) + " }"
+					end
+				end
+			end
+
+			if exists then
+				Result := "%N  There are dangerous prescriptions:" + prescriptions
+			else
+				Result := "%N  There are no dangerous prescriptions"
+			end
+		end
+
 	prescriptions_output: STRING
 		do
 			create Result.make_empty
@@ -126,6 +168,5 @@ feature -- public queries
 						+ prescription_tuple.prescribed.medicines_output + "]"
 				end
 			end
-
 		end
 end

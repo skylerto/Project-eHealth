@@ -95,18 +95,18 @@ feature -- public queries
 
 	medication_info(medication_id: INTEGER) : STRING
 		require
-			valid_id: medication_id > 0
+			not_negative: medication_id > 0
 			exists: medication_exists(medication_id)
 		do
 			create Result.make_empty
 			if attached medication_list.item (medication_id) as medication then
-				Result := "medication is " + medication.name
+				Result := medication.name
 			end
 		end
 
 	format_medication(medication_id: INTEGER) : STRING
 		require
-			valid_id: medication_id > 0
+			not_negative: medication_id > 0
 			exists: medication_exists(medication_id)
 		do
 			create Result.make_empty

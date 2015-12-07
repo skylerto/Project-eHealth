@@ -61,6 +61,18 @@ feature -- public queries
 			actually_exists: medicines_list.has (medicine_id) = Result
 		end
 
+	dangerous_interaction_exists: BOOLEAN
+		do
+			Result := false
+			across ordered_medicines as medicine1 loop
+				across ordered_medicines as medicine2 loop
+					if access.m.interactions.interaction_exists(medicine1.item, medicine2.item) then
+						Result := true
+					end
+				end
+			end
+		end
+
 	medicines_output: STRING
 		do
 			create Result.make_empty
