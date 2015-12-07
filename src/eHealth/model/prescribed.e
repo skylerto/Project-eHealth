@@ -38,6 +38,18 @@ feature {PRESCRIPTIONS} -- commands
 			correct_medicine: medicine_prescribed(medicine_id)
 		end
 
+	remove_medicine (medicine_id: INTEGER)
+		require
+			not_negative: medicine_id > 0
+			registered: access.m.medications.medication_exists (medicine_id)
+			prescribed: medicine_prescribed (medicine_id)
+		do
+			medicines_list.remove (medicine_id)
+			ordered_medicines.prune_all (medicine_id)
+		ensure
+			removed: not medicine_prescribed (medicine_id)
+		end
+
 feature -- public queries
 
 	medicine_prescribed(medicine_id: INTEGER): BOOLEAN

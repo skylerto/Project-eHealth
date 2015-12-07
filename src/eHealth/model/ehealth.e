@@ -21,6 +21,7 @@ feature {NONE} -- Initialization
 			-- Initialization for `Current'.
 		do
 			i := 0
+			state := [0,0,0]
 			create message.make_ok
 			create physicians.make
 			create patients.make
@@ -32,6 +33,7 @@ feature {NONE} -- Initialization
 
 feature -- model attributes
 	i : INTEGER
+	state : TUPLE[command : INTEGER ; report_type : INTEGER ; medication : INTEGER]
 	message : STATUS_MESSAGE
 	physicians : PHYSICIANS
 	patients : PATIENTS
@@ -62,7 +64,7 @@ feature -- model operations
 feature -- commands
 	add_interaction(id1: INTEGER; id2: INTEGER)
 	require
-		ids_non_zero: id1 > 0 and id2 > 0
+		not_negative: id1 > 0 and id2 > 0
 		ids_not_same: not (id1 = id2)
 		medications_exist: medications.medication_exists(id1) and medications.medication_exists(id2)
 		interaction_not_exists: not interactions.interaction_exists(id1,id2)
@@ -75,7 +77,7 @@ feature -- commands
 
 	add_medication(id: INTEGER ; medicine: TUPLE[name: STRING; kind: INTEGER; low: VALUE; hi: VALUE])
 	require
-		non_negative: id > 0
+		not_negative: id > 0
 		not_already_exists: not medications.medication_exists(id)
 		valid_string: is_valid_string (medicine.name)
 		name_not_used: not medications.medication_name_used(medicine.name)
@@ -88,7 +90,15 @@ feature -- commands
 	end
 
 	add_medicine(id: INTEGER ; medicine: INTEGER ; dose: VALUE)
+	require
+		not_negative: id > 0 and medicine > 0 and dose > 0.0
+		registered: prescriptions.prescription_id_used(id) and medications.medication_exists(medicine)
+		not_prescribed: not prescriptions.medicine_prescribed(id, medicine)
+		valid_dose: medications.valid_dose(medicine, dose)
 	do
+		prescriptions.add_medicine(id, medicine, dose)
+	ensure
+		prescribed: prescriptions.medicine_prescribed(id, medicine)
 	end
 
 	add_patient(id: INTEGER ; name: STRING)
@@ -116,9 +126,9 @@ feature -- commands
 	new_prescription(id: INTEGER ; doctor: INTEGER ; patient: INTEGER)
 	require
 		not_negative: id > 0 and doctor > 0 and patient > 0
-		id_not_used: not prescriptions.prescription_id_used(id)
-		registered: physicians.physician_exists (doctor) and patients.patient_exists(patient)
-		not_exists: not prescriptions.prescription_exists(doctor,patient)
+		id_not_used: not prescriptions.prescription_id_used (id)
+		registered: physicians.physician_exists (doctor) and patients.patient_exists (patient)
+		not_exists: not prescriptions.prescription_exists (doctor,patient)
 	do
 		prescriptions.new_prescription(id, doctor, patient)
 	ensure
@@ -126,27 +136,54 @@ feature -- commands
 	end
 
 	remove_medicine(id: INTEGER ; medicine: INTEGER)
+	require
+		not_negative: id > 0 and medicine > 0
+		registered: prescriptions.prescription_id_used (id) and medications.medication_exists (medicine)
+		prescribed: prescriptions.medicine_prescribed(id, medicine)
 	do
+		prescriptions.remove_medicine(id, medicine)
+	ensure
+		removed: not prescriptions.medicine_prescribed(id, medicine)
 	end
 
 feature -- queries
 	dpr_q
 	do
+		state.command := 1
+		state.report_type := 1
 	end
 
 	prescriptions_q(medication_id: INTEGER)
 	do
+		state.command := 1
+		state.report_type := 2
+		state.medication := medication_id
 	end
+
+feature -- queries
 
 	out : STRING
 		do
-			Result :=
-				"  " + i.out + ": " + message.out +
-				"%N  Physicians:" + physicians.physicians_output +
-				"%N  Patients:" + patients.patients_output +
-				"%N  Medications:" + medications.medications_output +
-				"%N  Interactions:" + interactions.interactions_output +
-				"%N  Prescriptions:" + prescriptions.prescriptions_output
+			create Result.make_empty
+			if state.command = 0 then
+				Result := "  " + i.out + ": " + message.out
+					+ "%N  Physicians:" + physicians.physicians_output
+					+ "%N  Patients:" + patients.patients_output
+					+ "%N  Medications:" + medications.medications_output
+					+ "%N  Interactions:" + interactions.interactions_output
+					+ "%N  Prescriptions:" + prescriptions.prescriptions_output
+			elseif state.command = 1 then
+				if state.report_type = 1 then
+					Result := "  " + i.out + ": " + message.out
+						+ "%N  dpr_q"
+				elseif state.report_type = 2 then
+					Result := "  " + i.out + ": " + message.out
+						+ "%N  Output: medication is "
+						+ medications.medication_info(state.medication)
+						+ patients.patients_prescribed_medicine(state.medication)
+				end
+			end
+			state := [0,0,0]
 		end
 
 	is_pill(kind: INTEGER) : BOOLEAN

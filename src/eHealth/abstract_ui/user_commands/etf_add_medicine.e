@@ -15,25 +15,30 @@ feature -- command
 	add_medicine(id: INTEGER ; medicine: INTEGER ; dose: VALUE)
 		require else
 			add_medicine_precond(id, medicine, dose)
-    	do
-	        if id <= 0 then
-	          -- ERROR:     prescription id must be a positive integer
-	        elseif false then
-	          -- ERROR:     prescription with this id does not exist
-	        elseif medicine <= 0 then
-	          -- ERROR:     medication id must be a positive integer
-	        elseif false then
-	          -- ERROR:     medication id must be registered
-	        elseif false then
-	          -- ERROR:     medication is already prescribed
-	        elseif false then
-	          -- ERROR:     specialist is required to add a dangerous interaction
-	        elseif false then
-	          -- ERROR:     dose is outside allowed range
-	        else
-			    model.default_update
-			    etf_cmd_container.on_change.notify ([Current])
-	        end
-    	end
+		local
+			m : STATUS_MESSAGE
+		do
+			if id < 1 then
+				create m.make_med_id_pos
+			elseif not model.prescriptions.prescription_id_used (id) then
+				create m.make_presc_not_exists
+			elseif medicine < 1 then
+				create m.make_med_id_pos
+			elseif not model.medications.medication_exists (medicine) then
+				create m.make_med_not_reg
+			elseif model.prescriptions.medicine_prescribed(id, medicine) then
+				create m.make_med_is_presc
+			elseif false then
+				create m.make_not_specialist
+			elseif not model.medications.valid_dose(medicine, dose) then
+				create m.make_dose_outside_range
+			else
+				create m.make_ok
+				model.add_medicine(id, medicine, dose)
+			end
+			model.default_update
+			model.set_message(m)
+			etf_cmd_container.on_change.notify ([Current])
+		end
 
 end

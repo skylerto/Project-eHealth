@@ -38,6 +38,33 @@ feature {EHEALTH}
 		correct_prescription: prescription_id_used(id) and prescription_exists(doctor,patient)
 	end
 
+	add_medicine(prescription_id: INTEGER ; medicine: INTEGER ; dose: VALUE)
+	require
+		not_negative: prescription_id > 0 and medicine > 0 and dose > 0.0
+		registered: prescription_id_used(prescription_id) and access.m.medications.medication_exists(medicine)
+		not_prescribed: not medicine_prescribed(prescription_id, medicine)
+		valid_dose: access.m.medications.valid_dose(medicine, dose)
+	do
+		if attached prescription_list.item (prescription_id) as prescription_tuple then
+			prescription_tuple.prescribed.add_medicine(medicine, dose)
+		end
+	ensure
+		prescribed: medicine_prescribed(prescription_id, medicine)
+	end
+
+	remove_medicine(prescription_id: INTEGER ; medicine: INTEGER)
+	require
+		not_negative: prescription_id > 0 and medicine > 0
+		registered: prescription_id_used (prescription_id) and access.m.medications.medication_exists (medicine)
+		prescribed: medicine_prescribed(prescription_id, medicine)
+	do
+		if attached prescription_list.item (prescription_id) as prescription_tuple then
+			prescription_tuple.prescribed.remove_medicine(medicine)
+		end
+	ensure
+	removed: not medicine_prescribed(prescription_id, medicine)
+	end
+
 feature -- public queries
 	prescription_id_used(prescription_id: INTEGER): BOOLEAN
 		require
@@ -56,6 +83,32 @@ feature -- public queries
 			across prescription_list as prescription loop
 				if prescription.item.doctor = doctor and prescription.item.patient = patient then
 					Result := true
+				end
+			end
+		end
+
+	medicine_prescribed(prescription_id, medicine_id : INTEGER): BOOLEAN
+		require
+			not_negative: prescription_id > 0 and medicine_id > 0
+			exists: prescription_id_used(prescription_id)
+		do
+			Result := false
+			if attached prescription_list.item (prescription_id) as prescription_tuple then
+				Result := prescription_tuple.prescribed.medicine_prescribed(medicine_id)
+			end
+		end
+
+	patient_prescribed_medicine(patient_id, medicine_id : INTEGER): BOOLEAN
+		require
+			not_negative: patient_id > 0 and medicine_id > 0
+			registered: access.m.patients.patient_exists(patient_id) and access.m.medications.medication_exists(medicine_id)
+		do
+			Result := false
+			across ordered_prescriptions as prescription loop
+				if attached prescription_list.item (prescription.item) as prescription_tuple then
+					if prescription_tuple.patient = patient_id and prescription_tuple.prescribed.medicine_prescribed(medicine_id) then
+						Result := true
+					end
 				end
 			end
 		end

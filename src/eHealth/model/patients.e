@@ -48,13 +48,32 @@ feature -- public queries
 			actually_exits: patient_list.has (patient_id) = Result
 		end
 
+	patients_prescribed_medicine(medication_id: INTEGER): STRING
+		require
+			not_negative: medication_id > 0
+			registered: access.m.medications.medication_exists(medication_id)
+		do
+			create Result.make_empty
+			across ordered_patients as patient loop
+				if attached patient_list.item (patient.item) as patientobject then
+					if access.m.prescriptions.patient_prescribed_medicine(patient.item, medication_id) then
+						Result := Result
+							+ "%N    " + patient.item.out
+							+ "->" + patientobject
+					end
+				end
+			end
+		end
+
+
 	patients_output: STRING
 		do
 			create Result.make_empty
 			across ordered_patients as patient loop
-				Result := Result + "%N    " + patient.item.out + "->"
 				if attached patient_list.item (patient.item) as patientobject then
-					Result := Result + patientobject
+					Result := Result
+						+ "%N    " + patient.item.out
+						+ "->" + patientobject
 				end
 			end
 		end

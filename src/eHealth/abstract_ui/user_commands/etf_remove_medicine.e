@@ -15,20 +15,25 @@ feature -- command
 	remove_medicine(id: INTEGER ; medicine: INTEGER)
 		require else
 			remove_medicine_precond(id, medicine)
-    	do
-	        if id <= 0 then
-	          -- ERROR:     prescription id must be a positive integer
-	        elseif false then
-	          -- ERROR:     prescription with this id does not exist
-	        elseif medicine <= 0 then
-	          -- ERROR:     medication id must be a positive integer
-	        elseif false then
-	          -- ERROR:     medication id must be registered
-	        elseif false then
-	          -- ERROR:     medication is not in the prescription
-	        else
-	    		model.default_update
-			    etf_cmd_container.on_change.notify ([Current])
-    	  	end
-    	end
+		local
+			m : STATUS_MESSAGE
+		do
+			if id < 1 then
+				create m.make_presc_id_pos
+			elseif not model.prescriptions.prescription_id_used (id) then
+				create m.make_presc_not_exists
+			elseif medicine < 1 then
+				create m.make_med_id_pos
+			elseif not model.medications.medication_exists (medicine) then
+				create m.make_med_not_reg
+			elseif not model.prescriptions.medicine_prescribed (id, medicine) then
+				create m.make_med_not_in_presc
+			else
+				create m.make_ok
+				model.remove_medicine(id, medicine)
+			end
+			model.default_update
+			model.set_message(m)
+			etf_cmd_container.on_change.notify ([Current])
+		end
 end

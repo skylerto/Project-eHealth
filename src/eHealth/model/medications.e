@@ -93,11 +93,23 @@ feature -- public queries
 			end
 		end
 
+	medication_info(medication_id: INTEGER) : STRING
+		require
+			valid_id: medication_id > 0
+			exists: medication_exists(medication_id)
+		do
+			create Result.make_empty
+			if attached medication_list.item (medication_id) as medication then
+				Result := "medication is " + medication.name
+			end
+		end
+
 	format_medication(medication_id: INTEGER) : STRING
 		require
 			valid_id: medication_id > 0
 			exists: medication_exists(medication_id)
 		do
+			create Result.make_empty
 			if attached medication_list.item (medication_id) as medication then
 				Result := "[" + medication.name
 
@@ -108,8 +120,6 @@ feature -- public queries
 				end
 
 				Result := Result + "," + medication_id.out + "]"
-			else
-				Result := ""
 			end
 		end
 
