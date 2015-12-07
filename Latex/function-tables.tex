@@ -110,15 +110,15 @@ Abstract State & $\neg$ error & error \\ \hline
 mind(i)        &     NC      & NC    \\ \hline
 ptid(i)        &       NC    & NC    \\ \hline
 mdid(i)        &     NC      & NC    \\ \hline
-rxid(i)        &     $rxid_{1} \cup \{id\}$      & NC    \\ \hline
+rxid(i)        &     $rxid_{-1} \cup \{id\}$      & NC    \\ \hline
 mn(i)          &      NC     & NC    \\ \hline
 mns(i)         &     NC      & NC    \\ \hline
 mdpt(i)        &    NC       & NC    \\ \hline
-rx(i)          &      $rx_{1} \upharpoonleft (id \mapsto (md, pt))$     & NC    \\ \hline
-prs(i)         &      $prs_{1} \upharpoonleft (id \mapsto empty\_prs(mnid_{1}))$      & NC    \\ \hline
+rx(i)          &      $rx_{-1} \upharpoonleft (id \mapsto (md, pt))$     & NC    \\ \hline
+prs(i)         &      $prs_{-1} \upharpoonleft (id \mapsto empty\_prs(mnid_{1}))$      & NC    \\ \hline
 di(i)          &        NC   & NC    \\ \hline
 gs(i)          &       NC    & NC    \\ \hline
-dpr(i)         &     $dpr_{1} \upharpoonleft (id \mapsto \emptyset)$      & NC    \\ \hline
+dpr(i)         &     $dpr_{-1} \upharpoonleft (id \mapsto \emptyset)$      & NC    \\ \hline
 r(i)           & ok        & error \\ \hline
 \end{tabular}
 
@@ -146,7 +146,7 @@ mn(i)          &    NC       & NC    \\ \hline
 mns(i)         &   NC        & NC    \\ \hline
 mdpt(i)        &   NC        & NC    \\ \hline
 rx(i)          &      NC     & NC    \\ \hline
-prs(i)         &     $prs_{1}(id) \upharpoonleft (m \mapsto d))$      & NC    \\ \hline
+prs(i)         &     $prs_{-1}(id) \upharpoonleft (m \mapsto d))$      & NC    \\ \hline
 di(i)          &      NC     & NC    \\ \hline
 gs(i)          &     NC      & NC    \\ \hline
 dpr(i)         &     NC      & NC    \\ \hline
@@ -176,7 +176,7 @@ mn(i)          &     NC      & NC    \\ \hline
 mns(i)         &    NC       & NC    \\ \hline
 mdpt(i)        &    NC       & NC    \\ \hline
 rx(i)          &       NC    & NC    \\ \hline
-prs(i)         &      $prs_{1} \upharpoonleft (id \mapsto \varepsilon)$     & NC    \\ \hline
+prs(i)         &      $prs_{-1} \upharpoonleft (id \mapsto \varepsilon)$     & NC    \\ \hline
 di(i)          &       NC   & NC    \\ \hline
 gs(i)          &      NC     & NC    \\ \hline
 dpr(i)         &      NC     & NC    \\ \hline
@@ -207,7 +207,7 @@ mns(i)         &   NC        & NC    \\ \hline
 mdpt(i)        &   NC        & NC    \\ \hline
 rx(i)          &      NC     & NC    \\ \hline
 prs(i)         &     NC      & NC    \\ \hline
-di(i)          &      $di_{1} \cup (id1, id2) \wedge di_{1} \cup (id2, id1) $     & NC    \\ \hline
+di(i)          &      $di_{-1} \cup (id1, id2) \wedge di_{1} \cup (id2, id1) $     & NC    \\ \hline
 gs(i)          &     NC      & NC    \\ \hline
 dpr(i)         &     NC      & NC    \\ \hline
 r(i)           & ok        & error \\ \hline
