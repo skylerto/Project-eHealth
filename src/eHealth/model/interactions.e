@@ -72,13 +72,13 @@ feature -- public queries
 				if attached interaction_list.item (ordered_interaction.item) as interaction then
 					if model.patient_prescribed_medicine(patient_id, interaction.medicine1)
 							and model.patient_prescribed_medicine(patient_id,  interaction.medicine2) then
-						Result := Result + format_interactions(interaction.medicine1, interaction.medicine2) + ","
+						Result := Result + format_interactions(interaction.medicine1, interaction.medicine2) + ", "
 						exists := true
 					end
 				end
 			end
 			if exists then
-				Result.remove_tail(1)
+				Result.remove_tail(2)
 			end
 		end
 
