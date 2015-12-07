@@ -1,6 +1,6 @@
 note
-	description: "Summary description for {MEDICATIONS}."
-	author: ""
+	description: "Medications for EHEALTH system."
+	author: "Siraj Rauff"
 	date: "$Date$"
 	revision: "$Revision$"
 

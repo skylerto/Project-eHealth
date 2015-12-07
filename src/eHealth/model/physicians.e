@@ -1,6 +1,6 @@
 note
-	description: "Summary description for {PHYSICIANS}."
-	author: ""
+	description: "Physicians for EHEALTH system."
+	author: "Siraj Rauff"
 	date: "$Date$"
 	revision: "$Revision$"
 
@@ -45,6 +45,19 @@ feature -- public queries
 			Result := physician_list.has (physician_id)
 		ensure
 			actually_exits: physician_list.has (physician_id) = Result
+		end
+
+	physician_is_specialist(physician_id: INTEGER): BOOLEAN
+		require
+			not_negative: physician_id > 0
+			regisetered: physician_exists(physician_id)
+		do
+			Result := false
+			if attached physician_list.item (physician_id) as physician then
+				if (access.m.is_specialist(physician.kind)) then
+					Result := true
+				end
+			end
 		end
 
 	physicians_output: STRING

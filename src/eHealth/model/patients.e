@@ -1,6 +1,6 @@
 note
-	description: "Summary description for {PATIENTS}."
-	author: ""
+	description: "Patients in the EHEALTH system."
+	author: "Siraj Rauff"
 	date: "$Date$"
 	revision: "$Revision$"
 
@@ -51,12 +51,12 @@ feature -- public queries
 	patients_prescribed_medicine(medication_id: INTEGER): STRING
 		require
 			not_negative: medication_id > 0
-			registered: access.m.medications.medication_exists(medication_id)
+			registered: access.m.medication_exists(medication_id)
 		do
 			create Result.make_empty
 			across ordered_patients as patient loop
 				if attached patient_list.item (patient.item) as patientobject then
-					if access.m.prescriptions.patient_prescribed_medicine(patient.item, medication_id) then
+					if access.m.patient_prescribed_medicine(patient.item, medication_id) then
 						Result := Result
 							+ "%N    " + patient.item.out
 							+ "->" + patientobject
