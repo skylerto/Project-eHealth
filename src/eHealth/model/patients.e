@@ -28,6 +28,7 @@ feature {EHEALTH} -- commands
 		require
 			non_negative: id > 0
 			valid_string: access.m.is_valid_string (name)
+			not_exists: not patient_exists(id)
 		do
 			patient_list.extend (name, id)
 			ordered_patients.extend (id)
@@ -40,7 +41,7 @@ feature -- public queries
 
 	patient_exists(patient_id: INTEGER): BOOLEAN
 		require
-			positive: patient_id > 0
+			not_negative: patient_id > 0
 		do
 			Result := patient_list.has (patient_id)
 		ensure

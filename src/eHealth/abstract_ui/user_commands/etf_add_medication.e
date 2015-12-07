@@ -26,7 +26,7 @@ feature -- command
 				create m.make_med_name_start
 			elseif model.medications.medication_name_used (medicine.name) then
 				create m.make_med_name_in_use
-			elseif not((0 < medicine.low.as_double) and (medicine.low <= medicine.hi)) then
+			elseif not((0.0 < medicine.low) and (medicine.low <= medicine.hi)) then
 				create m.make_valid_range
 			else
 				create m.make_ok

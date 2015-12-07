@@ -26,6 +26,7 @@ feature {NONE} -- Initialization
 			create patients.make
 			create medications.make
 			create interactions.make
+			create prescriptions.make
 			create constraints
 		end
 
@@ -36,6 +37,7 @@ feature -- model attributes
 	patients : PATIENTS
 	medications : MEDICATIONS
 	interactions : INTERACTIONS
+	prescriptions : PRESCRIPTIONS
 	constraints : ETF_TYPE_CONSTRAINTS
 
 feature -- model operations
@@ -64,6 +66,7 @@ feature -- commands
 		ids_not_same: not (id1 = id2)
 		medications_exist: medications.medication_exists(id1) and medications.medication_exists(id2)
 		interaction_not_exists: not interactions.interaction_exists(id1,id2)
+		-- First remove conflicint medicine prescribed by generalist
 	do
 		interactions.add_interaction(id1,id2)
 	ensure
@@ -73,8 +76,10 @@ feature -- commands
 	add_medication(id: INTEGER ; medicine: TUPLE[name: STRING; kind: INTEGER; low: VALUE; hi: VALUE])
 	require
 		non_negative: id > 0
+		not_already_exists: not medications.medication_exists(id)
 		valid_string: is_valid_string (medicine.name)
-		-- name_unused: not medications.medication_name_used(medicine.name)
+		name_not_used: not medications.medication_name_used(medicine.name)
+		valid_range: 0.0 < medicine.low and medicine.low <= medicine.hi
 	do
 		medications.add_medication(id, medicine)
 	ensure
@@ -88,6 +93,7 @@ feature -- commands
 
 	add_patient(id: INTEGER ; name: STRING)
 	require
+		not_negative: id > 0
 		valid_name: is_valid_string (name)
 		not_exists: not patients.patient_exists (id)
 	do
@@ -98,6 +104,7 @@ feature -- commands
 
 	add_physician(id: INTEGER ; name: STRING ; kind: INTEGER)
 	require
+		not_negative: id > 0
 		valid_name: is_valid_string (name)
 		not_exists: not physicians.physician_exists (id)
 	do
@@ -107,7 +114,15 @@ feature -- commands
 	end
 
 	new_prescription(id: INTEGER ; doctor: INTEGER ; patient: INTEGER)
+	require
+		not_negative: id > 0 and doctor > 0 and patient > 0
+		id_not_used: not prescriptions.prescription_id_used(id)
+		registered: physicians.physician_exists (doctor) and patients.patient_exists(patient)
+		not_exists: not prescriptions.prescription_exists(doctor,patient)
 	do
+		prescriptions.new_prescription(id, doctor, patient)
+	ensure
+		added: prescriptions.prescription_id_used(id) and prescriptions.prescription_exists(doctor, patient)
 	end
 
 	remove_medicine(id: INTEGER ; medicine: INTEGER)
@@ -131,7 +146,7 @@ feature -- queries
 				"%N  Patients:" + patients.patients_output +
 				"%N  Medications:" + medications.medications_output +
 				"%N  Interactions:" + interactions.interactions_output +
-				"%N  Prescriptions:"
+				"%N  Prescriptions:" + prescriptions.prescriptions_output
 		end
 
 	is_pill(kind: INTEGER) : BOOLEAN

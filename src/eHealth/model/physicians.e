@@ -40,7 +40,7 @@ feature -- public queries
 
 	physician_exists(physician_id: INTEGER): BOOLEAN
 		require
-			positive: physician_id > 0
+			non_negative: physician_id > 0
 		do
 			Result := physician_list.has (physician_id)
 		ensure
