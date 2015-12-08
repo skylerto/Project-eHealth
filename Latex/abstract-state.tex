@@ -1,0 +1,24 @@
+\section{Abstract variables needed for the Function Table}
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+Name & Interpredation                                                                                 & Purpose                                                                                                                         \\ \hline
+mnid & The set of all medication ids                                                                  & Keep track of all the  medication ids in the system                                                                             \\ \hline
+ptid & The set of all patient ids                                                                     & Keep track of all the patient ids in the system                                                                                 \\ \hline
+mdid & The set of all doctor ids                                                                      & Keep track of all the doctor ids in the system                                                                                  \\ \hline
+rxid & The set of all prescription ids                                                                & Keep track of all the prescription ids in the system                                                                            \\ \hline
+mdpt & \begin{tabular}[c]{@{}l@{}}Relationship between\\ Doctor and Patient\end{tabular}              & Keep track of the doctor and the patient                                                                                        \\ \hline
+rx   & \begin{tabular}[c]{@{}l@{}}Relation between doctor\\ patient and medication\end{tabular}       & \begin{tabular}[c]{@{}l@{}}Keep track of all the medical prescriptions between\\  doctor and patient in the system\end{tabular} \\ \hline
+prs  & \begin{tabular}[c]{@{}l@{}}List of all prescriptions\\ including dosage\end{tabular}           & Keep track of all the prescriptions in the system                                                                               \\ \hline
+di   & \begin{tabular}[c]{@{}l@{}}Set of dangerous \\ interactions between\\ medications\end{tabular} & \begin{tabular}[c]{@{}l@{}}Keep track of all the dangerous interactions in the\\ system\end{tabular}                            \\ \hline
+gs   & The kind of doctor                                                                             & Keep track of all the type of doctor                                                                                            \\ \hline
+dpi  & \begin{tabular}[c]{@{}l@{}}The dangerous\\  prescription report\end{tabular}                   & \begin{tabular}[c]{@{}l@{}}Notify dangerous interactions,\\ if they exist\end{tabular}                                          \\ \hline
+\end{tabular}
+
+
+\caption{Abstract Variables used in Function Tables}
+\label{abs-state}
+\end{center}
+\end{figure}

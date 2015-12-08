@@ -1,0 +1,218 @@
+
+
+\section{Function Tables}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\subsection{Table of Error codes and Warnings}
+
+\begin{figure}[]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Name  & Meaning                                                    \\ \hline
+err1  & physician id must be a positive integer                    \\ \hline
+err2  & physician id already in use                                \\ \hline
+err3  & name must start with a letter                              \\ \hline
+err4  & patient id must be a positive integer                      \\ \hline
+err5  & patient id already in use                                  \\ \hline
+err6  & name must start with a letter                              \\ \hline
+err7  & medication id must be a positive integer                   \\ \hline
+err8  & medication id already in use                               \\ \hline
+err9  & medication name must start with a letter                   \\ \hline
+err10 & medication name already in use                             \\ \hline
+err11 & require 0 \textless low-dose \textless= hi-dose            \\ \hline
+err12 & medication ids must be positive integers                   \\ \hline
+err13 & medication ids must be different                           \\ \hline
+err14 & medications with these ids must be registered              \\ \hline
+err15 & interaction already exists                                 \\ \hline
+err16 & first remove conflicting medicine prescribed by generalist \\ \hline
+err17 & prescription id must be a positive integer                 \\ \hline
+err18 & prescription id already in use                             \\ \hline
+err19 & physician with this id not registered                      \\ \hline
+err20 & patient with this id not registered                        \\ \hline
+err21 & prescription already exists for this physician and patient \\ \hline
+err22 & prescription with this id does not exist                   \\ \hline
+err23 & medication id must be registered                           \\ \hline
+err24 & medication is already prescribed                           \\ \hline
+err25 & specialist is required to add a dangerous interaction      \\ \hline
+err26 & dose is outside allowed range                              \\ \hline
+err27 & medication is not in the prescription                      \\ \hline
+\end{tabular}
+\caption{Table of errors and warnings}
+\label{err-table}
+\end{center}
+\end{figure}
+
+\newpage
+
+
+\subsection{Function Table for eHealth}
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\multicolumn{2}{|l|}{Monitored Inputs}                &             \\ \hline
+\multicolumn{2}{|l|}{i = 0}                           & See Table \ref{ft-init} \\ \hline
+\multirow{4}{*}{i \textgreater 0} & new\_prescription(id, doctor, patient) & See Table~\ref{ft-np} \\ \cline{2-3} 
+                                  & add\_medicine(id, medicine, dose)     & See Table~\ref{ft-am} \\ \cline{2-3} 
+                                  & remove\_medicine(id, medicine) & See Table~\ref{ft-rm} \\ \cline{2-3} 
+                                  & add\_interaction(id1, id2)  & See Table~\ref{ft-ai} \\ \hline
+\end{tabular}
+\caption{Function Table for eHealth}
+\label{ft-ehealth}
+\end{center}
+\end{figure}
+
+\subsection{Function Table for init}
+
+error: $false$
+
+\begin{figure}[h]
+\begin{center}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Abstract State & $\neg$ error & error \\ \hline
+mind(i)        &   $\emptyset$      & NC    \\ \hline
+ptid(i)        &       $\emptyset$    & NC    \\ \hline
+mdid(i)        &    $\emptyset$       & NC    \\ \hline
+rxid(i)        &      $\emptyset$     & NC    \\ \hline
+mn(i)          &       $\emptyset$    & NC    \\ \hline
+mns(i)         &   $ \varepsilon$       & NC    \\ \hline
+mdpt(i)        &      $\emptyset$     & NC    \\ \hline
+rx(i)          &    $ \varepsilon  $    & NC    \\ \hline
+prs(i)         &   $ \varepsilon $      & NC    \\ \hline
+di(i)          &     $\emptyset$      & NC    \\ \hline
+gs(i)          &      $\emptyset \mapsto \varepsilon$     & NC    \\ \hline
+dpr(i)         &       $\emptyset \mapsto \varepsilon $    & NC    \\ \hline
+r(i)           & ok        & error \\ \hline
+\end{tabular}
+
+\caption{Function Table for init}
+\label{ft-init}
+\end{center}
+\end{figure}
+
+\newpage
+
+\subsection{Function Table for new\_prescription(id, md, pt)}
+
+error: $\neg (id > 0 \wedge \neg rxid_{1}(id) \wedge md > 0  \wedge mdid_{1}(md) \wedge pt > 0 \wedge ptid_{1}(pt) \wedge mdpt_{1}(md, pt))$
+
+\begin{figure}[h]
+\begin{center}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Abstract State & $\neg$ error & error \\ \hline
+mind(i)        &     NC      & NC    \\ \hline
+ptid(i)        &       NC    & NC    \\ \hline
+mdid(i)        &     NC      & NC    \\ \hline
+rxid(i)        &     $rxid_{-1} \cup \{id\}$      & NC    \\ \hline
+mn(i)          &      NC     & NC    \\ \hline
+mns(i)         &     NC      & NC    \\ \hline
+mdpt(i)        &    NC       & NC    \\ \hline
+rx(i)          &      $rx_{-1} \upharpoonleft (id \mapsto (md, pt))$     & NC    \\ \hline
+prs(i)         &      $prs_{-1} \upharpoonleft (id \mapsto empty\_prs(mnid_{1}))$      & NC    \\ \hline
+di(i)          &        NC   & NC    \\ \hline
+gs(i)          &       NC    & NC    \\ \hline
+dpr(i)         &     $dpr_{-1} \upharpoonleft (id \mapsto \emptyset)$      & NC    \\ \hline
+r(i)           & ok        & error \\ \hline
+\end{tabular}
+
+\caption{Function Table for new\_prescription(id, doctor, patient)}
+\label{ft-np}
+\end{center}
+\end{figure}
+
+\newpage
+
+\subsection{Function Table for add\_medicine(id, m, d)}
+
+error: $\neg (id > 0 \wedge \neg rxid_{1}(id) \wedge m > 0  \wedge mnid_{1}(m) \wedge pt > 0 has(m, prs_{1}(id))\wedge sumthin \wedge isValidDose(m,d))$
+
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+Abstract State & $\neg$ error & error \\ \hline
+mind(i)        &   NC        & NC    \\ \hline
+ptid(i)        &     NC      & NC    \\ \hline
+mdid(i)        &   NC        & NC    \\ \hline
+rxid(i)        &     NC      & NC    \\ \hline
+mn(i)          &    NC       & NC    \\ \hline
+mns(i)         &   NC        & NC    \\ \hline
+mdpt(i)        &   NC        & NC    \\ \hline
+rx(i)          &      NC     & NC    \\ \hline
+prs(i)         &     $prs_{-1}(id) \upharpoonleft (m \mapsto d))$      & NC    \\ \hline
+di(i)          &      NC     & NC    \\ \hline
+gs(i)          &     NC      & NC    \\ \hline
+dpr(i)         &     NC      & NC    \\ \hline
+r(i)           & ok        & error \\ \hline
+\end{tabular}
+\caption{Function Table for add\_medicine(id, medicine, dose)}
+\label{ft-am}
+\end{center}
+\end{figure}
+
+\newpage
+
+\subsection{Function Table for remove\_medicine(id, med)}
+
+error: $\neg (id > 0 \wedge \neg rxid_{1}(id) \wedge med > 0  \wedge mnid_{1}(med) \wedge prs_{1}(id)(med)`1 > 0)$
+
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+Abstract State & $\neg$ error & error \\ \hline
+mind(i)        &    NC       & NC    \\ \hline
+ptid(i)        &      NC     & NC    \\ \hline
+mdid(i)        &    NC       & NC    \\ \hline
+rxid(i)        &      NC     & NC    \\ \hline
+mn(i)          &     NC      & NC    \\ \hline
+mns(i)         &    NC       & NC    \\ \hline
+mdpt(i)        &    NC       & NC    \\ \hline
+rx(i)          &       NC    & NC    \\ \hline
+prs(i)         &      $prs_{-1} \upharpoonleft (id \mapsto \varepsilon)$     & NC    \\ \hline
+di(i)          &       NC   & NC    \\ \hline
+gs(i)          &      NC     & NC    \\ \hline
+dpr(i)         &      NC     & NC    \\ \hline
+r(i)           & ok        & error \\ \hline
+\end{tabular}
+\caption{Function Table for remove\_medicine(id, medicine)}
+\label{ft-rm}
+\end{center}
+\end{figure}
+
+\newpage
+
+\subsection{Function Table for add\_interaction(id1, id2)}
+
+error: $\neg (id1 > 0 \wedge id2 > 0 \wedge \neg id1 = id2 \wedge mnid_{1}(id1)  \wedge mnid_{1}(id2) \wedge (\exists a: (prs_{1}(a)(id1)`1 > 0 \wedge sumin ) \vee (prs_{1}(id)(med)`1 > 0 \wedge sumin)))$
+
+\begin{figure}[!htp]
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+Abstract State & $\neg$ error & error \\ \hline
+mind(i)        &   NC        & NC    \\ \hline
+ptid(i)        &     NC      & NC    \\ \hline
+mdid(i)        &   NC       & NC    \\ \hline
+rxid(i)        &     NC      & NC    \\ \hline
+mn(i)          &    NC       & NC    \\ \hline
+mns(i)         &   NC        & NC    \\ \hline
+mdpt(i)        &   NC        & NC    \\ \hline
+rx(i)          &      NC     & NC    \\ \hline
+prs(i)         &     NC      & NC    \\ \hline
+di(i)          &      $di_{-1} \cup (id1, id2) \wedge di_{1} \cup (id2, id1) $     & NC    \\ \hline
+gs(i)          &     NC      & NC    \\ \hline
+dpr(i)         &     NC      & NC    \\ \hline
+r(i)           & ok        & error \\ \hline
+\end{tabular}
+\caption{Function Table for add\_interaction(id1, id2)}
+\label{ft-ai}
+\end{center}
+\end{figure}
+
+\newpage
