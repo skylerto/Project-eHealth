@@ -273,6 +273,14 @@ feature -- Interaction Queries
 			Result := interactions.interaction_exists(id1,id2)
 		end
 
+	possible_dangerous_interactions(patient_id, medicine_id: INTEGER): BOOLEAN
+		require
+			not_negative: patient_id > 0 and medicine_id > 0
+			reegistered: patient_exists(patient_id) and medication_exists(medicine_id)
+		do
+			Result := interactions.possible_dangerous_interactions(patient_id, medicine_id)
+		end
+
 	patient_dangerous_interactions(patient_id: INTEGER): STRING
 		require
 			not_negative: patient_id > 0
@@ -319,6 +327,14 @@ feature -- Prescription Queries
 			registered: patient_exists(patient_id) and medication_exists(medicine_id)
 		do
 			Result := prescriptions.patient_prescribed_medicine(patient_id, medicine_id)
+		end
+
+	dangerous_addition_allowed(prescription_id, medicine_id : INTEGER): BOOLEAN
+		require
+			not_negative: prescription_id > 0 and medicine_id > 0
+			registered: prescription_id_used(prescription_id) and medication_exists(medicine_id)
+		do
+			Result := prescriptions.dangerous_addition_allowed(prescription_id, medicine_id)
 		end
 
 	patient_dangerous_prescription(patient_id: INTEGER): BOOLEAN

@@ -20,7 +20,7 @@ feature -- command
 		do
 			if medication_id < 1 then
 				create m.make_med_id_pos
-			elseif not model.medications.medication_exists(medication_id) then
+			elseif not model.medication_exists(medication_id) then
 				create m.make_med_not_reg
 			else
 				create m.make_ok

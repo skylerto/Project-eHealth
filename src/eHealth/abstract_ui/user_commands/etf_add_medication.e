@@ -20,11 +20,11 @@ feature -- command
 		do
 			if id < 1 then
 				create m.make_med_id_pos
-			elseif model.medications.medication_exists (id) then
+			elseif model.medication_exists (id) then
 				create m.make_med_id_in_use
 			elseif not model.is_valid_string (medicine.name) then
 				create m.make_med_name_start
-			elseif model.medications.medication_name_used (medicine.name) then
+			elseif model.medication_name_used (medicine.name) then
 				create m.make_med_name_in_use
 			elseif not((0.0 < medicine.low) and (medicine.low <= medicine.hi)) then
 				create m.make_valid_range

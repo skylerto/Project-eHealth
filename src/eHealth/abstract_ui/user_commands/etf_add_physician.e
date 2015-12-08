@@ -20,7 +20,7 @@ feature -- command
 		do
 			if id < 1 then
 				create m.make_phys_id_pos
-			elseif model.physicians.physician_exists (id) then
+			elseif model.physician_exists (id) then
 				create m.make_phys_id_in_use
 			elseif not model.is_valid_string (name) then
 				create m.make_name_start

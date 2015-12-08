@@ -20,17 +20,17 @@ feature -- command
   	do
 			if id < 1 then
 				create m.make_presc_id_pos
-			elseif model.prescriptions.prescription_id_used(id) then
+			elseif model.prescription_id_used(id) then
 				create m.make_presc_id_in_use
 			elseif doctor < 1 then
 				create m.make_phys_id_pos
-			elseif not model.physicians.physician_exists(doctor) then
+			elseif not model.physician_exists(doctor) then
 				create m.make_phys_not_reg
 			elseif patient < 1 then
 				create m.make_patient_id_pos
-			elseif not model.patients.patient_exists(patient) then
+			elseif not model.patient_exists(patient) then
 				create m.make_patient_not_reg
-			elseif model.prescriptions.prescription_exists(doctor,patient) then
+			elseif model.prescription_exists(doctor,patient) then
 				create m.make_presc_exists
 			else
 				create m.make_ok

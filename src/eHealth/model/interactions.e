@@ -17,7 +17,7 @@ feature {NONE}
 		end
 
 feature {NONE}
-	interaction_list : HASH_TABLE[TUPLE[medicine1,medicine2:INTEGER],INTEGER]
+	interaction_list : HASH_TABLE[TUPLE[medicine1,medicine2: INTEGER], INTEGER]
 	ordered_interactions : SORTED_TWO_WAY_LIST[INTEGER]
 	interaction_id : INTEGER
 
@@ -51,6 +51,24 @@ feature -- public queries
 			across ordered_interactions as ordered_id loop
 				if attached interaction_list.item (ordered_id.item) as interaction then
 					if interaction.medicine1 = id1 and interaction.medicine2 = id2 or interaction.medicine1 = id2 and interaction.medicine2 = id1 then
+						Result := true
+					end
+				end
+			end
+		end
+
+	possible_dangerous_interactions(patient_id, medicine_id: INTEGER): BOOLEAN
+		require
+			not_negative: patient_id > 0 and medicine_id > 0
+			reegistered: access.m.patient_exists(patient_id) and access.m.medication_exists(medicine_id)
+		do
+			Result := false
+			across ordered_interactions as ordered_id loop
+				if attached interaction_list.item (ordered_id.item) as interaction then
+					if (interaction.medicine1 = medicine_id
+							and access.m.patient_prescribed_medicine(patient_id, interaction.medicine2))
+							or (interaction.medicine2 = medicine_id
+							and access.m.patient_prescribed_medicine(patient_id, interaction.medicine1)) then
 						Result := true
 					end
 				end

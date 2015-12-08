@@ -22,9 +22,9 @@ feature -- command
 					create m.make_med_ids_pos
 			elseif id1 = id2 then
 				create m.make_med_ids_same
-			elseif not (model.medications.medication_exists(id1) and model.medications.medication_exists(id2)) then
+			elseif not (model.medication_exists(id1) and model.medication_exists(id2)) then
 				create m.make_meds_not_reg
-			elseif model.interactions.interaction_exists(id1,id2) then
+			elseif model.interaction_exists(id1,id2) then
 				create m.make_interaction_exists
 			elseif false then
 			--ERROR:     first remove conflicting medicine prescribed by generalist

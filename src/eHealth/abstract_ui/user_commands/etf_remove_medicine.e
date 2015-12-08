@@ -20,13 +20,13 @@ feature -- command
 		do
 			if id < 1 then
 				create m.make_presc_id_pos
-			elseif not model.prescriptions.prescription_id_used (id) then
+			elseif not model.prescription_id_used (id) then
 				create m.make_presc_not_exists
 			elseif medicine < 1 then
 				create m.make_med_id_pos
-			elseif not model.medications.medication_exists (medicine) then
+			elseif not model.medication_exists (medicine) then
 				create m.make_med_not_reg
-			elseif not model.prescriptions.medicine_prescribed (id, medicine) then
+			elseif not model.medicine_prescribed (id, medicine) then
 				create m.make_med_not_in_presc
 			else
 				create m.make_ok

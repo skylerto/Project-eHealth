@@ -113,6 +113,19 @@ feature -- public queries
 			end
 		end
 
+	dangerous_addition_allowed(prescription_id, medicine_id : INTEGER): BOOLEAN
+		require
+			not_negative: prescription_id > 0 and medicine_id > 0
+			registered: prescription_id_used(prescription_id) and access.m.medication_exists(medicine_id)
+		do
+			Result := false
+			if attached prescription_list.item (prescription_id) as prescription_tuple then
+				if (access.m.physician_is_specialist(prescription_tuple.doctor)) or not (access.m.possible_dangerous_interactions(prescription_tuple.patient, medicine_id)) then
+					Result := true
+				end
+			end
+		end
+
 	patient_dangerous_prescription(patient_id: INTEGER): BOOLEAN
 		require
 			not_negative: patient_id > 0
