@@ -15,11 +15,11 @@ cp -r docs/ ehealth/docs
 ## PVS
 echo "Copying PVS files to ehealth"
 mkdir ehealth/pvs
-cp PVS/ehealth.pvs ehealth/pvs/ehealth.pvs
-cp PVS/ehealth.prf ehealth/pvs/ehealth.prf
-cp PVS/Time.pvs ehealth/pvs/Time.pvs
-cp PVS/Time.prf ehealth/pvs/Time.prf
-cp PVS/top.pvs ehealth/pvs/top.pvs
+cp pvs/ehealth.pvs ehealth/pvs/ehealth.pvs
+cp pvs/ehealth.prf ehealth/pvs/ehealth.prf
+cp pvs/Time.pvs ehealth/pvs/Time.pvs
+cp pvs/Time.prf ehealth/pvs/Time.prf
+cp pvs/top.pvs ehealth/pvs/top.pvs
 
 
 ## Source
