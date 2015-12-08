@@ -1,6 +1,0 @@
-
-Libraries>Mathmodels> ...
-doctors: SET[ID]
-FUN[D, R]
-REL[D, R]
-BAG[D, R]
