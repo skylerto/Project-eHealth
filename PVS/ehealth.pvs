@@ -40,10 +40,8 @@ BEGIN
   NAME: TYPE+
   KIND: TYPE+ = {pill, liquid}
 
-%MEDICATION = TUPLE [name: NAME; kind: KIND; low: VALUE; hi: VALUE]
   MEDICINE: TYPE = [name:NAME, kind:KIND, low:nnreal, hi:nnreal]
-%  medication: VAR MEDICINE
-%  Monitored events
+
   COMMAND : DATATYPE
     BEGIN
       m_np(id:ID_RX, md: ID_MD, pt: ID_PT): np?
@@ -76,8 +74,6 @@ BEGIN
       ,	ptid: set[ID_PT]  % patient ids
       , mdid: set[ID_MD]  % doctor ids
       ,	rxid: set[ID_RX]  % prescription ids
-     % , mn:   set[MEDICINE] % set of medicines
-     % , mdns:  [(mnid) -> (mn)] % (medication ids, medications)
       , mdpt: set[[(mdid),(ptid)]] % (doctor, patient) care relation
       , rx:   [(rxid) -> (mdpt)]   % care to rx ids,  needs to be a bijection
       , prs: [(rxid) -> [(mnid) -> DOSE]] % prescriptions
@@ -129,9 +125,6 @@ BEGIN
   init_ptid: set[ID_PT]
   init_rxid: set[ID_RX]
   init_dpr: [(init_rxid) -> set[[(init_mnid), (init_mnid)]]]
-  %init_mn: set[MEDICINE]
-  %init_mdns: [(init_mnid) -> (init_mn)]
-  %init_mdpt: set[[(init_mdid),(init_ptid)]]
   init_prs: [(init_rxid) -> [(init_mnid) -> DOSE]] 
  
   init_state : STATE =
@@ -139,9 +132,7 @@ BEGIN
         , ptid := init_ptid
         , mdid := init_mdid
         , rxid := init_rxid
-       % , mn := emptyset
-	%, mdns := emptyfun
-	, mdpt := emptyset
+       	, mdpt := emptyset
         , rx := emptyfun
         , prs := init_prs
         , di := emptyset
@@ -171,7 +162,8 @@ BEGIN
 	       s(i) = s(i-1) WITH  [ rxid := add(id,rxid_)
 		            , rx  := rx_ WITH [id := (md,pt)]
 			    , prs := prs_ WITH [id := empty_prs(mnid_) ]
-			    , dpr := dpr_ WITH [id := emptyset ] ] ,
+			    , dpr := dpr_ WITH [id := emptyset ] 
+			    ] ,
         NOT (id > 0
         AND NOT rxid_ (id)
         AND md > 0
@@ -189,8 +181,8 @@ BEGIN
       ,rx_   = s(i-1)`rx
       ,dpr_  = s(i-1)`dpr
       ,mnid_ = s(i-1)`mnid
-      ,prs_  = s(i-1)`prs
-
+      ,prs_ = s(i-1)`prs
+      
  % add_medicine (id: ID_RX; medicine:ID_MN; dose: VALUE)
  %     prescription id must be a positive integer
  %     prescription with this id does not exist
@@ -215,9 +207,6 @@ BEGIN
     ENDCOND
     where
        rxid_ = s(i-1)`rxid
-      ,rx_   = s(i-1)`rx
-      ,gs_   = s(i-1)`gs
-      ,dpr_  = s(i-1)`dpr
       ,mnid_ = s(i-1)`mnid
       ,prs_  = s(i-1)`prs
       ,mdOf_ = mdOf(s(i-1))
@@ -238,32 +227,31 @@ BEGIN
       %    interaction already exists
       %    first remove conflicting medicine prescribed by generalist
       ai_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = COND
-          id1 > 0
-          AND id2 > 0
+          id1 > 0 AND id2 > 0
           AND NOT (id1 = id2)
-	  AND mnid_ (id1)
-	  AND mnid_ (id2)
-    	  %AND (EXISTS (a: ID_MN): (prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0))
-        AND NOT member((id1,id2), di_ )
-        AND NOT (EXISTS (a: ID_RX, b: ID_MD, c: ID_PT): ((prs_ (a)(id1)`1 > 0) AND (prs_ (a)(id2)`1 > 0) AND (rx_ (a) = (b,c) AND gs_ (b) = gn )))
-   	 % AND like rm_med > 0 and the doctor associated with this interaction is
-          AND NOT di_ (id1, id2)
+	  AND member(id1, mnid_ )
+	  AND member(id2, mnid_ )
+          AND NOT member((id1,id2), di_ )
+          AND NOT (EXISTS (a: ID_RX, b: ID_MD, c: ID_PT): ((prs_ (a)(id1)`1 > 0 AND (rx_ (a) = (b,c) AND gs_ (b) = sp )) OR (prs_ (a)(id2)`1 > 0 AND (rx_ (a) = (b,c) AND gs_ (b) = sp))))
+   	 AND NOT (member((id1, id2), di_ )                                             
+            OR member((id2, id1), di_ ))
 	  -> s(i) = s(i-1) WITH [
-              di := add((id1, id2), di_ ),
-              di := add((id2, id1), di_ )
+              di := add((id1, id2), di_ )
+              ,di := add((id2, id1), di_ )
+	     % ,dpr := dpr_ WITH []
           ],
           NOT (
             id1 > 0
-            AND id2 > 0
+	    AND id2 > 0
             AND NOT (id1 = id2)
-            AND mnid_ (id1)
-            AND mnid_ (id2)
-            AND (EXISTS (a: ID_MN): prs_ (a)(id1)`1 > 0 OR prs_ (a)(id2)`1 > 0)
-            AND NOT di_ (id1, id2)
+            AND member(id1, mnid_ )
+            AND member(id2, mnid_ )
+	    AND NOT (EXISTS (a: ID_RX, b: ID_MD, c: ID_PT): ((prs_ (a)(id1)`1 > 0 AND (rx_ (a) = (b,c) AND gs_ (b) = sp )) OR (prs_ (a)(id2)`1 > 0 AND (rx_ (a) = (b,c) AND gs_ (b) = sp))))
+            AND NOT (member((id1, id2), di_ )
+            OR member((id2, id1), di_ ))
           ) -> s(i) = s(i-1)
       ENDCOND
       where
-        % mdns_ = s(i-1)`mdns
         di_   = s(i-1)`di
         ,dpr_  = s(i-1)`dpr
         ,mnid_ = s(i-1)`mnid
@@ -289,7 +277,7 @@ BEGIN
 	  ],
           NOT (
             id > 0
-            AND rxid_ (id)
+	    AND rxid_ (id)
             AND med > 0
             AND mnid_ (med)
             AND prs_ (id)(med)`1 > 0
