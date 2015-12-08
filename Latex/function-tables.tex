@@ -97,7 +97,8 @@ r(i)           & ok        & error \\ \hline
 
 \subsection{Function Table for new\_prescription(id, md, pt)}
 
-error: $\neg (id > 0 \wedge \neg rxid_{1}(id) \wedge md > 0  \wedge mdid_{1}(md) \wedge pt > 0 \wedge ptid_{1}(pt) \wedge mdpt_{1}(md, pt))$
+error: $\neg (id > 0 \wedge \neg rxid_{-1}(id) \wedge md > 0  \wedge mdid_{-1}(md) \wedge pt > 0 \wedge ptid_{-1}(pt) \wedge mdpt_{-1}(md, pt))$
+
 
 \begin{figure}[h]
 \begin{center}
@@ -129,7 +130,7 @@ r(i)           & ok        & error \\ \hline
 
 \subsection{Function Table for add\_medicine(id, m, d)}
 
-error: $\neg (id > 0 \wedge \neg rxid_{1}(id) \wedge m > 0  \wedge mnid_{1}(m) \wedge pt > 0 has(m, prs_{1}(id))\wedge sumthin \wedge isValidDose(m,d))$
+error: $\neg (id > 0 \wedge rxid_{-1}(id) \wedge m > 0  \wedge mnid_{1}(m) \wedge \neg  (prs_{-1}(id)(m)`1 > 0) \wedge (\exists (b: ID_MD, c: ID_PT): ((prs_{-1}(id)(m)`1 > 0 \wedge (rx_{-1}(id) = (b,c) \wedge gs_{-1}(b) = sp )))) \wedge isValidDose(m,d))$
 
 \begin{figure}[h]
 \begin{center}
@@ -159,7 +160,7 @@ r(i)           & ok        & error \\ \hline
 
 \subsection{Function Table for remove\_medicine(id, med)}
 
-error: $\neg (id > 0 \wedge \neg rxid_{1}(id) \wedge med > 0  \wedge mnid_{1}(med) \wedge prs_{1}(id)(med)`1 > 0)$
+error: $\neg (id > 0 \wedge rxid_{-1}(id) \wedge med > 0  \wedge mnid_{-1}(med) \wedge prs_{-1}(id)(med)`1 > 0)$
 
 \begin{figure}[h]
 \begin{center}
@@ -174,7 +175,7 @@ mn(i)          &     NC      & NC    \\ \hline
 mns(i)         &    NC       & NC    \\ \hline
 mdpt(i)        &    NC       & NC    \\ \hline
 rx(i)          &       NC    & NC    \\ \hline
-prs(i)         &      $prs_{-1} \upharpoonleft (id \mapsto \varepsilon)$     & NC    \\ \hline
+prs(i)         &      $prs_{-1} \upharpoonleft (id \mapsto empty\_prs(mnid_{1}))$     & NC    \\ \hline
 di(i)          &       NC   & NC    \\ \hline
 gs(i)          &      NC     & NC    \\ \hline
 dpr(i)         &      NC     & NC    \\ \hline
@@ -189,7 +190,8 @@ r(i)           & ok        & error \\ \hline
 
 \subsection{Function Table for add\_interaction(id1, id2)}
 
-error: $\neg (id1 > 0 \wedge id2 > 0 \wedge \neg id1 = id2 \wedge mnid_{1}(id1)  \wedge mnid_{1}(id2) \wedge (\exists a: (prs_{1}(a)(id1)`1 > 0 \wedge sumin ) \vee (prs_{1}(id)(med)`1 > 0 \wedge sumin)))$
+error: $\neg (id1 > 0 \wedge id2 > 0 \wedge \neg id1 = id2 \wedge member(id1, mnid_{-1}) \wedge member(id2, mnid_{-1}) \wedge \neg member((id1,id2), di_{-1}) \wedge (a: ID_RX, b: ID_MD, c: ID_PT): member(a, rxid_{-1}) \wedge member(b, mdid_{-1}) \wedge member(c, ptid_{-1}) \wedge ((prs_{-1}(a)(id1)`1 > 0 \wedge (rx_{-1}(a) = (b,c) \wedge gs_{-1}(b) = sp ))
+	      \vee (prs_{-1}(a)(id2)`1 > 0 \wedge (rx_{-1}(a) = (b,c) \wedge gs_{-1}(b) = sp))))) \wedge \neg (member((id1, id2), di_{-1}) \vee (member((id1, id2), di_{-1})$
 
 \begin{figure}[!htp]
 \begin{center}

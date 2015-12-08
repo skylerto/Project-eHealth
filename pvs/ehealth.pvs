@@ -185,7 +185,6 @@ BEGIN
 	AND NOT (EXISTS (b: ID_MD, c: ID_PT): ((prs_ (id)(m)`1 > 0 AND (rx_ (id) = (b,c) AND gs_ (b) = sp ))))
 	AND isValidDose_ (m,d)
             -> s(i) = s(i-1) WITH [ prs := prs_ WITH [id := prs_(id) WITH [m := d] ] ]
-	       	      % s_ WITH [ prs := s_`prs | id -> (s_`prs.id | m -> d) ]
      , NOT(id > 0
    	AND rxid_ (id)
    	AND m > 0
