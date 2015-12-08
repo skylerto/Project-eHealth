@@ -68,6 +68,22 @@ feature -- public queries
 			end
 		end
 
+	potential_interactions(medication_id1, medication_id2: INTEGER): BOOLEAN
+		require
+			not_negative: medication_id1 > 0 and medication_id2 > 0
+			registered: access.m.medication_exists(medication_id1) and access.m.medication_exists(medication_id2)
+		do
+			Result := false
+			across ordered_patients as patient loop
+				if access.m.patient_prescribed_medicine(patient.item, medication_id1)
+						and access.m.patient_prescribed_medicine(patient.item, medication_id2) then
+					if not(access.m.prescribed_by_specialist(patient.item, medication_id1) or access.m.prescribed_by_specialist(patient.item, medication_id2)) then
+						Result := true
+					end
+				end
+			end
+		end
+
 	dangerous_prescriptions: STRING
 		local
 			prescriptions : STRING

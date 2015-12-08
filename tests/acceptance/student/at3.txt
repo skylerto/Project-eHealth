@@ -70,7 +70,7 @@ add_medicine       (2, -1, 5.5)
 add_medicine       (2, 100, 5.5)
 add_medicine       (2, 1, 5.5)
 add_medicine       (2, 1, 5.5)
-add_medicine       (2, 100, 5500)
+add_medicine       (2, 100, 55.00)
 
 prescriptions_q(-1000)
 prescriptions_q(1000)

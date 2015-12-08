@@ -113,6 +113,23 @@ feature -- public queries
 			end
 		end
 
+	prescribed_by_specialist(patient_id, medicine_id : INTEGER): BOOLEAN
+		require
+			not_negative: patient_id > 0 and medicine_id > 0
+			registered: access.m.patient_exists(patient_id) and access.m.medication_exists(medicine_id)
+		do
+			Result := false
+			across ordered_prescriptions as prescription loop
+				if attached prescription_list.item (prescription.item) as prescription_tuple then
+					if prescription_tuple.patient = patient_id
+							and prescription_tuple.prescribed.medicine_prescribed(medicine_id)
+							and access.m.physician_is_specialist(prescription_tuple.doctor) then
+						Result := true
+					end
+				end
+			end
+		end
+
 	dangerous_addition_allowed(prescription_id, medicine_id : INTEGER): BOOLEAN
 		require
 			not_negative: prescription_id > 0 and medicine_id > 0

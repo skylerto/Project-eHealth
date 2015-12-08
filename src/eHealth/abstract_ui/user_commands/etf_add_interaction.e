@@ -26,9 +26,8 @@ feature -- command
 				create m.make_meds_not_reg
 			elseif model.interaction_exists(id1,id2) then
 				create m.make_interaction_exists
-			elseif false then
-			--ERROR:     first remove conflicting medicine prescribed by generalist
-				create m.make_ok
+			elseif model.potential_interactions(id1,id2) then
+				create m.make_conflicting_medicine
 			else
 				create m.make_ok
 				model.add_interaction(id1,id2)

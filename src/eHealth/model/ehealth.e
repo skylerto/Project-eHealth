@@ -150,11 +150,15 @@ feature -- queries
 		state.report_type := 1
 	end
 
-	prescriptions_q(medication_id: INTEGER)
+	prescriptions_q(medication_id: INTEGER ; error: BOOLEAN)
 	do
 		state.command := 1
 		state.report_type := 2
-		state.medication := medication_id
+		if error then
+			state.medication := -1
+		else
+			state.medication := medication_id
+		end
 	end
 
 feature -- queries [GENERAL]
@@ -176,10 +180,14 @@ feature -- queries [GENERAL]
 						+ dangerous_prescriptions
 
 				elseif state.report_type = 2 then
-					Result := "  " + i.out + ": " + message.out
-						+ "%N  Output: medication is "
-						+ medications.medication_info(state.medication)
-						+ patients.patients_prescribed_medicine(state.medication)
+					if state.medication < 1 then
+						Result := "  " + i.out + ": " + message.out
+					else
+						Result := "  " + i.out + ": " + message.out
+							+ "%N  Output: medication is "
+							+ medications.medication_info(state.medication)
+							+ patients.patients_prescribed_medicine(state.medication)
+					end
 				end
 			end
 			state := [0,0,0]
@@ -215,6 +223,19 @@ feature	-- Patients Queries
 			registered: medication_exists(medication_id)
 		do
 			Result := patients.patients_prescribed_medicine(medication_id)
+		end
+
+	potential_interactions(medication_id1, medication_id2: INTEGER): BOOLEAN
+		require
+			not_negative: medication_id1 > 0 and medication_id2 > 0
+			registered: medication_exists(medication_id1) and medication_exists(medication_id2)
+		do
+			Result := patients.potential_interactions(medication_id1, medication_id2)
+		end
+
+	dangerous_prescriptions: STRING
+		do
+			Result := patients.dangerous_prescriptions
 		end
 
 	format_patient(patient_id: INTEGER):STRING
@@ -329,6 +350,14 @@ feature -- Prescription Queries
 			Result := prescriptions.patient_prescribed_medicine(patient_id, medicine_id)
 		end
 
+	prescribed_by_specialist(patient_id, medicine_id : INTEGER): BOOLEAN
+		require
+			not_negative: patient_id > 0 and medicine_id > 0
+			registered: patient_exists(patient_id) and medication_exists(medicine_id)
+		do
+			Result := prescriptions.prescribed_by_specialist(patient_id, medicine_id)
+		end
+
 	dangerous_addition_allowed(prescription_id, medicine_id : INTEGER): BOOLEAN
 		require
 			not_negative: prescription_id > 0 and medicine_id > 0
@@ -343,11 +372,6 @@ feature -- Prescription Queries
 			registered: patient_exists(patient_id)
 		do
 			Result := prescriptions.patient_dangerous_prescription(patient_id)
-		end
-
-	dangerous_prescriptions: STRING
-		do
-			Result := patients.dangerous_prescriptions
 		end
 
 feature -- queries [TYPE]
