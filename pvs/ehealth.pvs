@@ -124,17 +124,18 @@ BEGIN
   init_mnid: set[ID_MN]
   init_ptid: set[ID_PT]
   init_rxid: set[ID_RX]
+  init_mdpt: set[[(init_mdid),(init_ptid)]]
   init_dpr: [(init_rxid) -> set[[(init_mnid), (init_mnid)]]]
   init_prs: [(init_rxid) -> [(init_mnid) -> DOSE]] 
-  %init_rx: [(init_rxid) -> ([emptyset])]  
+  init_rx: [(init_rxid)->(init_mdpt)]  
 
   init_state : STATE =
        (# mnid := init_mnid
         , ptid := init_ptid
         , mdid := init_mdid
         , rxid := init_rxid
-       	, mdpt := emptyset
-        , rx := emptyfun%init_rx
+       	, mdpt := init_mdpt %Emptyset
+        , rx := init_rx
         , prs := init_prs
         , di := emptyset
         , gs := init_gs
