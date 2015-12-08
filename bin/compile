@@ -1,3 +1,0 @@
-#! /bin/bash
-
-ec15.01 -c_compile -config eHealth.ecf

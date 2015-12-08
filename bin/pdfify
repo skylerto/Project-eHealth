@@ -1,5 +1,0 @@
-#! /bin/bash
-
-ARG=$1
-
-pandoc $1 --latex-engine=xelatex -o $ARG.pdf
