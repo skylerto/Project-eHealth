@@ -3,16 +3,14 @@
 The high-level goals (G) of the system are:
 
 \begin{mylist}
-\item G1--- The user should be able to add doctors (generalists, and specialists)
-
-\item G2--- The user should be able to add patients
-
-\item G3--- The user should be able to add medications
-
-\item G4--- The user should be able to add perscriptions
-
-\item G5--- The user should be able to add interactions between medications
-
-\item G6--- The user should only be able to add a prescription with a dangerous interaction if the doctor is a specialist
+\item G1 --- The user should be able to add physicians of type \{generalist, specialist\} with unique IDs
+\item G2 --- The user should be able to add patients with unique IDs
+\item G3 --- The user should be able to add medications with unique names and IDs and a safe dosage range
+\item G4 --- The user should be able to add prescriptions with a unique ID between a doctor and patient
+\item G5 --- The user should be able to add interactions between medications
+\item G6 --- Physicians should be able to prescribe medications with specific dosages, so long as the dosage is within the safe range
+\item G7 --- A Physician must be a specialist to prescribe a medication to a patient when it would create a dangerous interaction with a different already prescribed medication - regardless of the prescription or physician the other medication exists in
+\item G8 --- The system should be able to display a report of all patients prescribed a particular medication
+\item G9 --- The system should be able to display a dangerous prescriptions report that lists all patients with dangerous prescriptions along with the particular medications prescribed to them that interact dangeriously
 
 \end{mylist}

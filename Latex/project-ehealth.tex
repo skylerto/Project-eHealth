@@ -36,20 +36,12 @@
 \noindent \textbf{Prism account used for submission}: cse23188
 
 \bigskip\noindent
-Keep track of your revisions in the table below.
 
 \section*{Revisions}
 %%%%%%%%%%%%Table of revisions%%%%%%%%
-\begin{tabular}{|l|l|p{3in}|}
-\hline
-Date & Revision& Description \\ 
-\hline
-
-\hl{date please}
-
-& 1.0       
-& Initial requirements document\\ 
-\hline
+\begin{tabular}{|l|l|p{3in}|} \hline
+Date & Revision& Description \\ \hline
+December 8, 2015 & 1.0 & Initial requirements document\\ \hline
 \end{tabular}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -63,6 +55,7 @@ Date & Revision& Description \\
 \newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \tableofcontents
 \listoffigures
 \listoftables
@@ -72,40 +65,25 @@ Date & Revision& Description \\
 
 \section{System Overview}
 
-The System Under Development (SUD) is a computer system to create and manage health prescription records for Ontario.
-
-This requirements document is specifically for prescription management. The purpose of the eHealth Patient care System is to maintain physicians, medications, patients, and patient prescriptions. The system will also control the undesirable interactions between medications, that is when two medications conflict in some way with one another. Only specialist physicians should be allowed to prescribe undesirable interactions while general physicians should be allowed to prescribe medications, as long as they do not create undesirable interactions. 
-
-%\begin{figure}[!htb]
-%\begin{center}
-%\includegraphics[width=.4\textwidth]{pics/isolette.png}
-%\end{center}
-%\caption{Isolette}
-%\label{fig:isolette}
-%\end{figure}
-
+The System Under Development (SUD) is a eHealth prescriptions management prototype that will eventually be part of a much larger system that manages health prescription records for Ontario. This requirements document is specifically for this prototype that will keep track of prescriptions for patients so that dangerous interactions between medications can be controlled and checked.\newline\newline
+To do this, the system will keep will maintain a database of physicians, medications, patients, and patient prescriptions, each with a unique identifier (ID). The system will also maintain records of dangerous interactions between medications. Interactions are defined as undesirable outcomes when certain pairs of medications are taken together. For this system, we are to track these interactions as well as prescriptions that contain medications that interact dangerously.\newline\newline
+Physicians are classified either as generalists, or specialists in the database. Generalists are allowed to prescribe medications so long as they do not cause dangerous interactions. Specialists are given discretion in this case - they are allowed to prescribe medications that would cause dangerous reactions, though this is flagged by the system and displayed in a report.
 \newpage
 
-
 \input{context-diagram}
-
 \newpage
 
 \input{goals}
-
 \newpage
 
 \input{monitored-variables}
-
 \newpage
 
 \input{controlled-variables}
-
 \newpage
 %\input{mode-diagram}
 
 \input{er-descriptions}
-
 %\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{abstract-state}

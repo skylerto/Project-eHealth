@@ -6,16 +6,27 @@ The monitored events are those which come through the user interface. The follow
 \centering
 \begin{tabular}{|l|l|}
 \hline
-Name                                                                                                      & Interpretation                                                                           \\ \hline
-\begin{tabular}[c]{@{}l@{}}add\_physician(id: ID\_MD; \\ name: NAME; kind: PHYSICIAN\_TYPE)\end{tabular}  & Add a Physician to the system                                                            \\ \hline
-add\_patient(id: ID\_PT; name: NAME)                                                                      & Add Patient to the system                                                                \\ \hline
-\begin{tabular}[c]{@{}l@{}}add\_medication(id: ID\_MN; \\ medicine: MEDICATION)\end{tabular}              & Add a medication to the system,                                                          \\ \hline
-add\_interaction(id1:ID\_MN;id2:ID\_MN)                                                                   & \begin{tabular}[c]{@{}l@{}}Add an interaction between\\ two medications\end{tabular}     \\ \hline
-\begin{tabular}[c]{@{}l@{}}new\_prescription(id: ID\_RX; \\ doctor: ID\_MD; patient: ID\_PT)\end{tabular} & \begin{tabular}[c]{@{}l@{}}Add a new prescription to \\ the system\end{tabular}          \\ \hline
-\begin{tabular}[c]{@{}l@{}}add\_medicine(id: ID\_RX; \\ medicine:ID\_MN; dose: VALUE)\end{tabular}        & Add a medicine to a prescription                                                         \\ \hline
-\begin{tabular}[c]{@{}l@{}}remove\_medicine(id: ID\_RX; \\ medicine:ID\_MN)\end{tabular}                  & \begin{tabular}[c]{@{}l@{}}Remove a medication from\\ a prescription\end{tabular}        \\ \hline
-prescriptions\_q(medication\_id: ID\_MN)                                                                  & \begin{tabular}[c]{@{}l@{}}Get all the prescriptions with\\ that medication\end{tabular} \\ \hline
-dpr\_q                                                                                                    & \begin{tabular}[c]{@{}l@{}}Get all the dangerous interactions\\ prescribed\end{tabular}  \\ \hline
+Name & Interpretation \\ \hline
+
+\begin{tabular}[c]{@{}l@{}}add\_physician(id: ID\_MD; \\ name: NAME; kind: PHYSICIAN\_TYPE)\end{tabular}  & Add a Physician to the system \\ \hline
+
+add\_patient(id: ID\_PT; name: NAME) & Add Patient to the system \\ \hline
+
+\begin{tabular}[c]{@{}l@{}}add\_medication(id: ID\_MN; \\ medicine: MEDICATION)\end{tabular} & Add a medication to the system \\ \hline
+
+add\_interaction(id1:ID\_MN;id2:ID\_MN) & \begin{tabular}[c]{@{}l@{}}Add an interaction between\\ two medications\end{tabular} \\ \hline
+
+\begin{tabular}[c]{@{}l@{}}new\_prescription(id: ID\_RX; \\ doctor: ID\_MD; patient: ID\_PT)\end{tabular} & \begin{tabular}[c]{@{}l@{}}Add a new prescription to \\ the system\end{tabular} \\ \hline
+
+\begin{tabular}[c]{@{}l@{}}add\_medicine(id: ID\_RX; \\ medicine:ID\_MN; dose: VALUE)\end{tabular} & Add a medicine to a prescription \\ \hline
+
+\begin{tabular}[c]{@{}l@{}}remove\_medicine(id: ID\_RX; \\ medicine:ID\_MN)\end{tabular} & \begin{tabular}[c]{@{}l@{}}Remove a medication from\\ 
+a prescription\end{tabular} \\ \hline
+
+prescriptions\_q(medication\_id: ID\_MN) & \begin{tabular}[c]{@{}l@{}}List all patients prescribed\\ the medication\end{tabular} \\ \hline
+
+dpr\_q & \begin{tabular}[c]{@{}l@{}}Print out a dangerous prescription report\end{tabular}  \\ \hline
+
 \end{tabular}
 \caption{Monitored Events}
 \label{table:monitored}
@@ -25,11 +36,11 @@ dpr\_q                                                                          
 \centering
 \begin{tabular}{|l|l|l|}
 \hline
-Name            & Type                                                                                           & Interpretation                                                                                   \\ \hline
-PHYSICIAN\_TYPE & \{gn, sp\}                                                                                     & \begin{tabular}[c]{@{}l@{}}Constrained to either \\ generalist or specialist\end{tabular}        \\ \hline
-MEDICATION      & \begin{tabular}[c]{@{}l@{}}{[}name: NAME; kind: KIND; \\ low: VALUE; hi: VALUE{]}\end{tabular} & Constrained by GUI                                                                               \\ \hline
-KIND            & \{pill, liquid\}                                                                               & \begin{tabular}[c]{@{}l@{}}Constrained to either \\ pill or a liquid\end{tabular}                \\ \hline
-DOSE            & \{mg, cc\}                                                                                     & \begin{tabular}[c]{@{}l@{}}Constrained to either milligrams \\ or cubic centimetres\end{tabular} \\ \hline
+Name & Type & Interpretation \\ \hline
+PHYSICIAN\_TYPE & \{gn, sp\} & \begin{tabular}[c]{@{}l@{}}Generalist or Specialist\end{tabular} \\ \hline
+MEDICATION & \begin{tabular}[c]{@{}l@{}}{[}name: NAME; kind: KIND; \\ low: VALUE; hi: VALUE{]}\end{tabular} & Name is unique. See following rows\\ \hline
+KIND & \{pill, liquid\} & \begin{tabular}[c]{@{}l@{}}Pill or a liquid\end{tabular}                \\ \hline
+DOSE & \{mg, cc\} & \begin{tabular}[c]{@{}l@{}}Milligrams \\ or Cubic Centimetres\end{tabular} \\ \hline
 \end{tabular}
 \caption{Monitored Types}
 \label{table:monitored-types}
