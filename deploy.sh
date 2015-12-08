@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# update
+git pull
+
 # Create dir
 echo "Creating ehealth"
 rm -rf ehealth/
