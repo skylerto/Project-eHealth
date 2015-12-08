@@ -297,7 +297,7 @@ BEGIN
 	  AND mnid_ (med)
 	  AND prs_ (id)(med)`1 > 0
 	  -> s(i) = s(i-1) WITH [
-	    prs := prs_ WITH [id := emptyfun]
+	    prs := prs_ WITH [id := empty_prs(mnid_ ) ]
 	  ],
           NOT (
             id > 0
