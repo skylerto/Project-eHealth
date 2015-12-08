@@ -2,38 +2,82 @@
 
 \subsection{Requirements Descriptions}
 \reqm{REQ}
-{The system will keep track of Physicians, Patients, Medications, Interactions, and Prescriptions\\}
+{The system will keep track of Physicians, Patients, Medications, and Prescriptions with unique IDs.\\~}
 { See Table~\ref{tbl:cv} for list of abstract states.\\}
 \label{R1}
+\textbf{Rationale:} Physicians and Patients may have non-unique names, and to avoid confusion when creating prescriptions, they must be identified by unique IDs. 
 
 \reqm{REQ}
-{A generalist cannot add a medicine to a prescription if that medicine leads to a dangerous interaction. \\}
-{ See Table~\ref{table:monitored} for adding medicine, and Table~\ref{tbl:cv} for dangerous interactions.\\}
+{The system will make a distinction between Physicians that are Generalists and Specialists.\\~}
+{ See Table~\ref{table:monitored-types} for Monitored Types.\\}
 \label{R2}
+\textbf{Rationale:} The system will not allow \textit{Generalists} to add Medications to prescriptions where they may cause dangerous interactions. The assumption is made that \textit{Specialists} have received more training and it is left up to their discretion to allow Medications with dangerous Interactions to be prescribed.
 
 \reqm{REQ}
-{An interaction cannot be added if a specialist has not prescribed at least one of the medications.\\}
-{ See Table~\ref{table:monitored} for adding interaction, and Table~\ref{tbl:cv}.\\}
+{The system will only accept unique Medication names to prevent confusion.\\~}
+{ Non-unique Medication names increase the chance of human error. \\}
 \label{R3}
+\textbf{Rationale:} Though Medications are also identified by a unique ID, it is critical that these are not mixed up, and as such it is required that the names are not identical as they may be for Patients or Physicians.
+
+\reqm{REQ}
+{The system will keep track of dangerous Interactions between Medications, as well as the order in which they were added.\\~}
+{ Tracking dangerous Interactions allow for the system to properly flag them. \\}
+\label{R4}
+\textbf{Rationale:} The system must keep track of dangerous Interactions to enforce rules such as Generalists not being allowed to add Medications that case dangerous interactions. The client specified that they require the interactions within a prescription to be output in the order that the interactions were added to the system.
+
+\reqm{REQ}
+{The system will allow Physicians to prescribe Medications to Patients.\\~}
+{ Basic functionality of a system tracking Prescriptions. \\}
+\label{R5}
+\textbf{Rationale:} The system is designed to keep track of Prescriptions between a Physician and a Patient.
+
+\reqm{REQ}
+{The system will allow Patients to have multiple Prescriptions, each with a unique Physician.\\~}
+{ See Table~\ref{tbl:cv} for list of abstract states.\\}
+\label{R6}
+\textbf{Rationale:} The client has specified that Patients are not limited to one Physician, so they may have multiple Prescriptions. They will, however, have only one prescription per Physician.
+
+\reqm{REQ}
+{The system \textit{will not} allow a Generalist to add a Medication to a Prescription if the Medication leads to a dangerous Interaction. The system \textit{will} allow a Specialist to add a Medication to a Prescription if the Medication leads to a dangerous Interaction\\}
+{ See Table~\ref{table:monitored} for adding medicine, and Table~\ref{tbl:cv} for dangerous interactions.\\~}
+\label{R7}
+\textbf{Rationale:} The system will prevent Generalists from adding Medications to Prescriptions where they may cause harm to the Patient. Specialists are  have more training, and therefore are determined to know what they are doing when prescribing such Medications.
+
+\reqm{REQ}
+{An interaction between two Medications cannot be added if both medications are prescribed to a patient
+by generalists.\\}
+{ See Table~\ref{table:monitored} for adding interaction, and Table~\ref{tbl:cv}.\\}
+\label{R8}
+\textbf{Rationale:} This critical safety requirement prevents a Generalist from being able to add dangerously interacting Medications to Prescriptions before the Interaction is added to the system. This requirement will prompt the user of the system to first remove one of the interacting Medications from the Prescription.
+
+\reqm{REQ}
+{A Medication may only be prescribed to a Patient once. \\}
+{ A Medication may only be prescribed within the safe dosage range \\~}
+\label{R9}
+\textbf{Rationale:} This prevents different Physicians prescribing the same Medications and exceeding the safe dosage.
 
 \subsection{Environmental Descriptions}
 \reqm{ENV}
-{All input to the system will be constrained to the GUI grammer.\\}
-{ See Table~\ref{table:monitored} for the list possible monitored events.\\}
+{All input to the system will be constrained to the input grammar.\\}
+{ See Table~\ref{table:monitored} for the list possible monitored events.\\~}
 \label{E1}
 
 \reqm{ENV}
-{A constraint by the grammar will ensure PHYSICIAN\_TYPE is either a generalist or a specialist.\\}
-{ See Table~\ref{table:monitored-types} for PHYSICIAN\_TYPE.\\~}
+{Physicians and Patients may have identical names.\\}
+{ We cannot control the names of people. They may have the same name. \\~}
 \label{E2}
-\noindent \textbf{Rationale}: The operator interface for the nurse is designed in such a way that the increments of the input temperatures from the control interface must change by whole numbers.
+
+\reqm{ENV}
+{Physicians are either \textit{Generalists} or \textit{Specialists}.\\}
+{ See Table~\ref{table:monitored-types} for PHYSICIAN\_TYPE.\\~}
+\label{E3}
 
 \reqm{ENV}
 {The DOSE type will be constrained by the GUI grammar to be either mg, or cc.\\}
 { See Table~\ref{table:monitored-types} for DOSE.\\~}
-\label{E3}
+\label{E4}
 
 \reqm{ENV}
 {The KIND type will be constrained by the GUI grammar to be either a pill or a liquid.\\}
 { See Table~\ref{table:monitored-types} for KIND.\\~}
-\label{E4}
+\label{E5}

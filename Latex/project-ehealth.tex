@@ -80,17 +80,17 @@ Physicians are classified either as generalists, or specialists in the database.
 \newpage
 
 \input{controlled-variables}
+
+\input{abstract-state}
 \newpage
 %\input{mode-diagram}
 
 \input{er-descriptions}
 %\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{abstract-state}
-
 
 \input{function-tables}
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Validation}
 \begin{figure}[!htb]
@@ -216,11 +216,7 @@ add_medication     (6, ["23afarin", pill, 1.0, 6.0])
 add_medication     (7, ["Wafarin", pill, 1.0, 6.0])
 add_medication     (8, ["Wafarin", pill, 6.0, 1.0])
 \end{pvs}
-%\caption{Second Acceptance Test}
-%\label{at3}
-%\end{figure}
 
-%\begin{figure}[h]
 \begin{pvs}
 dpr_q
 -- add_interaction
@@ -253,21 +249,10 @@ add_medicine       (2, 100, 55.00)
 prescriptions_q(-1000)
 prescriptions_q(1000)
 \end{pvs}
-%\caption{Second Acceptance Test}
-%\label{at3}
-%\end{figure}
-%%%%%
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\newpage
-%\bibliographystyle{plain}
-%\bibliography{ref}
 
 \appendix 
-
-%\input{additional-requirements}
 
 \input{ehealth-pvs}
 

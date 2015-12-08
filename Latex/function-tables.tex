@@ -1,9 +1,5 @@
-
-
 \section{Function Tables}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\subsection{Table of Error codes and Warnings}
 
 \begin{figure}[]
 \begin{center}
@@ -44,7 +40,6 @@ err27 & medication is not in the prescription                      \\ \hline
 \end{figure}
 
 \newpage
-
 
 \subsection{Function Table for eHealth}
 \begin{figure}[h]
@@ -88,7 +83,7 @@ dpr(i)         &       $\emptyset \mapsto \varepsilon $    & NC    \\ \hline
 r(i)           & ok        & error \\ \hline
 \end{tabular}
 
-\caption{Function Table for init}
+\caption{Table ~\ref{ft-init}. Function Table for init}
 \label{ft-init}
 \end{center}
 \end{figure}
@@ -97,7 +92,7 @@ r(i)           & ok        & error \\ \hline
 
 \subsection{Function Table for new\_prescription(id, md, pt)}
 
-error: $\neg (id > 0 \wedge \neg rxid_{-1}(id) \wedge md > 0  \wedge mdid_{-1}(md) \wedge pt > 0 \wedge ptid_{-1}(pt) \wedge mdpt_{-1}(md, pt))$
+error: $\neg(\newline id > 0 \newline\wedge \neg rxid_{-1}(id) \newline\wedge md > 0  \newline\wedge mdid_{-1}(md) \newline\wedge pt > 0 \newline\wedge ptid_{-1}(pt) \newline\wedge mdpt_{-1}(md, pt))$
 
 
 \begin{figure}[h]
@@ -121,7 +116,7 @@ dpr(i)         &     $dpr_{-1} \upharpoonleft (id \mapsto \emptyset)$      & NC 
 r(i)           & ok        & error \\ \hline
 \end{tabular}
 
-\caption{Function Table for new\_prescription(id, doctor, patient)}
+\caption{Table ~\ref{ft-np}. Function Table for new\_prescription(id, doctor, patient)}
 \label{ft-np}
 \end{center}
 \end{figure}
@@ -130,7 +125,7 @@ r(i)           & ok        & error \\ \hline
 
 \subsection{Function Table for add\_medicine(id, m, d)}
 
-error: $\neg (id > 0 \wedge rxid_{-1}(id) \wedge m > 0  \wedge mnid_{1}(m) \wedge \neg  (prs_{-1}(id)(m)`1 > 0) \wedge (\exists (b: ID\_MD, c: ID\_PT): ((prs_{-1}(id)(m)`1 > 0 \wedge (rx_{-1}(id) = (b,c) \wedge gs_{-1}(b) = sp )))) \wedge isValidDose(m,d))$
+error: $\neg (\newline id > 0 \newline\wedge rxid_{-1}(id) \newline\wedge m > 0  \newline\wedge mnid_{1}(m) \newline\wedge \neg  (prs_{-1}(id)(m)`1 > 0) \newline\wedge (\exists (b: ID\_MD, c: ID\_PT): \newline\indent((prs_{-1}(id)(m)`1 > 0 \newline\indent\wedge (rx_{-1}(id) = (b,c) \newline\indent\wedge gs_{-1}(b) = sp )))) \newline\wedge isValidDose(m,d))$
 
 \begin{figure}[h]
 \begin{center}
@@ -151,7 +146,7 @@ gs(i)          &     NC      & NC    \\ \hline
 dpr(i)         &     NC      & NC    \\ \hline
 r(i)           & ok        & error \\ \hline
 \end{tabular}
-\caption{Function Table for add\_medicine(id, medicine, dose)}
+\caption{Table ~\ref{ft-am}. Function Table for add\_medicine(id, medicine, dose)}
 \label{ft-am}
 \end{center}
 \end{figure}
@@ -160,7 +155,7 @@ r(i)           & ok        & error \\ \hline
 
 \subsection{Function Table for remove\_medicine(id, med)}
 
-error: $\neg (id > 0 \wedge rxid_{-1}(id) \wedge med > 0  \wedge mnid_{-1}(med) \wedge prs_{-1}(id)(med)`1 > 0)$
+error: $\neg (\newline id > 0 \newline\wedge rxid_{-1}(id) \newline\wedge med > 0 \newline\wedge mnid_{-1}(med) \newline\wedge prs_{-1}(id)(med)`1 > 0)$
 
 \begin{figure}[h]
 \begin{center}
@@ -181,7 +176,7 @@ gs(i)          &      NC     & NC    \\ \hline
 dpr(i)         &      NC     & NC    \\ \hline
 r(i)           & ok        & error \\ \hline
 \end{tabular}
-\caption{Function Table for remove\_medicine(id, medicine)}
+\caption{Table ~\ref{ft-rm}. Function Table for remove\_medicine(id, medicine)}
 \label{ft-rm}
 \end{center}
 \end{figure}
@@ -190,8 +185,8 @@ r(i)           & ok        & error \\ \hline
 
 \subsection{Function Table for add\_interaction(id1, id2)}
 
-error: $\neg (id1 > 0 \wedge id2 > 0 \wedge \neg id1 = id2 \wedge member(id1, mnid_{-1}) \wedge member(id2, mnid_{-1}) \wedge \neg member((id1,id2), di_{-1}) \wedge (\exists (a: ID\_RX, b: ID\_MD, c: ID\_PT): member(a, rxid_{-1}) \wedge member(b, mdid_{-1}) \wedge member(c, ptid_{-1}) \wedge ((prs_{-1}(a)(id1)`1 > 0 \wedge (rx_{-1}(a) = (b,c) \wedge gs_{-1}(b) = sp ))
-	      \vee (prs_{-1}(a)(id2)`1 > 0 \wedge (rx_{-1}(a) = (b,c) \wedge gs_{-1}(b) = sp))))) \wedge \neg (member((id1, id2), di_{-1}) \vee (member((id1, id2), di_{-1})$
+error: $\neg(\newline id1 > 0 \newline\wedge id2 > 0 \newline\wedge \neg id1 = id2 \newline\wedge member(id1, mnid_{-1}) \newline\wedge member(id2, mnid_{-1}) \newline\wedge \neg member((id1,id2), di_{-1}) \newline\wedge (\exists (a: ID\_RX, b: ID\_MD, c: ID\_PT): \newline\indent member(a, rxid_{-1}) \newline\indent\wedge member(b, mdid_{-1}) \newline\indent\wedge member(c, ptid_{-1}) \newline\indent\wedge ((prs_{-1}(a)(id1)`1 > 0 \newline\indent\indent\wedge (rx_{-1}(a) = (b,c) \newline\indent\indent\wedge gs_{-1}(b) = sp ))
+	      \newline\indent\vee (prs_{-1}(a)(id2)`1 > 0 \newline\indent\indent\wedge (rx_{-1}(a) = (b,c) \newline\indent\indent\wedge gs_{-1}(b) = sp))))) \newline\wedge \neg (member((id1, id2), di_{-1}) \newline\vee (member((id1, id2), di_{-1})$
 
 \begin{figure}[!htp]
 \begin{center}
@@ -212,7 +207,7 @@ gs(i)          &     NC      & NC    \\ \hline
 dpr(i)         &     NC      & NC    \\ \hline
 r(i)           & ok        & error \\ \hline
 \end{tabular}
-\caption{Function Table for add\_interaction(id1, id2)}
+\caption{Table ~\ref{ft-ai}. Function Table for add\_interaction(id1, id2)}
 \label{ft-ai}
 \end{center}
 \end{figure}

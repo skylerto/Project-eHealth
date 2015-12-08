@@ -146,14 +146,16 @@ BEGIN
         , dpr := init_dpr
         #)
 
-	% new_prescription (id: ID_RX; doctor: ID_MD; patient: ID_PT)
+	% new_prescription (id: ID_RX; doctor: ID_MD;
+	%		patient: ID_PT)
 	%     prescription id must be a positive integer
 	%     prescription id already in use
 	%     physician id must be a positive integer
 	%     physician with this id not registered
 	%     patient id must be a positive integer
 	%     patient with this id not registered
-	%     prescription already exists for this physican and patient
+	%     prescription already exists for this physican
+	%		and patient
   np_ft(id:ID_RX, md: ID_MD, pt: ID_PT)(s)(i): bool =
     COND
 	i = 0 -> s(i) = init_state,
@@ -250,7 +252,8 @@ BEGIN
       %    medication ids must be different
       %    medications with these ids must be registered
       %    interaction already exists
-      %    first remove conflicting medicine prescribed by generalist
+      %    first remove conflicting medicine prescribed by
+      %	generalist
       ai_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = COND
           i = 0 -> s(i) = init_state,
           i > 0 -> COND
