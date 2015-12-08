@@ -126,14 +126,15 @@ BEGIN
   init_rxid: set[ID_RX]
   init_dpr: [(init_rxid) -> set[[(init_mnid), (init_mnid)]]]
   init_prs: [(init_rxid) -> [(init_mnid) -> DOSE]] 
- 
+  %init_rx: [(init_rxid) -> ([emptyset])]  
+
   init_state : STATE =
        (# mnid := init_mnid
         , ptid := init_ptid
         , mdid := init_mdid
         , rxid := init_rxid
        	, mdpt := emptyset
-        , rx := emptyfun
+        , rx := emptyfun%init_rx
         , prs := init_prs
         , di := emptyset
         , gs := init_gs
@@ -152,6 +153,9 @@ BEGIN
 	%     prescription already exists for this physican and patient
   np_ft(id:ID_RX, md: ID_MD, pt: ID_PT)(s)(i): bool =
     COND
+	i = 0 -> s(i) = init_state,
+	i > 0 ->
+	COND
 	id > 0
 	AND NOT rxid_ (id)
 	AND md > 0
@@ -182,8 +186,10 @@ BEGIN
       ,dpr_  = s(i-1)`dpr
       ,mnid_ = s(i-1)`mnid
       ,prs_ = s(i-1)`prs
-      
- % add_medicine (id: ID_RX; medicine:ID_MN; dose: VALUE)
+      ENDCOND      
+
+%dose: DOSE
+ % Add_medicine (id: ID_RX; medicine:ID_MN; dose: VALUE)
  %     prescription id must be a positive integer
  %     prescription with this id does not exist
  %     medication id must be a positive integer
@@ -193,10 +199,17 @@ BEGIN
  %     dose is outside allowed range
   am_ft(id:ID_RX, m: ID_MN, d: DOSE)(s)(i): bool =
     COND
-	id > 0 AND NOT rxid_ (id)
-	AND m > 0 AND mnid_ (m)
-	AND NOT has(m,prs_ (id))
-	AND (EXISTS (r : (prsOfPt_ (ptOf_ (id)))): interactWith_ (prs_(r),m))
+	i = 0 -> s(i) = init_state,
+        i > 0 -> COND
+	id > 0 
+	AND rxid_ (id)
+	AND m > 0 
+	AND mnid_ (m)
+	AND NOT (prs_ (id)(m)`1 > 0)
+	%AND (NOT member(m, di_ ))
+	%OR (member(m, di_ ) AND di_ (m)
+	AND NOT (EXISTS (b: ID_MD, c: ID_PT): ((prs_ (id)(m)`1 > 0 AND (rx_ (id) = (b,c) AND gs_ (b) = sp ))))
+	%AND (EXISTS (r : (prsOfPt_ (ptOf_ (id)))): interactWith_ (prs_(r),m))
 		       % does medication m introduce an interaction?
 		       % if so, is doctor 'md' a specialist?
 	AND isValidDose_ (m,d)
@@ -208,72 +221,21 @@ BEGIN
     where
        rxid_ = s(i-1)`rxid
       ,mnid_ = s(i-1)`mnid
+      ,di_ = s(i-1)`di
+      ,rx_ = s(i-1)`rx
+      ,gs_ = s(i-1)`gs
       ,prs_  = s(i-1)`prs
       ,mdOf_ = mdOf(s(i-1))
       ,ptOf_ = ptOf(s(i-1))
       ,interactWith_ = interactWith(s(i-1))
       ,prsOfPt_ = prsOfPt(s(i-1))
       ,isValidDose_ = isValidDose(s(i-1))
-
+      ENDCOND
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FUN FUN FUNCTION TABLES %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-      %add_interaction (id1:ID_MN;id2:ID_MN)
-      %    medication ids must be positive integers
-      %    medication ids must be different
-      %    medications with these ids must be registered
-      %    interaction already exists
-      %    first remove conflicting medicine prescribed by generalist
-      ai_ft(id1:ID_MN, id2:ID_MN)(s)(i): bool = COND
-          id1 > 0 AND id2 > 0
-          AND NOT (id1 = id2)
-	  AND member(id1, mnid_ )
-	  AND member(id2, mnid_ )
-          AND NOT member((id1,id2), di_ )
-          AND NOT (EXISTS (a: ID_RX, b: ID_MD, c: ID_PT): ((prs_ (a)(id1)`1 > 0 AND (rx_ (a) = (b,c) AND gs_ (b) = sp )) OR (prs_ (a)(id2)`1 > 0 AND (rx_ (a) = (b,c) AND gs_ (b) = sp))))
-   	 AND NOT (member((id1, id2), di_ )                                             
-            OR member((id2, id1), di_ ))
-	  -> s(i) = s(i-1) WITH [
-              di := add((id1, id2), di_ )
-              ,di := add((id2, id1), di_ )
-	     % ,dpr := dpr_ WITH []
-          ],
-          NOT (
-            id1 > 0
-	    AND id2 > 0
-            AND NOT (id1 = id2)
-            AND member(id1, mnid_ )
-            AND member(id2, mnid_ )
-	    AND NOT (EXISTS (a: ID_RX, b: ID_MD, c: ID_PT): ((prs_ (a)(id1)`1 > 0 AND (rx_ (a) = (b,c) AND gs_ (b) = sp )) OR (prs_ (a)(id2)`1 > 0 AND (rx_ (a) = (b,c) AND gs_ (b) = sp))))
-            AND NOT (member((id1, id2), di_ )
-            OR member((id2, id1), di_ ))
-          ) -> s(i) = s(i-1)
-      ENDCOND
-      where
-        di_   = s(i-1)`di
-        ,dpr_  = s(i-1)`dpr
-        ,mnid_ = s(i-1)`mnid
-        ,prs_  = s(i-1)`prs
-	,rx_ = s(i-1)`rx
-	,mdpt_ = s(i-1)`mdpt
-	,gs_ = s(i-1)`gs
-
-      %remove_medicine  (id: ID_RX; medicine:ID_MN)
-      %    prescription id must be a positive integer
-      %    prescription with this id does not exist
-      %    medication id must be a positive integer
-      %    medication id must be registered
-      %    medication is not in the prescription
-      rm_ft(id:ID_RX, med: ID_MN)(s)(i): bool = COND
-          id > 0
-	  AND rxid_ (id)
-	  AND med > 0
-	  AND mnid_ (med)
-	  AND prs_ (id)(med)`1 > 0
-	  -> s(i) = s(i-1) WITH [
-	    prs := prs_ WITH [id := emptyfun]
+ ]
 	  ],
           NOT (
             id > 0
@@ -288,7 +250,7 @@ BEGIN
         ,dpr_  = s(i-1)`dpr
         ,mnid_ = s(i-1)`mnid
         ,prs_  = s(i-1)`prs
-
+	ENDCOND
 
 ehealth_ft(cmd)(s)(i): bool = COND
   i = 0 -> s(0) = init_state,
