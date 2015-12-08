@@ -52,22 +52,9 @@ BEGIN
   cmd: VAR [POS_DTIME -> COMMAND]
 
   invariant (p : bool) : TYPE = { x : Unit | p }
-  	    % unit : { x : Unit | 2 is even }
-	    %  (type correct IFF: 2 is even [ x := unit ]
-	    %  	     	     ...  2 is even
-	    %		     	  TRUE
-	    %
-	    % unit : { x : Unit | 3 is even }
-	    %  (type correct IFF: 3 is even [x := unit]
-	    %  	     	     ...  3 is even
-	    %		     	  FALSE
-	    %
-	    % { x : Unit | p } = IF p THEN {unit} ELSE {} ENDIF
 
   has [T : TYPE] (m : T, p : [T -> DOSE]) : bool = p(m)`1 > 0
-      % does prescription p have a non-zero dose of m?
 
-  % Have to place the state in a record
   STATE: TYPE =
     [#
         mnid: set[ID_MN]  % medication ids
@@ -80,33 +67,23 @@ BEGIN
       , di: set[[(mnid), (mnid)]]  % dangerous interactions, invariant needed?
       , gs: [(mdid) -> GS] % kind of doctor
       , dpr : [(rxid) -> set[[(mnid), (mnid)]]]
-      %, inv1 : invariant( FORALL (x : (mnid)): NOT di((x,x)) )
-      	     % irreflexivity
-      %, inv2 : invariant( FORALL (x,y : (mnid)): di((x,y)) <=> di((y,x)) )
-      	     % symmetry
    #]
 
   PRES (s : STATE) : TYPE =  [(s`mnid) -> DOSE]
-       % type of PRESCRIPTIONS for a given state
 
-  % would prescriptions p0 and p1 cause dangerous interactions
-	% if they were prescribed to the same patient?
   interact (s : STATE)(p0, p1 : PRES (s)) : bool =
   	   EXISTS (m0,m1 : (s`mnid)):
 	   	  s`di((m0,m1))
 	      AND has(m0,p0)
 	      AND has(m1,p1)
 
-	  % given state s, does medication m1 cause a problem
-	  % for the patient of prescription p0?
+
   interactWith (s: STATE)(p0 : PRES (s), m1 : (s`mnid)) : bool =
   	   EXISTS (m0 : (s`mnid)): s`di((m0,m1)) AND has(m0,p0)
 
 	   medicine: MEDICINE
   isValidDose(s : STATE)(m : ID_MN, d : DOSE) : bool = d`1 > 0 AND d`1 > medicine`3 AND medicine`4 > d`1
-  	   % is d a valid dose of medication m?
-	   % kept abstract; will need a counterpart in the state
-	   % in order to be refined
+
 
   prsOfPt (s: STATE)(p: (s`ptid)) : set [(s`rxid)] =
   	  { r : (s`rxid) | s`rx(r)`2 = p }
@@ -126,8 +103,8 @@ BEGIN
   init_rxid: set[ID_RX]
   init_mdpt: set[[(init_mdid),(init_ptid)]]
   init_dpr: [(init_rxid) -> set[[(init_mnid), (init_mnid)]]]
-  init_prs: [(init_rxid) -> [(init_mnid) -> DOSE]] 
-  init_rx: [(init_rxid)->(init_mdpt)]  
+  init_prs: [(init_rxid) -> [(init_mnid) -> DOSE]]
+  init_rx: [(init_rxid)->(init_mdpt)]
 
   init_state : STATE =
        (# mnid := init_mnid
@@ -140,8 +117,6 @@ BEGIN
         , di := emptyset
         , gs := init_gs
         , dpr := init_dpr
-       % , inv1 := unit
-       % , inv2 := unit
         #)
 
 	% new_prescription (id: ID_RX; doctor: ID_MD; patient: ID_PT)
@@ -167,7 +142,7 @@ BEGIN
 	       s(i) = s(i-1) WITH  [ rxid := add(id,rxid_)
 		            , rx  := rx_ WITH [id := (md,pt)]
 			    , prs := prs_ WITH [id := empty_prs(mnid_) ]
-			    , dpr := dpr_ WITH [id := emptyset ] 
+			    , dpr := dpr_ WITH [id := emptyset ]
 			    ] ,
         NOT (id > 0
         AND NOT rxid_ (id)
@@ -187,7 +162,7 @@ BEGIN
       ,dpr_  = s(i-1)`dpr
       ,mnid_ = s(i-1)`mnid
       ,prs_ = s(i-1)`prs
-      ENDCOND      
+      ENDCOND
 
 %dose: DOSE
  % Add_medicine (id: ID_RX; medicine:ID_MN; dose: VALUE)
@@ -202,21 +177,21 @@ BEGIN
     COND
 	i = 0 -> s(i) = init_state,
         i > 0 -> COND
-	id > 0 
+	id > 0
 	AND rxid_ (id)
-	AND m > 0 
+	AND m > 0
 	AND mnid_ (m)
 	AND NOT (prs_ (id)(m)`1 > 0)
-	%AND (NOT member(m, di_ ))
-	%OR (member(m, di_ ) AND di_ (m)
 	AND NOT (EXISTS (b: ID_MD, c: ID_PT): ((prs_ (id)(m)`1 > 0 AND (rx_ (id) = (b,c) AND gs_ (b) = sp ))))
-	%AND (EXISTS (r : (prsOfPt_ (ptOf_ (id)))): interactWith_ (prs_(r),m))
-		       % does medication m introduce an interaction?
-		       % if so, is doctor 'md' a specialist?
 	AND isValidDose_ (m,d)
             -> s(i) = s(i-1) WITH [ prs := prs_ WITH [id := prs_(id) WITH [m := d] ] ]
 	       	      % s_ WITH [ prs := s_`prs | id -> (s_`prs.id | m -> d) ]
-     , ELSE
+     , NOT(id > 0
+   	AND rxid_ (id)
+   	AND m > 0
+   	AND mnid_ (m)
+   	AND NOT (prs_ (id)(m)`1 > 0)
+   	AND NOT (EXISTS (b: ID_MD, c: ID_PT): ((prs_ (id)(m)`1 > 0 AND (rx_ (id) = (b,c) AND gs_ (b) = sp )))))
         -> s(i) = s(i-1)
     ENDCOND
     where
@@ -233,9 +208,6 @@ BEGIN
       ,isValidDose_ = isValidDose(s(i-1))
       ENDCOND
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% FUN FUN FUNCTION TABLES %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
       %add_interaction (id1:ID_MN;id2:ID_MN)
       %    medication ids must be positive integers
@@ -251,9 +223,9 @@ BEGIN
 	  AND member(id1, mnid_ )
 	  AND member(id2, mnid_ )
 	  AND NOT member((id1,id2), di_ )
-          AND NOT (EXISTS (a: ID_RX, b: ID_MD, c: ID_PT): member(a, rxid_ ) AND member(b, mdid_ ) AND member(c, ptid_ ) AND ((prs_ (a)(id1)`1 > 0 AND (rx_ (a) = (b,c) AND gs_ (b) = sp )) 
+          AND NOT (EXISTS (a: ID_RX, b: ID_MD, c: ID_PT): member(a, rxid_ ) AND member(b, mdid_ ) AND member(c, ptid_ ) AND ((prs_ (a)(id1)`1 > 0 AND (rx_ (a) = (b,c) AND gs_ (b) = sp ))
 	      OR (prs_ (a)(id2)`1 > 0 AND (rx_ (a) = (b,c) AND gs_ (b) = sp))))
-   	 AND NOT (member((id1, id2), di_ )                                             
+   	 AND NOT (member((id1, id2), di_ )
             OR member((id2, id1), di_ ))
 	  -> s(i) = s(i-1) WITH [
               di := add((id1, id2), di_ )
