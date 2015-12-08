@@ -3,42 +3,37 @@
 \subsection{Requirements Descriptions}
 \reqm{REQ}
 {The system will keep track of Physicians, Patients, Medications, Interactions, and Prescriptions\\}
-{.\hl{..}}
+{ See Table~\ref{tbl:cv} for list of abstract states.\\}
 \label{R1}
 
 \reqm{REQ}
-{The system will output a different response depending on which monitored event occurs. \\}
-{\hl{...} \\~}
+{A generalist cannot add a medicine to a prescription if that medicine leads to a dangerous interaction. \\}
+{ See Table~\ref{table:monitored} for adding medicine, and Table~\ref{tbl:cv} for dangerous interactions.\\}
 \label{R2}
 
 \reqm{REQ}
-{In \emph{normal} mode, the controller shall activate an alarm whenever 
-
-\begin{mylist}
-\item the current temperature falls outside the \emph{alarm} temperature range (either through temperature fluctuation or a change in the alarm range by an operator), or
-\item a failure is signalled in any of the input devices (temperature sensor and operator settings).
-\end{mylist}~}
-{The alarm temperature range is $\mv{al}\upto\mv{ah}$.
-Monitored variable \mv{st} 
-%in Table~\ref{fig:mv} 
-shows ``invalid'' when any of the input signals fail.}
+{An interaction cannot be added if a specialist has not prescribed at least one of the medications.\\}
+{ See Table~\ref{table:monitored} for adding interaction, and Table~\ref{tbl:cv}.\\}
 \label{R3}
-\noindent \textbf{Rationale}: During normal operation, if any conditions occur that could affect the wellbeing of the infant, the nurse should be notified by an alarm. This could include sensor or interface failure, or current temperature exceeding alarm values - even if this is caused by the nurse adjusting the values.
 
 \subsection{Environmental Descriptions}
 \reqm{ENV}
-{All input to the system will be assumed as to be constrained to the GUI.\\}
-{see table for a list of monitored events.\\~}
+{All input to the system will be constrained to the GUI grammer.\\}
+{ See Table~\ref{table:monitored} for the list possible monitored events.\\}
 \label{E1}
 
 \reqm{ENV}
-{.\\}
-{ \mv{ah}, \mv{al}, \mv{dh}, and \mv{dl} in Table 1: Monitored Variables.\\~}
+{A constraint by the grammar will ensure PHYSICIAN\_TYPE is either a generalist or a specialist.\\}
+{ See Table~\ref{table:monitored-types} for PHYSICIAN\_TYPE.\\~}
 \label{E2}
 \noindent \textbf{Rationale}: The operator interface for the nurse is designed in such a way that the increments of the input temperatures from the control interface must change by whole numbers.
 
 \reqm{ENV}
-{Failure of the sensors or operator settings will cause the status to become invalid.\\}
-{If the sensor or operator settings fail, \mv{st} becomes invalid.\\~}
+{The DOSE type will be constrained by the GUI grammar to be either mg, or cc.\\}
+{ See Table~\ref{table:monitored-types} for DOSE.\\~}
 \label{E3}
-\noindent \textbf{Rationale}: The environment has ways of detecting failures of the operator interface or the temperature sensor and indicating their status to the controller. The Isolette must constantly be monitoring the status of the sensors and controls to ensure that safe assumptions can be made on their values so as to not endanger the infant.
+
+\reqm{ENV}
+{The KIND type will be constrained by the GUI grammar to be either a pill or a liquid.\\}
+{ See Table~\ref{table:monitored-types} for KIND.\\~}
+\label{E4}

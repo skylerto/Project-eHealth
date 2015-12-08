@@ -20,3 +20,17 @@ dpr\_q                                                                          
 \caption{Monitored Events}
 \label{table:monitored}
 \end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+Name            & Type                                                                                           & Interpretation                                                                                   \\ \hline
+PHYSICIAN\_TYPE & \{gn, sp\}                                                                                     & \begin{tabular}[c]{@{}l@{}}Constrained to either \\ generalist or specialist\end{tabular}        \\ \hline
+MEDICATION      & \begin{tabular}[c]{@{}l@{}}{[}name: NAME; kind: KIND; \\ low: VALUE; hi: VALUE{]}\end{tabular} & Constrained by GUI                                                                               \\ \hline
+KIND            & \{pill, liquid\}                                                                               & \begin{tabular}[c]{@{}l@{}}Constrained to either \\ pill or a liquid\end{tabular}                \\ \hline
+DOSE            & \{mg, cc\}                                                                                     & \begin{tabular}[c]{@{}l@{}}Constrained to either milligrams \\ or cubic centimetres\end{tabular} \\ \hline
+\end{tabular}
+\caption{Monitored Types}
+\label{table:monitored-types}
+\end{table}
